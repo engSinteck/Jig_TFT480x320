@@ -65,8 +65,12 @@ void Error_Handler(void);
 #define TP_RST_GPIO_Port GPIOC
 #define SD_IN_Pin GPIO_PIN_0
 #define SD_IN_GPIO_Port GPIOA
+#define SPI_NSS_Pin GPIO_PIN_4
+#define SPI_NSS_GPIO_Port GPIOA
 #define LED_INT_Pin GPIO_PIN_2
 #define LED_INT_GPIO_Port GPIOB
+#define SPI2_NSS_Pin GPIO_PIN_12
+#define SPI2_NSS_GPIO_Port GPIOB
 #define TFT_DC_Pin GPIO_PIN_6
 #define TFT_DC_GPIO_Port GPIOC
 #define TFT_BACK_Pin GPIO_PIN_8
