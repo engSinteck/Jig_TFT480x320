@@ -99,6 +99,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* Hook prototypes */
 void configureTimerForRunTimeStats(void);
 unsigned long getRunTimeCounterValue(void);
+//void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
 
 /* USER CODE BEGIN 1 */
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
@@ -111,13 +112,16 @@ __weak unsigned long getRunTimeCounterValue(void)
 {
 	return ulHighFrequencyTimerTicks;
 }
-
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
-{
-    HAL_GPIO_WritePin(LED_INT_GPIO_Port, LED_INT_Pin, GPIO_PIN_SET); // ou um breakpoint aqui
-    while(1);
-}
 /* USER CODE END 1 */
+
+/* USER CODE BEGIN 4 */
+//void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+//{
+//   /* Run time stack overflow checking is performed if
+//   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+//   called if a stack overflow is detected. */
+//}
+/* USER CODE END 4 */
 
 /**
   * @brief  FreeRTOS initialization
@@ -253,9 +257,6 @@ void StartTaskLVGL(void *argument)
 
 	  if(HAL_GetTick() - timer_lvgl > 1000) {
 		  timer_lvgl = HAL_GetTick();
-
-		  UBaseType_t hwm = uxTaskGetStackHighWaterMark(NULL); 				// dentro da própria TaskLVGL
-		  LV_LOG_USER("Stack HWM: %lu words livres", (unsigned long)hwm);
 	  }
 
       osDelay(5);
