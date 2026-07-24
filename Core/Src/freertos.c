@@ -29,22 +29,31 @@
 #include "string.h"
 #include "../App/src/ILI9488.h"
 #include "../App/src/GT911.h"
+#include "../App/src/log_cdc.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+void my_log_cb(lv_log_level_t level, const char * buf);
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName);
+
 GT911_Config_t sampleConfig = {.X_Resolution = 320, .Y_Resolution = 480, .Number_Of_Touch_Support = 1, .ReverseY = true, .ReverseX = false, .SwithX2Y = true, .SoftwareNoiseReduction = false};
 
-static uint16_t buf1[(480 * 16)] __attribute__((section(".tftram"))) __attribute__((aligned(32)));
-static uint16_t buf2[(480 * 16)] __attribute__((section(".tftram"))) __attribute__((aligned(32)));
+static uint8_t buf1[(480 * 10 * 3)] /*__attribute__((section(".tftram")))*/ __attribute__((aligned(32)));
+static uint8_t buf2[(480 * 10 * 3)] /*__attribute__((section(".tftram")))*/ __attribute__((aligned(32)));
 static lv_display_t * disp;
 
 uint32_t timer_led = 0;
+uint32_t timer_lvgl = 0;
+static lv_obj_t * Tela_Debug;
+static lv_obj_t * img_fundo;
+volatile unsigned long ulHighFrequencyTimerTicks = 0;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+LV_IMG_DECLARE(AUDIO);
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -95,12 +104,18 @@ unsigned long getRunTimeCounterValue(void);
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
 __weak void configureTimerForRunTimeStats(void)
 {
-
+	ulHighFrequencyTimerTicks = 0;
 }
 
 __weak unsigned long getRunTimeCounterValue(void)
 {
-return 0;
+	return ulHighFrequencyTimerTicks;
+}
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    HAL_GPIO_WritePin(LED_INT_GPIO_Port, LED_INT_Pin, GPIO_PIN_SET); // ou um breakpoint aqui
+    while(1);
 }
 /* USER CODE END 1 */
 
@@ -194,25 +209,72 @@ void StartTaskLVGL(void *argument)
   lv_init();
 
   disp = lv_display_create(480, 320);
-  lv_display_set_buffers(disp, buf1, buf2, 480 * 16, LV_DISP_RENDER_MODE_PARTIAL);
+  lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
+  lv_display_set_buffers(disp, buf1, buf2, 480 * 10 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
   lv_display_set_flush_cb(disp, ILI9488_Flush_DMA);
 
   lv_indev_t * indev = lv_indev_create();
   lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
   lv_indev_set_read_cb(indev, touch_read_cb);
+  
+#if LV_USE_LOG
+  // Log LVGL
+  lv_log_register_print_cb(my_log_cb);
+#endif
+
+  // Teste Imagem
+	Tela_Debug = lv_obj_create(NULL);
+	lv_obj_clear_flag(Tela_Debug, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+	lv_obj_set_style_bg_color(Tela_Debug, lv_color_hex(0x000000), 0);
+	lv_obj_set_style_bg_grad_color(Tela_Debug, lv_color_hex(0x000000), 0);
+
+    /* Default size driven by label content */
+    //lv_obj_t * button_1 = lv_button_create(Tela_Debug);
+    //lv_obj_set_align(button_1, LV_ALIGN_CENTER);
+
+    //lv_obj_t * label_1 = lv_label_create(button_1);
+    //lv_obj_set_align(label_1, LV_ALIGN_CENTER);
+    //lv_label_set_text(label_1, "Click me");
+
+		img_fundo = lv_img_create(Tela_Debug);
+		lv_img_set_src(img_fundo, &AUDIO);
+		//  lv_obj_set_width(img_fundo, 480);
+		//  lv_obj_set_height(img_fundo, 128);
+		  //lv_obj_set_protect(img_fundo, LV_PROTECT_POS);
+		  lv_obj_set_pos(img_fundo, 0, 0);
+		  //lv_obj_align(img_fundo, LV_ALIGN_CENTER, 0, 0);
+
+	lv_scr_load(Tela_Debug);
 
   /* Infinite loop */
   for(;;)
   {
 	  lv_timer_handler();
 
-      osDelay(2);
+	  if(HAL_GetTick() - timer_lvgl > 1000) {
+		  timer_lvgl = HAL_GetTick();
+
+		  UBaseType_t hwm = uxTaskGetStackHighWaterMark(NULL); 				// dentro da própria TaskLVGL
+		  LV_LOG_USER("Stack HWM: %lu words livres", (unsigned long)hwm);
+	  }
+
+      osDelay(5);
   }
   /* USER CODE END StartTaskLVGL */
 }
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	if(hspi->Instance == SPI2) {
+		ILI9488_Flush_End_DMA(disp);
+	}
+}
 
+void my_log_cb(lv_log_level_t level, const char * buf)
+{
+	logI(buf, strlen(buf));
+}
 /* USER CODE END Application */
 

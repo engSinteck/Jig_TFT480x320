@@ -39,6 +39,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+extern volatile unsigned long ulHighFrequencyTimerTicks;
 
 /* USER CODE END PTD */
 
@@ -112,6 +113,7 @@ int main(void)
   MX_RNG_Init();
   MX_TIM12_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start_IT(&htim12);	
 
   /* USER CODE END 2 */
 
@@ -209,7 +211,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   if (htim->Instance == TIM12)
   {
-	  //ulHighFrequencyTimerTicks++;
+	  ulHighFrequencyTimerTicks++;
   }
   /* USER CODE END Callback 1 */
 }

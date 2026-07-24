@@ -19,8 +19,8 @@
 #define HSPI_INSTANCE			&hspi2
 
 //CHIP SELECT PIN AND PORT, STANDARD GPIO
-//#define LCD_CS_PORT								TFT_CS_GPIO_Port
-//#define LCD_CS_PIN								TFT_CS_Pin
+#define LCD_CS_PORT								SPI2_NSS_GPIO_Port
+#define LCD_CS_PIN								SPI2_NSS_Pin
 
 //DATA COMMAND PIN AND PORT, STANDARD GPIO
 #define LCD_DC_PORT								TFT_DC_GPIO_Port
@@ -95,9 +95,8 @@ void ILI9488_Puts14x24(uint16_t x, uint16_t y, uint8_t *string, uint8_t TFT_STRI
 void ILI9488_Puts18x32(uint16_t x, uint16_t y, uint8_t *string, uint8_t TFT_STRING_MODE);
 void ILI9488_Puts26x48(uint16_t x, uint16_t y, uint8_t *string, uint8_t TFT_STRING_MODE);
 
-void ILI9488_Flush(lv_disp_t * disp, const lv_area_t * area, lv_color_t * color_p);
-//void ILI9488_Flush_DMA(lv_disp_t * disp, const lv_area_t * area, lv_color_t * color_p);
-void ILI9488_Flush_DMA(lv_disp_t * disp, const lv_area_t * area, uint8_t * pxmap);
-void ILI9488_Flush_End_DMA(lv_disp_t * disp);
+void ILI9488_Flush(lv_display_t * disp, const lv_area_t * area, uint8_t * pxmap);
+void ILI9488_Flush_DMA(lv_display_t * dis, const lv_area_t * area, uint8_t * pxmap);
+void ILI9488_Flush_End_DMA(lv_display_t * disp);
 
 #endif /* ILI9488_H_ */

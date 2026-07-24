@@ -107,7 +107,7 @@
 #define ABS(x)   ((x) > 0 ? (x) : -(x))
 
 /* Global Variables ------------------------------------------------------------------*/
-static uint8_t  buf_tft_dma[ 480 * 16 * 3 ] __attribute__((section(".tftram"))) __attribute__((aligned(32)));
+//static uint8_t  buf_tft_dma[ 480 * 10 * 3 ] __attribute__((section(".tftram"))) __attribute__((aligned(32)));
 
 volatile uint16_t LCD_HEIGHT_9488 = ILI9488_SCREEN_HEIGHT;
 volatile uint16_t LCD_WIDTH_9488  = ILI9488_SCREEN_WIDTH;
@@ -128,19 +128,19 @@ void ILI9488_SPI_Send(unsigned char SPI_Data)
 /* Send command (char) to LCD */
 void ILI9488_Write_Command(uint8_t Command)
 {
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);
 	ILI9488_SPI_Send(Command);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 /* Send Data (char) to LCD */
 void ILI9488_Write_Data(uint8_t Data)
 {
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	ILI9488_SPI_Send(Data);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 /* Set Address - Location block - to draw into */
@@ -275,7 +275,9 @@ void ILI9488_Init(void)
 	//ILI9488_Write_Data((1<<3)|(0<<7)|(1<<6)|(1<<5));
 
 	//ILI9488_Write_Data((1<<3) | (0<<7) | (0<<6) | (1<<5));
-	ILI9488_Write_Data((1<<3) | (1<<7) | (1<<6) | (1<<5));
+	//ILI9488_Write_Data((1<<3) | (1<<7) | (1<<6) | (1<<5));
+
+	ILI9488_Write_Data((1<<7) | (1<<6) | (1<<5));   // sem BGR — agora RGB
 
 	ILI9488_Write_Command(0x3A);
 	ILI9488_Write_Data(0x66);				// 18Bits RGB 666
@@ -338,9 +340,9 @@ void ILI9488_Draw_Colour(uint16_t Colour)
 	unsigned char TempBuffer[3] = {(Colour>>8)&0xF8, (Colour>>3)&0xFC, Colour<<3};
 
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	HAL_SPI_Transmit(HSPI_INSTANCE, TempBuffer, 3, 1);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 //INTERNAL FUNCTION OF LIBRARY
@@ -360,7 +362,7 @@ void ILI9488_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 	}
 
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 
 	unsigned char Byte1 = (Colour>>8)&0xF8;	//RED
 	unsigned char Byte2 = (Colour>>3)&0xFC;	//GREEN
@@ -390,7 +392,7 @@ void ILI9488_Draw_Colour_Burst(uint16_t Colour, uint32_t Size)
 	//REMAINDER!
 	HAL_SPI_Transmit(HSPI_INSTANCE, (unsigned char *)burst_buffer, Remainder_from_block, 10);
 
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 //FILL THE ENTIRE SCREEN WITH SELECTED COLOUR (either #define-d ones or custom 16bit)
@@ -422,42 +424,42 @@ void ILI9488_Draw_Pixel(uint16_t X,uint16_t Y,uint16_t Colour)
 
 	//ADDRESS
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	ILI9488_SPI_Send(0x2A);
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 	//XDATA
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	unsigned char Temp_Buffer[4] = {X>>8,X, (X+1)>>8, (X+1)};
 	HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer, 4, 1);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 	//ADDRESS
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	ILI9488_SPI_Send(0x2B);
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 	//YDATA
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	unsigned char Temp_Buffer1[4] = {Y>>8,Y, (Y+1)>>8, (Y+1)};
 	HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer1, 4, 1);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 	//ADDRESS
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	ILI9488_SPI_Send(0x2C);
 	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 	//COLOUR
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 	unsigned char Temp_Buffer2[3] = {(Colour>>8)&0xF8, (Colour>>3)&0xFC, Colour<<3};
 	HAL_SPI_Transmit(HSPI_INSTANCE, Temp_Buffer2, 3, 1);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
 //DRAW RECTANGLE OF SET SIZE AND HEIGTH AT X and Y POSITION WITH CUSTOM COLOUR
@@ -710,54 +712,46 @@ void ILI9488_SetBackgroundColor(uint16_t color)
 	BACK_COLOR = color;
 }
 
-
-
-void ILI9488_Flush(lv_disp_t * disp, const lv_area_t * area, lv_color_t * color_p)
+void ILI9488_Flush(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map)
 {
-	int32_t size;
+    int32_t w = lv_area_get_width(area);
+    int32_t h = lv_area_get_height(area);
+    int32_t size = w * h;
 
-    size = ( ((area->x2 - area->x1) + 1)  * ((area->y2 - area->y1) + 1) );
     ILI9488_Set_Address(area->x1, area->y1, area->x2, area->y2);
 
-    //                                  RED               GREEN           BLUE
-    //unsigned char TempBuffer[3] = {(Colour>>8)&0xF8, (Colour>>3)&0xFC, Colour<<3};
-	for(uint16_t x = 0; x <= size-1; x++) {
-		unsigned char TempBuffer[3] = {color_p->red, color_p->green, color_p->blue};
-		HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-		//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-		HAL_SPI_Transmit(HSPI_INSTANCE, (uint8_t *)&TempBuffer[0], 3, HAL_MAX_DELAY);
-		color_p++;
-		//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
-	}
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 
-	lv_disp_flush_ready(disp);                  /* Tell you are ready with the flushing*/
+    // px_map já vem em RGB888 (3 bytes/pixel) se você configurar
+    // lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888)
+    HAL_SPI_Transmit(HSPI_INSTANCE, px_map, size * 3, HAL_MAX_DELAY);
+
+    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+
+    lv_display_flush_ready(disp);
 }
 
-void ILI9488_Flush_DMA(lv_disp_t * disp, const lv_area_t * area, uint8_t * pxmap)
-//void ILI9488_Flush_DMA(lv_disp_t * disp, const lv_area_t * area, lv_color_t * color_p)
+void ILI9488_Flush_DMA(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map)
 {
-	int32_t size;
+    int32_t w = lv_area_get_width(area);
+    int32_t h = lv_area_get_height(area);
+    int32_t size = w * h;
 
-    size = ( ((area->x2 - area->x1) + 1)  * ((area->y2 - area->y1) + 1) );
     ILI9488_Set_Address(area->x1, area->y1, area->x2, area->y2);
 
-    //                                  RED               GREEN           BLUE
-    //unsigned char TempBuffer[3] = {(Colour>>8)&0xF8, (Colour>>3)&0xFC, Colour<<3};
-	for(uint16_t x = 0; x <= size-1; x++) {
-		buf_tft_dma[x*3 + 0] = pxmap[0];
-		buf_tft_dma[x*3 + 1] = pxmap[1];
-		buf_tft_dma[x*3 + 2] = pxmap[2];
-		pxmap++;
-	}
-	HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 
-	HAL_SPI_Transmit_DMA(HSPI_INSTANCE, (uint8_t *)&buf_tft_dma[0], size * 3);
+    // px_map já está em RGB888 (3 bytes/pixel) — envia direto, sem conversão
+    HAL_SPI_Transmit_DMA(HSPI_INSTANCE, px_map, size * 3);
+
+    // NÃO chame lv_display_flush_ready aqui — só no callback de conclusão do DMA
 }
 
-void ILI9488_Flush_End_DMA(lv_disp_t * disp)
+void ILI9488_Flush_End_DMA(lv_display_t * disp)
 {
-	//HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 
 	lv_disp_flush_ready(disp);                  /* Tell you are ready with the flushing*/
 }
