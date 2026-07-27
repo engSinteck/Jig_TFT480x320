@@ -42,6 +42,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 extern lv_obj_t * Tela_Debug;
+extern lv_obj_t * Tela_DAC;
 
 
 void my_log_cb(lv_log_level_t level, const char * buf);
@@ -82,7 +83,7 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t TaskLVGLHandle;
 const osThreadAttr_t TaskLVGL_attributes = {
   .name = "TaskLVGL",
-  .stack_size = 2048 * 4,
+  .stack_size = 4096 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for MutexLVGL */
@@ -248,14 +249,12 @@ void StartTaskLVGL(void *argument)
 
   // Tela Debug
   screen_debug();
-  screen_gpio();
+  //screen_gpio();
   //screen_dac();
   //screen_mp3();
   //screen_tuner();
 
-  lv_scr_load(Tela_Debug);
-
-  /* Infinite loop */
+   /* Infinite loop */
   for(;;)
   {
 	  lv_timer_handler();

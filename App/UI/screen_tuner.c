@@ -45,6 +45,8 @@ void screen_tuner(void)
 	Tuner_Band();
 
 	Button_Menu(Tela_Tuner);
+
+	lv_scr_load(Tela_Tuner);
 }
 
 static void lv_spinbox_freq_increment_event_cb(lv_event_t * e)

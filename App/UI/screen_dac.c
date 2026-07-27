@@ -41,6 +41,8 @@ void screen_dac(void)
 	DAC_3();
 
 	Button_Menu(Tela_DAC);
+
+	lv_scr_load(Tela_DAC);
 }
 
 static void lv_spinbox_dac1_increment_event_cb(lv_event_t * e)

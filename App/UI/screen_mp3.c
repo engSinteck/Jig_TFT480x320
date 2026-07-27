@@ -44,6 +44,8 @@ void screen_mp3(void)
 	Button_MP3();
 
 	Button_Menu(Tela_MP3);
+
+	lv_scr_load(Tela_MP3);
 }
 
 static void event_prev_handler(lv_event_t * e)

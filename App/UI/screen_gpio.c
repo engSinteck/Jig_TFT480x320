@@ -62,7 +62,7 @@ void screen_gpio(void)
     //static uint32_t user_data = 10;
     //task_Gpio = lv_timer_create(update_gpio_screen, 200,  &user_data);
 
-	//lv_scr_load(Tela_Gpio);
+	lv_scr_load(Tela_Gpio);
 }
 
 void update_gpio_screen(lv_timer_t * timer)
