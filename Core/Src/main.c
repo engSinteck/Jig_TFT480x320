@@ -106,14 +106,16 @@ int main(void)
   MX_SDIO_SD_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
-  MX_TIM1_Init();
   MX_USART1_UART_Init();
   MX_FATFS_Init();
   MX_CRC_Init();
   MX_RNG_Init();
   MX_TIM12_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim12);	
+  HAL_TIM_Base_Start_IT(&htim12);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 4095);		// PWM_CH2 = 4095 TFT_BACKLIGHT
 
   /* USER CODE END 2 */
 

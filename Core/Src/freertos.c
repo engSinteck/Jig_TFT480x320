@@ -30,13 +30,21 @@
 #include "../App/src/ILI9488.h"
 #include "../App/src/GT911.h"
 #include "../App/src/log_cdc.h"
+#include "../App/src/file_handle.h"
 
+#include "../App/UI/screen_dac.h"
+#include "../App/UI/screen_debug.h"
+#include "../App/UI/screen_gpio.h"
+#include "../App/UI/screen_mp3.h"
+#include "../App/UI/screen_tuner.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+extern lv_obj_t * Tela_Debug;
+
+
 void my_log_cb(lv_log_level_t level, const char * buf);
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName);
 
 GT911_Config_t sampleConfig = {.X_Resolution = 320, .Y_Resolution = 480, .Number_Of_Touch_Support = 1, .ReverseY = true, .ReverseX = false, .SwithX2Y = true, .SoftwareNoiseReduction = false};
 
@@ -46,8 +54,6 @@ static lv_display_t * disp;
 
 uint32_t timer_led = 0;
 uint32_t timer_lvgl = 0;
-static lv_obj_t * Tela_Debug;
-static lv_obj_t * img_fundo;
 volatile unsigned long ulHighFrequencyTimerTicks = 0;
 /* USER CODE END PTD */
 
@@ -76,7 +82,7 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t TaskLVGLHandle;
 const osThreadAttr_t TaskLVGL_attributes = {
   .name = "TaskLVGL",
-  .stack_size = 1024 * 4,
+  .stack_size = 2048 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for MutexLVGL */
@@ -99,7 +105,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* Hook prototypes */
 void configureTimerForRunTimeStats(void);
 unsigned long getRunTimeCounterValue(void);
-//void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
 
 /* USER CODE BEGIN 1 */
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
@@ -115,12 +121,12 @@ __weak unsigned long getRunTimeCounterValue(void)
 /* USER CODE END 1 */
 
 /* USER CODE BEGIN 4 */
-//void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
-//{
-//   /* Run time stack overflow checking is performed if
-//   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
-//   called if a stack overflow is detected. */
-//}
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
+}
 /* USER CODE END 4 */
 
 /**
@@ -210,6 +216,9 @@ void StartTaskLVGL(void *argument)
   // Init GT911
   GT911_Init(sampleConfig);
 
+  // Test Read SD-Card
+  Mount_FATFS();
+
   lv_init();
 
   disp = lv_display_create(480, 320);
@@ -227,28 +236,24 @@ void StartTaskLVGL(void *argument)
 #endif
 
   // Teste Imagem
-	Tela_Debug = lv_obj_create(NULL);
-	lv_obj_clear_flag(Tela_Debug, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_obj_set_style_bg_color(Tela_Debug, lv_color_hex(0x000000), 0);
-	lv_obj_set_style_bg_grad_color(Tela_Debug, lv_color_hex(0x000000), 0);
+//  Tela_Debug = lv_obj_create(NULL);
+//  lv_obj_clear_flag(Tela_Debug, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+//  lv_obj_set_style_bg_color(Tela_Debug, lv_color_hex(0x000000), 0);
+//  lv_obj_set_style_bg_grad_color(Tela_Debug, lv_color_hex(0x000000), 0);
+//
+//  img_fundo = lv_img_create(Tela_Debug);
+//  //lv_img_set_src(img_fundo, &AUDIO);
+//  lv_img_set_src(img_fundo, "F:/AUDIO.bin");
+//  lv_obj_set_pos(img_fundo, 0, 0);
 
-    /* Default size driven by label content */
-    //lv_obj_t * button_1 = lv_button_create(Tela_Debug);
-    //lv_obj_set_align(button_1, LV_ALIGN_CENTER);
+  // Tela Debug
+  screen_debug();
+  screen_gpio();
+  //screen_dac();
+  //screen_mp3();
+  //screen_tuner();
 
-    //lv_obj_t * label_1 = lv_label_create(button_1);
-    //lv_obj_set_align(label_1, LV_ALIGN_CENTER);
-    //lv_label_set_text(label_1, "Click me");
-
-		img_fundo = lv_img_create(Tela_Debug);
-		lv_img_set_src(img_fundo, &AUDIO);
-		//  lv_obj_set_width(img_fundo, 480);
-		//  lv_obj_set_height(img_fundo, 128);
-		  //lv_obj_set_protect(img_fundo, LV_PROTECT_POS);
-		  lv_obj_set_pos(img_fundo, 0, 0);
-		  //lv_obj_align(img_fundo, LV_ALIGN_CENTER, 0, 0);
-
-	lv_scr_load(Tela_Debug);
+  lv_scr_load(Tela_Debug);
 
   /* Infinite loop */
   for(;;)

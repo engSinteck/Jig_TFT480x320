@@ -196,14 +196,7 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
-  
-  .tftram(NOLOAD) : 
-  {
-    . = ALIGN(4);
-    *(.tftram*)
-  	. = ALIGN(4);
-  } > CCMRAM
-  
+
   /* Remove information from the compiler libraries */
   /DISCARD/ :
   {
