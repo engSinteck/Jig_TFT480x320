@@ -492,7 +492,6 @@ static void event_btn1_handler(lv_event_t * e)
     if(code == LV_EVENT_CLICKED) {
         LV_LOG_USER("Clicked");
 
-        //lv_scr_load(Tela_Debug);
         lv_obj_delete( lv_screen_active());
         screen_debug();
     }
@@ -505,7 +504,6 @@ static void event_btn2_handler(lv_event_t * e)
     if(code == LV_EVENT_CLICKED) {
         LV_LOG_USER("Clicked");
 
-        //lv_scr_load(Tela_Gpio);
         lv_obj_delete( lv_screen_active());
         screen_gpio();
     }
@@ -518,7 +516,6 @@ static void event_btn3_handler(lv_event_t * e)
     if(code == LV_EVENT_CLICKED) {
         LV_LOG_USER("Clicked");
 
-        //lv_scr_load(Tela_DAC);
         lv_obj_delete( lv_screen_active());
         screen_dac();
     }
@@ -531,7 +528,6 @@ static void event_btn4_handler(lv_event_t * e)
     if(code == LV_EVENT_CLICKED) {
         LV_LOG_USER("Clicked");
 
-        //lv_scr_load(Tela_MP3);
         lv_obj_delete( lv_screen_active() );
         screen_mp3();
     }
@@ -544,7 +540,6 @@ static void event_btn5_handler(lv_event_t * e)
     if(code == LV_EVENT_CLICKED) {
         LV_LOG_USER("Clicked");
 
-        //lv_scr_load(Tela_Tuner);
         lv_obj_delete( lv_screen_active() );
         screen_tuner();
     }

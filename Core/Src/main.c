@@ -45,7 +45,13 @@ extern volatile unsigned long ulHighFrequencyTimerTicks;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define RX_BUFFER_SIZE 1024
 
+uint8_t rx_byte = 0;
+volatile uint8_t rx_buffer[RX_BUFFER_SIZE] = {0};
+volatile uint8_t rx_flag = 0;
+volatile uint16_t head = 0;
+uint16_t tail = 0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -116,6 +122,8 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim12);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 4095);		// PWM_CH2 = 4095 TFT_BACKLIGHT
+
+  HAL_UART_Receive_IT(&huart1, &rx_byte, 1);
 
   /* USER CODE END 2 */
 
