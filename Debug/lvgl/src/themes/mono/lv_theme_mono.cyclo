@@ -1,0 +1,5 @@
+../lvgl/src/themes/mono/lv_theme_mono.c:259:13:theme_apply	31
+../lvgl/src/themes/mono/lv_theme_mono.c:184:14:lv_theme_mono_init	42
+../lvgl/src/themes/mono/lv_theme_mono.c:217:6:lv_theme_mono_is_inited	2
+../lvgl/src/themes/mono/lv_theme_mono.c:224:14:lv_theme_mono_get	2
+../lvgl/src/themes/mono/lv_theme_mono.c:233:6:lv_theme_mono_deinit	4

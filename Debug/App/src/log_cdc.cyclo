@@ -1,0 +1,4 @@
+../App/src/log_cdc.c:24:6:HAL_printf_valist	1
+../App/src/log_cdc.c:33:6:HAL_printf	1
+../App/src/log_cdc.c:47:6:logUSB	1
+../App/src/log_cdc.c:57:6:logI	1

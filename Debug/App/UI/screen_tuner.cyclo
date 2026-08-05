@@ -1,0 +1,7 @@
+../App/UI/screen_tuner.c:124:13:lv_spinbox_band_decrement_event_cb	3
+../App/UI/screen_tuner.c:64:13:lv_spinbox_freq_decrement_event_cb	3
+../App/UI/screen_tuner.c:52:13:lv_spinbox_freq_increment_event_cb	3
+../App/UI/screen_tuner.c:116:13:lv_spinbox_band_increment_event_cb	3
+../App/UI/screen_tuner.c:76:6:Tuner_Freq	1
+../App/UI/screen_tuner.c:132:6:Tuner_Band	1
+../App/UI/screen_tuner.c:25:6:screen_tuner	1

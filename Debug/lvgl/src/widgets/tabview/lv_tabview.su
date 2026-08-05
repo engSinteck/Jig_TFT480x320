@@ -1,0 +1,16 @@
+../lvgl/src/widgets/tabview/lv_tabview.c:85:12:lv_tabview_create	8	static
+../lvgl/src/widgets/tabview/lv_tabview.c:124:6:lv_tabview_set_tab_text	32	static
+../lvgl/src/widgets/tabview/lv_tabview.c:150:6:lv_tabview_set_active	56	static
+../lvgl/src/widgets/tabview/lv_tabview.c:355:13:lv_tabview_event	32	static
+../lvgl/src/widgets/tabview/lv_tabview.c:393:13:cont_scroll_end_event_cb	48	static
+../lvgl/src/widgets/tabview/lv_tabview.c:369:13:button_clicked_event_cb	16	static
+../lvgl/src/widgets/tabview/lv_tabview.c:94:12:lv_tabview_add_tab	48	static
+../lvgl/src/widgets/tabview/lv_tabview.c:195:6:lv_tabview_set_tab_bar_position	40	static
+../lvgl/src/widgets/tabview/lv_tabview.c:323:13:lv_tabview_constructor	16	static
+../lvgl/src/widgets/tabview/lv_tabview.c:266:6:lv_tabview_set_tab_bar_size	32	static
+../lvgl/src/widgets/tabview/lv_tabview.c:281:10:lv_tabview_get_tab_active	32	static
+../lvgl/src/widgets/tabview/lv_tabview.c:288:12:lv_tabview_get_tab_button	32	static
+../lvgl/src/widgets/tabview/lv_tabview.c:295:10:lv_tabview_get_tab_count	32	static
+../lvgl/src/widgets/tabview/lv_tabview.c:302:12:lv_tabview_get_content	0	static
+../lvgl/src/widgets/tabview/lv_tabview.c:307:12:lv_tabview_get_tab_bar	0	static
+../lvgl/src/widgets/tabview/lv_tabview.c:312:10:lv_tabview_get_tab_bar_position	32	static

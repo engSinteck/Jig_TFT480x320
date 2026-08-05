@@ -1,0 +1,10 @@
+lvgl/src/drivers/wayland/lv_wl_g2d_backend.o: \
+ ../lvgl/src/drivers/wayland/lv_wl_g2d_backend.c \
+ ../lvgl/src/drivers/wayland/lv_wayland_private.h \
+ ../lvgl/src/drivers/wayland/../../lv_conf_internal.h \
+ ../lvgl/src/drivers/wayland/../../lv_conf_kconfig.h \
+ ../lvgl/src/drivers/wayland/../../../../lv_conf.h
+../lvgl/src/drivers/wayland/lv_wayland_private.h:
+../lvgl/src/drivers/wayland/../../lv_conf_internal.h:
+../lvgl/src/drivers/wayland/../../lv_conf_kconfig.h:
+../lvgl/src/drivers/wayland/../../../../lv_conf.h:

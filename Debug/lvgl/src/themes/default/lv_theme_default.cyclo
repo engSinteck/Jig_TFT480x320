@@ -1,0 +1,6 @@
+../lvgl/src/themes/default/lv_theme_default.c:733:13:theme_apply	59
+../lvgl/src/themes/default/lv_theme_default.c:625:14:lv_theme_default_init	245
+../lvgl/src/themes/default/lv_theme_default.c:1233:13:resolution_change_event_cb	1
+../lvgl/src/themes/default/lv_theme_default.c:691:6:lv_theme_default_is_inited	2
+../lvgl/src/themes/default/lv_theme_default.c:698:14:lv_theme_default_get	2
+../lvgl/src/themes/default/lv_theme_default.c:707:6:lv_theme_default_deinit	4

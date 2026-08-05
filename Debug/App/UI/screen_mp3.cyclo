@@ -1,0 +1,8 @@
+../App/UI/screen_mp3.c:101:13:event_stop_handler	3
+../App/UI/screen_mp3.c:84:13:event_next_handler	3
+../App/UI/screen_mp3.c:67:13:event_play_handler	3
+../App/UI/screen_mp3.c:50:13:event_prev_handler	3
+../App/UI/screen_mp3.c:164:13:event_config_handler	2
+../App/UI/screen_mp3.c:118:6:Button_MP3	1
+../App/UI/screen_mp3.c:173:6:Button_config	1
+../App/UI/screen_mp3.c:23:6:screen_mp3	1

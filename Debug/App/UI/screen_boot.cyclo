@@ -1,0 +1,3 @@
+../App/UI/screen_boot.c:31:6:update_boot_screen	3
+../App/UI/screen_boot.c:24:6:_ui_screen_change	2
+../App/UI/screen_boot.c:39:6:screen_boot	1

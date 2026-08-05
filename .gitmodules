@@ -1,0 +1,6 @@
+[submodule "lvgl"]
+	path = lvgl
+	url = https://github.com/lvgl/lvgl.git
+[submodule "Middlewares/Third_Party/stm32-mw-fatfs"]
+	path = Middlewares/Third_Party/stm32-mw-fatfs
+	url = https://github.com/STMicroelectronics/stm32-mw-fatfs.git

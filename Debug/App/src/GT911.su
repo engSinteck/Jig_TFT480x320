@@ -1,0 +1,6 @@
+../App/src/GT911.c:260:23:GT911_GetRegister	16	static
+../App/src/GT911.c:55:16:GT911_Init	32	static
+../App/src/GT911.c:126:6:GT911_PrintConfig	16	static
+../App/src/GT911.c:135:16:GT911_ReadTouch	32	static
+../App/src/GT911.c:323:9:GT911_ReadTouch_LVGL	56	static
+../App/src/GT911.c:294:6:touch_read_cb	32	static

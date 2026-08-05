@@ -1,0 +1,3 @@
+../lvgl/demos/lv_demos.c:74:6:lv_demo_args_init	2
+../lvgl/demos/lv_demos.c:81:6:lv_demos_create	1
+../lvgl/demos/lv_demos.c:116:6:lv_demos_show_help	1
