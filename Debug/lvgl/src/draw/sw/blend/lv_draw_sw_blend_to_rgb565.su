@@ -1,3 +1,0 @@
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb565.c:1058:35:rgb888_image_blend	80	static
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb565.c:255:28:lv_draw_sw_blend_color_to_rgb565	80	static
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb565.c:403:28:lv_draw_sw_blend_image_to_rgb565	80	static

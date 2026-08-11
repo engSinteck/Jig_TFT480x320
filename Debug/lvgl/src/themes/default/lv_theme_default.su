@@ -1,6 +1,0 @@
-../lvgl/src/themes/default/lv_theme_default.c:733:13:theme_apply	32	static
-../lvgl/src/themes/default/lv_theme_default.c:625:14:lv_theme_default_init	128	static
-../lvgl/src/themes/default/lv_theme_default.c:1233:13:resolution_change_event_cb	24	static
-../lvgl/src/themes/default/lv_theme_default.c:691:6:lv_theme_default_is_inited	0	static
-../lvgl/src/themes/default/lv_theme_default.c:698:14:lv_theme_default_get	0	static
-../lvgl/src/themes/default/lv_theme_default.c:707:6:lv_theme_default_deinit	16	static

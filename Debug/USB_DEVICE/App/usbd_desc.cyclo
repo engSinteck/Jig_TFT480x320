@@ -1,7 +1,0 @@
-../USB_DEVICE/App/usbd_desc.c:219:11:USBD_CDC_DeviceDescriptor	1
-../USB_DEVICE/App/usbd_desc.c:232:11:USBD_CDC_LangIDStrDescriptor	1
-../USB_DEVICE/App/usbd_desc.c:264:11:USBD_CDC_ManufacturerStrDescriptor	1
-../USB_DEVICE/App/usbd_desc.c:245:11:USBD_CDC_ProductStrDescriptor	1
-../USB_DEVICE/App/usbd_desc.c:299:11:USBD_CDC_ConfigStrDescriptor	1
-../USB_DEVICE/App/usbd_desc.c:318:11:USBD_CDC_InterfaceStrDescriptor	1
-../USB_DEVICE/App/usbd_desc.c:277:11:USBD_CDC_SerialStrDescriptor	6

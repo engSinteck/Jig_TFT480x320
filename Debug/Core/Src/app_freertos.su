@@ -1,9 +1,0 @@
-../Core/Src/app_freertos.c:375:6:my_log_cb	0	static
-../Core/Src/app_freertos.c:284:6:StartDefaultTask	8	static
-../Core/Src/app_freertos.c:309:6:StartTask485	8	static
-../Core/Src/app_freertos.c:327:6:StartTaskLVGL	16	static
-../Core/Src/app_freertos.c:203:6:vApplicationStackOverflowHook	0	static
-../Core/Src/app_freertos.c:213:13:configureTimerForRunTimeStats	0	static
-../Core/Src/app_freertos.c:218:22:getRunTimeCounterValue	0	static
-../Core/Src/app_freertos.c:229:6:MX_FREERTOS_Init	8	static
-../Core/Src/app_freertos.c:368:6:HAL_SPI_TxCpltCallback	0	static

@@ -1,9 +1,0 @@
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:464:13:release_glyph_cb	1
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:724:13:binfont_font_free_src_cb	2
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:217:12:read_label	4
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:709:15:binfont_font_dup_src_cb	3
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:133:6:lv_binfont_destroy	9
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:704:13:binfont_font_delete_cb	1
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:589:9:load_kern	16
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:96:13:lv_binfont_create	81
-../lvgl/src/font/binfont_loader/lv_binfont_loader.c:685:20:binfont_font_create_cb	3

@@ -1,4 +1,0 @@
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb888.c:1083:42:blend_non_normal_pixel	7
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb888.c:766:35:rgb888_image_blend	41
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb888.c:224:28:lv_draw_sw_blend_color_to_rgb888	39
-../lvgl/src/draw/sw/blend/lv_draw_sw_blend_to_rgb888.c:352:28:lv_draw_sw_blend_image_to_rgb888	234
