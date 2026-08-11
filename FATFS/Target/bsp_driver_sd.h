@@ -28,12 +28,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h5xx_hal.h"
 #include "fatfs_platform.h"
+#include "stm32h5xx_hal_mmc.h"
 
 /* Exported types --------------------------------------------------------*/
 /**
   * @brief SD Card information structure
   */
-#define BSP_SD_CardInfo HAL_SD_CardInfoTypeDef
+#define BSP_SD_CardInfo HAL_MMC_CardInfoTypeDef
 
 /* Exported constants --------------------------------------------------------*/
 /**

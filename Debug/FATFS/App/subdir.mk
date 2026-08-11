@@ -5,13 +5,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../FATFS/App/app_fatfs.c 
+../FATFS/App/fatfs.c 
 
 OBJS += \
-./FATFS/App/app_fatfs.o 
+./FATFS/App/fatfs.o 
 
 C_DEPS += \
-./FATFS/App/app_fatfs.d 
+./FATFS/App/fatfs.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +21,7 @@ FATFS/App/%.o FATFS/App/%.su FATFS/App/%.cyclo: ../FATFS/App/%.c FATFS/App/subdi
 clean: clean-FATFS-2f-App
 
 clean-FATFS-2f-App:
-	-$(RM) ./FATFS/App/app_fatfs.cyclo ./FATFS/App/app_fatfs.d ./FATFS/App/app_fatfs.o ./FATFS/App/app_fatfs.su
+	-$(RM) ./FATFS/App/fatfs.cyclo ./FATFS/App/fatfs.d ./FATFS/App/fatfs.o ./FATFS/App/fatfs.su
 
 .PHONY: clean-FATFS-2f-App
 

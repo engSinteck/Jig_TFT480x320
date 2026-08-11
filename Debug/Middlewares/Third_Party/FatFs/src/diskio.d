@@ -51,6 +51,8 @@ Middlewares/Third_Party/FatFs/src/diskio.o: \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_pcd_ex.h \
  ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_exti.h \
  ../FATFS/Target/bsp_driver_sd.h ../FATFS/Target/fatfs_platform.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_mmc.h \
+ ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_mmc_ex.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h \
  ../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
@@ -116,6 +118,8 @@ Middlewares/Third_Party/FatFs/src/diskio.o: \
 ../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_exti.h:
 ../FATFS/Target/bsp_driver_sd.h:
 ../FATFS/Target/fatfs_platform.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_mmc.h:
+../Drivers/STM32H5xx_HAL_Driver/Inc/stm32h5xx_hal_mmc_ex.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:

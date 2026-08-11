@@ -8,18 +8,21 @@ C_SRCS += \
 ../App/src/GT911.c \
 ../App/src/GT911_User.c \
 ../App/src/ILI9488.c \
+../App/src/file_handle.c \
 ../App/src/log_cdc.c 
 
 OBJS += \
 ./App/src/GT911.o \
 ./App/src/GT911_User.o \
 ./App/src/ILI9488.o \
+./App/src/file_handle.o \
 ./App/src/log_cdc.o 
 
 C_DEPS += \
 ./App/src/GT911.d \
 ./App/src/GT911_User.d \
 ./App/src/ILI9488.d \
+./App/src/file_handle.d \
 ./App/src/log_cdc.d 
 
 
@@ -30,7 +33,7 @@ App/src/%.o App/src/%.su App/src/%.cyclo: ../App/src/%.c App/src/subdir.mk
 clean: clean-App-2f-src
 
 clean-App-2f-src:
-	-$(RM) ./App/src/GT911.cyclo ./App/src/GT911.d ./App/src/GT911.o ./App/src/GT911.su ./App/src/GT911_User.cyclo ./App/src/GT911_User.d ./App/src/GT911_User.o ./App/src/GT911_User.su ./App/src/ILI9488.cyclo ./App/src/ILI9488.d ./App/src/ILI9488.o ./App/src/ILI9488.su ./App/src/log_cdc.cyclo ./App/src/log_cdc.d ./App/src/log_cdc.o ./App/src/log_cdc.su
+	-$(RM) ./App/src/GT911.cyclo ./App/src/GT911.d ./App/src/GT911.o ./App/src/GT911.su ./App/src/GT911_User.cyclo ./App/src/GT911_User.d ./App/src/GT911_User.o ./App/src/GT911_User.su ./App/src/ILI9488.cyclo ./App/src/ILI9488.d ./App/src/ILI9488.o ./App/src/ILI9488.su ./App/src/file_handle.cyclo ./App/src/file_handle.d ./App/src/file_handle.o ./App/src/file_handle.su ./App/src/log_cdc.cyclo ./App/src/log_cdc.d ./App/src/log_cdc.o ./App/src/log_cdc.su
 
 .PHONY: clean-App-2f-src
 

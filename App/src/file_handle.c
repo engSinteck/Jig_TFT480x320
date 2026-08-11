@@ -7,17 +7,18 @@
 #include "main.h"
 #include <../App/src/file_handle.h>
 #include <../App/src/log_cdc.h>
-//#include "fatfs.h"
+#include "fatfs.h"
 #include "stdio.h"
 #include "string.h"
 
 extern uint8_t retSD;    /* Return value for SD */
-extern FATFS SDFatFS;    /* File system object for USER logical drive */
-extern FIL SDFile;
+extern char SDPath[4];   /* SD logical drive path */
+extern FATFS SDFatFS;    /* File system object for SD logical drive */
+extern FIL SDFile;       /* File object for SD */
 
 FATFS *pfs;
-char line[512]; /* Line buffer */
-FRESULT fr;     /* FatFs return code */
+char line[512]; 		/* Line buffer */
+FRESULT fr;     		/* FatFs return code */
 DWORD fre_clust;
 uint32_t totalSpace, freeSpace, SpaceUsed;
 uint32_t duracao = 0;

@@ -331,7 +331,7 @@ void StartTaskLVGL(void *argument)
 	GT911_Init(sampleConfig);
 
 	// Test Read SD-Card
-	//Mount_FATFS();
+	Mount_FATFS();
 
 	lv_init();
 
