@@ -352,6 +352,7 @@ void StartTaskLVGL(void *argument)
 
 	// Tela Debug
 	screen_boot();
+	//screen_debug();
 
   /* Infinite loop */
   for(;;)
