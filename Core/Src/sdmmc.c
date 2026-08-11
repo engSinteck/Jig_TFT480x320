@@ -41,9 +41,9 @@ void MX_SDMMC1_SDIO_Init(void)
   hsdio1.Instance = SDMMC1;
   hsdio1.Init.ClockEdge = SDMMC_CLOCK_EDGE_RISING;
   hsdio1.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
-  hsdio1.Init.BusWide = SDMMC_BUS_WIDE_1B;
+  hsdio1.Init.BusWide = SDMMC_BUS_WIDE_4B;
   hsdio1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsdio1.Init.ClockDiv = 4;
+  hsdio1.Init.ClockDiv = 0;
   if (HAL_SDIO_Init(&hsdio1) != HAL_OK)
   {
     Error_Handler();

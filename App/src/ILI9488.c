@@ -325,8 +325,8 @@ void ILI9488_Init(void)
 	ILI9488_Write_Command(0x11);
 	HAL_Delay(120);
 
-	ILI9488_Set_Address(0, 0, ILI9488_SCREEN_WIDTH-1, ILI9488_SCREEN_HEIGHT-1);
-	ILI9488_Fill_Screen(0x0000);
+	//ILI9488_Set_Address(0, 0, ILI9488_SCREEN_WIDTH-1, ILI9488_SCREEN_HEIGHT-1);
+	//ILI9488_Fill_Screen(0x0000);
 
 	//TURN ON DISPLAY
 	ILI9488_Write_Command(0x29);
@@ -724,7 +724,6 @@ void ILI9488_Flush(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map
     HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 
     // px_map já vem em RGB888 (3 bytes/pixel) se você configurar
-    // lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888)
     HAL_SPI_Transmit(HSPI_INSTANCE, px_map, size * 3, HAL_MAX_DELAY);
 
     HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);

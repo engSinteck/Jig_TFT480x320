@@ -1,4 +1,5 @@
 "./App/UI/AUDIO.o"
+"./App/UI/LOGO_ONE_2.o"
 "./App/UI/screen_boot.o"
 "./App/UI/screen_dac.o"
 "./App/UI/screen_debug.o"

@@ -6,6 +6,7 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../App/UI/AUDIO.c \
+../App/UI/LOGO_ONE_2.c \
 ../App/UI/screen_boot.c \
 ../App/UI/screen_dac.c \
 ../App/UI/screen_debug.c \
@@ -15,6 +16,7 @@ C_SRCS += \
 
 OBJS += \
 ./App/UI/AUDIO.o \
+./App/UI/LOGO_ONE_2.o \
 ./App/UI/screen_boot.o \
 ./App/UI/screen_dac.o \
 ./App/UI/screen_debug.o \
@@ -24,6 +26,7 @@ OBJS += \
 
 C_DEPS += \
 ./App/UI/AUDIO.d \
+./App/UI/LOGO_ONE_2.d \
 ./App/UI/screen_boot.d \
 ./App/UI/screen_dac.d \
 ./App/UI/screen_debug.d \
@@ -39,7 +42,7 @@ App/UI/%.o App/UI/%.su App/UI/%.cyclo: ../App/UI/%.c App/UI/subdir.mk
 clean: clean-App-2f-UI
 
 clean-App-2f-UI:
-	-$(RM) ./App/UI/AUDIO.cyclo ./App/UI/AUDIO.d ./App/UI/AUDIO.o ./App/UI/AUDIO.su ./App/UI/screen_boot.cyclo ./App/UI/screen_boot.d ./App/UI/screen_boot.o ./App/UI/screen_boot.su ./App/UI/screen_dac.cyclo ./App/UI/screen_dac.d ./App/UI/screen_dac.o ./App/UI/screen_dac.su ./App/UI/screen_debug.cyclo ./App/UI/screen_debug.d ./App/UI/screen_debug.o ./App/UI/screen_debug.su ./App/UI/screen_gpio.cyclo ./App/UI/screen_gpio.d ./App/UI/screen_gpio.o ./App/UI/screen_gpio.su ./App/UI/screen_mp3.cyclo ./App/UI/screen_mp3.d ./App/UI/screen_mp3.o ./App/UI/screen_mp3.su ./App/UI/screen_tuner.cyclo ./App/UI/screen_tuner.d ./App/UI/screen_tuner.o ./App/UI/screen_tuner.su
+	-$(RM) ./App/UI/AUDIO.cyclo ./App/UI/AUDIO.d ./App/UI/AUDIO.o ./App/UI/AUDIO.su ./App/UI/LOGO_ONE_2.cyclo ./App/UI/LOGO_ONE_2.d ./App/UI/LOGO_ONE_2.o ./App/UI/LOGO_ONE_2.su ./App/UI/screen_boot.cyclo ./App/UI/screen_boot.d ./App/UI/screen_boot.o ./App/UI/screen_boot.su ./App/UI/screen_dac.cyclo ./App/UI/screen_dac.d ./App/UI/screen_dac.o ./App/UI/screen_dac.su ./App/UI/screen_debug.cyclo ./App/UI/screen_debug.d ./App/UI/screen_debug.o ./App/UI/screen_debug.su ./App/UI/screen_gpio.cyclo ./App/UI/screen_gpio.d ./App/UI/screen_gpio.o ./App/UI/screen_gpio.su ./App/UI/screen_mp3.cyclo ./App/UI/screen_mp3.d ./App/UI/screen_mp3.o ./App/UI/screen_mp3.su ./App/UI/screen_tuner.cyclo ./App/UI/screen_tuner.d ./App/UI/screen_tuner.o ./App/UI/screen_tuner.su
 
 .PHONY: clean-App-2f-UI
 

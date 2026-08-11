@@ -327,12 +327,8 @@ void StartTask485(void *argument)
 void StartTaskLVGL(void *argument)
 {
   /* USER CODE BEGIN TaskLVGL */
-	ILI9488_Init();
-	ILI9488_Set_Address(0, 0, ILI9488_SCREEN_WIDTH-1, ILI9488_SCREEN_HEIGHT-1);
-	ILI9488_Fill_Screen(0xF800);
-
 	// Init GT911
-//	GT911_Init(sampleConfig);
+	GT911_Init(sampleConfig);
 
 	// Test Read SD-Card
 	//Mount_FATFS();
@@ -343,6 +339,7 @@ void StartTaskLVGL(void *argument)
 	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
 	lv_display_set_buffers(disp, buf1, buf2, 480 * 10 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
 	lv_display_set_flush_cb(disp, ILI9488_Flush);
+	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
 
 	lv_indev_t * indev = lv_indev_create();
 	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
@@ -368,6 +365,13 @@ void StartTaskLVGL(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+	if(hspi->Instance == SPI2) {
+		ILI9488_Flush_End_DMA(disp);
+	}
+}
+
 void my_log_cb(lv_log_level_t level, const char * buf)
 {
 	//logI(buf, strlen(buf));

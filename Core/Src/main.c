@@ -35,7 +35,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "../App/src/ILI9488.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -112,17 +112,23 @@ int main(void)
   MX_ICACHE_Init();
   MX_OCTOSPI1_Init();
   MX_RTC_Init();
-//  MX_SDMMC1_SDIO_Init();
+  //MX_SDMMC1_SDIO_Init();
   MX_SPI2_Init();
-  MX_TIM1_Init();
   MX_USB_PCD_Init();
   MX_TIM12_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   MX_CRC_Init();
   MX_RNG_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim12);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 4095);		// PWM_CH2 = 4095 TFT_BACKLIGHT
+
+  ILI9488_Init();
+  ILI9488_Set_Address(0, 0, ILI9488_SCREEN_WIDTH-1, ILI9488_SCREEN_HEIGHT-1);
+  ILI9488_Fill_Screen(0x0000);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -246,7 +252,6 @@ void PeriphCommonClock_Config(void)
   PeriphClkInitStruct.Usart2ClockSelection = RCC_USART2CLKSOURCE_PLL2Q;
   PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PLL3R;
   PeriphClkInitStruct.Sdmmc1ClockSelection = RCC_SDMMC1CLKSOURCE_PLL2R;
-  PeriphClkInitStruct.OspiClockSelection = RCC_OSPICLKSOURCE_PLL1Q;
   PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLL3Q;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {

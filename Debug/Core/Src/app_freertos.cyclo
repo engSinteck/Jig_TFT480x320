@@ -1,4 +1,4 @@
-../Core/Src/app_freertos.c:371:6:my_log_cb	1
+../Core/Src/app_freertos.c:375:6:my_log_cb	1
 ../Core/Src/app_freertos.c:284:6:StartDefaultTask	2
 ../Core/Src/app_freertos.c:309:6:StartTask485	1
 ../Core/Src/app_freertos.c:327:6:StartTaskLVGL	1
@@ -6,3 +6,4 @@
 ../Core/Src/app_freertos.c:213:13:configureTimerForRunTimeStats	1
 ../Core/Src/app_freertos.c:218:22:getRunTimeCounterValue	1
 ../Core/Src/app_freertos.c:229:6:MX_FREERTOS_Init	1
+../Core/Src/app_freertos.c:368:6:HAL_SPI_TxCpltCallback	2
