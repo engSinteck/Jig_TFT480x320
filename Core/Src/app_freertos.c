@@ -338,7 +338,7 @@ void StartTaskLVGL(void *argument)
 	disp = lv_display_create(480, 320);
 	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
 	lv_display_set_buffers(disp, buf1, buf2, 480 * 10 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
-	lv_display_set_flush_cb(disp, ILI9488_Flush);
+	lv_display_set_flush_cb(disp, ILI9488_Flush_DMA);
 	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
 
 	lv_indev_t * indev = lv_indev_create();
@@ -352,7 +352,6 @@ void StartTaskLVGL(void *argument)
 
 	// Tela Debug
 	screen_boot();
-	//screen_debug();
 
   /* Infinite loop */
   for(;;)
