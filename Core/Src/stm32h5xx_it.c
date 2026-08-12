@@ -57,7 +57,7 @@
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef handle_GPDMA1_Channel1;
 extern XSPI_HandleTypeDef hxspi1;
-extern SDIO_HandleTypeDef hsdio1;
+extern SD_HandleTypeDef hsd1;
 extern DMA_HandleTypeDef handle_GPDMA1_Channel0;
 extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim12;
@@ -274,7 +274,7 @@ void SDMMC1_IRQHandler(void)
   /* USER CODE BEGIN SDMMC1_IRQn 0 */
 
   /* USER CODE END SDMMC1_IRQn 0 */
-  HAL_SDIO_IRQHandler(&hsdio1);
+  HAL_SD_IRQHandler(&hsd1);
   /* USER CODE BEGIN SDMMC1_IRQn 1 */
 
   /* USER CODE END SDMMC1_IRQn 1 */

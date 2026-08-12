@@ -112,7 +112,7 @@ int main(void)
   MX_ICACHE_Init();
   MX_OCTOSPI1_Init();
   MX_RTC_Init();
-  //MX_SDMMC1_SDIO_Init();
+  MX_SDMMC1_SD_Init();
   MX_SPI2_Init();
   MX_USB_PCD_Init();
   MX_TIM12_Init();

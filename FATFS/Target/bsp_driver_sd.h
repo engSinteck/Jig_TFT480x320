@@ -34,7 +34,7 @@
 /**
   * @brief SD Card information structure
   */
-#define BSP_SD_CardInfo HAL_MMC_CardInfoTypeDef
+#define BSP_SD_CardInfo HAL_SD_CardInfoTypeDef
 
 /* Exported constants --------------------------------------------------------*/
 /**
@@ -74,7 +74,7 @@ void BSP_SD_IRQHandler(void);
 void BSP_SD_DMA_Tx_IRQHandler(void);
 void BSP_SD_DMA_Rx_IRQHandler(void);
 uint8_t BSP_SD_GetCardState(void);
-//void    BSP_SD_GetCardInfo(HAL_SD_CardInfoTypeDef *CardInfo);
+void    BSP_SD_GetCardInfo(HAL_SD_CardInfoTypeDef *CardInfo);
 uint8_t BSP_SD_IsDetected(void);
 
 /* These functions can be modified in case the current settings (e.g. DMA stream)
