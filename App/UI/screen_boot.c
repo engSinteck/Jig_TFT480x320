@@ -46,7 +46,6 @@ void screen_boot(void)
 	// Imagem de Fundo
 	img_boot = lv_img_create(Tela_Boot);
 	lv_img_set_src(img_boot, "S:/LOGO_ONE_2.bin");
-	//lv_img_set_src(img_boot, &LOGO_ONE_2);
 
     lv_obj_set_pos(img_boot, 0, 0);
 
