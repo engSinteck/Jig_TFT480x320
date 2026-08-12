@@ -124,7 +124,6 @@ uint8_t cmd_idx = 0;
 extern lv_obj_t * Tela_Debug;
 extern lv_obj_t * Tela_DAC;
 
-
 void my_log_cb(lv_log_level_t level, const char * buf);
 
 GT911_Config_t sampleConfig = {.X_Resolution = 320, .Y_Resolution = 480, .Number_Of_Touch_Support = 1, .ReverseY = true, .ReverseX = false, .SwithX2Y = true, .SoftwareNoiseReduction = false};
@@ -140,7 +139,7 @@ volatile unsigned long ulHighFrequencyTimerTicks = 0;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-LV_IMG_DECLARE(AUDIO);
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
