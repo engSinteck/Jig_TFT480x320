@@ -27,6 +27,7 @@
 #include "string.h"
 #include "../App/src/ILI9488.h"
 #include "../App/src/GT911.h"
+#include "../App/src/stm32_qspi.h"
 #include "../App/src/file_handle.h"
 
 #include "../App/UI/screen_dac.h"
@@ -128,13 +129,20 @@ void my_log_cb(lv_log_level_t level, const char * buf);
 
 GT911_Config_t sampleConfig = {.X_Resolution = 320, .Y_Resolution = 480, .Number_Of_Touch_Support = 1, .ReverseY = true, .ReverseX = false, .SwithX2Y = true, .SoftwareNoiseReduction = false};
 
-static uint8_t buf1[(480 * 10 * 3)] __attribute__((aligned(32)));
-static uint8_t buf2[(480 * 10 * 3)] __attribute__((aligned(32)));
-static lv_display_t * disp;
-
 uint32_t timer_led = 0;
 uint32_t timer_lvgl = 0;
 volatile unsigned long ulHighFrequencyTimerTicks = 0;
+
+// Buffers de renderização alinhados a 32 bytes para o DMA e D-Cache do STM32H5
+#define DISP_HOR_RES 480
+#define DISP_VER_RES 320
+#define DRAW_BUF_HEIGHT 16 // Renderização parcial de 16 linhas por vez
+#define DRAW_BUF_SIZE_BYTES (DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) // 23040 Bytes (RGB888)
+
+static uint8_t buf1[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
+static uint8_t buf2[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
+static lv_display_t * disp;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -329,25 +337,27 @@ void StartTaskLVGL(void *argument)
 	// Init GT911
 	GT911_Init(sampleConfig);
 
+	// Init QSPI Flash
+	//BSP_QSPI_Init();
+
 	// Test Read SD-Card
 	Mount_FATFS();
 
 	lv_init();
 
-	disp = lv_display_create(480, 320);
-	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
-	lv_display_set_buffers(disp, buf1, buf2, 480 * 10 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
-	lv_display_set_flush_cb(disp, ILI9488_Flush_DMA);
-	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
-
-	lv_indev_t * indev = lv_indev_create();
-	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
-	lv_indev_set_read_cb(indev, touch_read_cb);
-
 #if LV_USE_LOG
 	// Log LVGL
 	lv_log_register_print_cb(my_log_cb);
 #endif
+
+	disp = lv_display_create(480, 320);
+	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
+	lv_display_set_buffers(disp, buf1, buf2, 480 * 16 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
+	lv_display_set_flush_cb(disp, ILI9488_Flush_DMA);
+
+	lv_indev_t * indev = lv_indev_create();
+	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+	lv_indev_set_read_cb(indev, touch_read_cb);
 
 	// Tela Debug
 	screen_boot();

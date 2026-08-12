@@ -20,6 +20,7 @@
 #include "main.h"
 #include "app_freertos.h"
 #include "crc.h"
+#include "dcache.h"
 #include "gpdma.h"
 #include "i2c.h"
 #include "icache.h"
@@ -121,6 +122,7 @@ int main(void)
   MX_CRC_Init();
   MX_RNG_Init();
   MX_TIM3_Init();
+  MX_DCACHE1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim12);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);

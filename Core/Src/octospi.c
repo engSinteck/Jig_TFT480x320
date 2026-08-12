@@ -42,13 +42,13 @@ void MX_OCTOSPI1_Init(void)
   hxspi1.Init.FifoThresholdByte = 1;
   hxspi1.Init.MemoryMode = HAL_XSPI_SINGLE_MEM;
   hxspi1.Init.MemoryType = HAL_XSPI_MEMTYPE_MICRON;
-  hxspi1.Init.MemorySize = HAL_XSPI_SIZE_16MB;
-  hxspi1.Init.ChipSelectHighTimeCycle = 1;
+  hxspi1.Init.MemorySize = HAL_XSPI_SIZE_128MB;
+  hxspi1.Init.ChipSelectHighTimeCycle = 3;
   hxspi1.Init.FreeRunningClock = HAL_XSPI_FREERUNCLK_DISABLE;
   hxspi1.Init.ClockMode = HAL_XSPI_CLOCK_MODE_0;
   hxspi1.Init.WrapSize = HAL_XSPI_WRAP_NOT_SUPPORTED;
-  hxspi1.Init.ClockPrescaler = 0;
-  hxspi1.Init.SampleShifting = HAL_XSPI_SAMPLE_SHIFT_NONE;
+  hxspi1.Init.ClockPrescaler = 2;
+  hxspi1.Init.SampleShifting = HAL_XSPI_SAMPLE_SHIFT_HALFCYCLE;
   hxspi1.Init.DelayHoldQuarterCycle = HAL_XSPI_DHQC_DISABLE;
   hxspi1.Init.ChipSelectBoundary = HAL_XSPI_BONDARYOF_NONE;
   hxspi1.Init.DelayBlockBypass = HAL_XSPI_DELAY_BLOCK_BYPASS;
@@ -142,7 +142,7 @@ void HAL_XSPI_MspInit(XSPI_HandleTypeDef* xspiHandle)
     handle_GPDMA1_Channel1.Init.DestInc = DMA_DINC_FIXED;
     handle_GPDMA1_Channel1.Init.SrcDataWidth = DMA_SRC_DATAWIDTH_BYTE;
     handle_GPDMA1_Channel1.Init.DestDataWidth = DMA_DEST_DATAWIDTH_BYTE;
-    handle_GPDMA1_Channel1.Init.Priority = DMA_LOW_PRIORITY_LOW_WEIGHT;
+    handle_GPDMA1_Channel1.Init.Priority = DMA_LOW_PRIORITY_MID_WEIGHT;
     handle_GPDMA1_Channel1.Init.SrcBurstLength = 1;
     handle_GPDMA1_Channel1.Init.DestBurstLength = 1;
     handle_GPDMA1_Channel1.Init.TransferAllocatedPort = DMA_SRC_ALLOCATED_PORT0|DMA_DEST_ALLOCATED_PORT0;

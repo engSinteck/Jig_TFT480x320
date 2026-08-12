@@ -13,6 +13,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "spi.h"
+#include "dcache.h"
 #include "ILI9488.h"
 //#include "LCD_font.h"
 
@@ -735,7 +736,10 @@ void ILI9488_Flush_DMA(lv_display_t * disp, const lv_area_t * area, uint8_t * px
 {
     int32_t w = lv_area_get_width(area);
     int32_t h = lv_area_get_height(area);
-    int32_t size = w * h;
+    //int32_t size = w * h;
+    int32_t bytes_to_send = w * h * 3;			// 3 bytes por pixel
+
+    HAL_DCACHE_CleanByAddr(&hdcache1, (uint32_t *)px_map, bytes_to_send);
 
     ILI9488_Set_Address(area->x1, area->y1, area->x2, area->y2);
 
@@ -743,9 +747,7 @@ void ILI9488_Flush_DMA(lv_display_t * disp, const lv_area_t * area, uint8_t * px
     HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
 
     // px_map já está em RGB888 (3 bytes/pixel) — envia direto, sem conversão
-    HAL_SPI_Transmit_DMA(HSPI_INSTANCE, px_map, size * 3);
-
-    // NÃO chame lv_display_flush_ready aqui — só no callback de conclusão do DMA
+    HAL_SPI_Transmit_DMA(HSPI_INSTANCE, px_map, bytes_to_send);
 }
 
 void ILI9488_Flush_End_DMA(lv_display_t * disp)
