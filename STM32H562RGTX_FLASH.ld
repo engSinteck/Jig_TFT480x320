@@ -47,11 +47,29 @@ MEMORY
 {
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 640K
   FLASH    (rx)    : ORIGIN = 0x08000000,   LENGTH = 1024K
+  QSPI     (rx)    : ORIGIN = 0x90000000,   LENGTH = 16M   /* W25Q128 memory-mapped */
 }
 
 /* Sections */
 SECTIONS
 {
+
+  /* ======================================================================
+   *  Assets LVGL (imagens/fontes) gravados no W25Q128 e acessados via
+   *  Memory-Mapped em 0x90000000. Marque as variaveis com:
+   *      __attribute__((section(".qspi_data")))
+   *  O STM32CubeProgrammer grava esta secao usando um external loader do
+   *  W25Q128 (veja docs/README_QSPI_MemoryMapped.md).
+   * ==================================================================== */
+  .qspi_data :
+  {
+    . = ALIGN(4);
+    _sqspi = .;
+    KEEP(*(.qspi_data))
+    KEEP(*(.qspi_data*))
+    . = ALIGN(4);
+    _eqspi = .;
+  } >QSPI
 
   /* The startup code into "FLASH" Rom type memory */
   .isr_vector :

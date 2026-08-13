@@ -37,11 +37,14 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../App/src/ILI9488.h"
+#include "../App/src/stm32_qspi.h"
+#include "../App/src/log_cdc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 extern volatile unsigned long ulHighFrequencyTimerTicks;
+uint8_t id[3] = {0};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -126,11 +129,26 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim12);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-  __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 2048);		// PWM_CH2 = 2048 TFT_BACKLIGHT
+  __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 4095);		// PWM_CH2 = 2048 TFT_BACKLIGHT
 
   ILI9488_Init();
   ILI9488_Set_Address(0, 0, ILI9488_SCREEN_WIDTH-1, ILI9488_SCREEN_HEIGHT-1);
   ILI9488_Fill_Screen(0x0000);
+
+  if (BSP_QSPI_Init() != QSPI_OK) {
+      logI("QSPI - Init FAIL\r\n");
+  } else {
+      BSP_QSPI_ReadID(id);                          /* esperado: EF 40 18 */
+      logI("QSPI - JEDEC ID: %02X %02X %02X\r\n", id[0], id[1], id[2]);
+
+      if (BSP_QSPI_MemoryMappedMode() != QSPI_OK) {
+          logI("QSPI - MemMapped FAIL\r\n");
+      } else {
+          /* Sanity check: le os 4 primeiros bytes ja pelo barramento */
+          volatile uint32_t first = *(volatile uint32_t *)QSPI_MAPPED_ADDR;
+          logI("QSPI - Mapped OK, [0]=0x%08lX\r\n", first);
+      }
+  }
   /* USER CODE END 2 */
 
   /* Init scheduler */

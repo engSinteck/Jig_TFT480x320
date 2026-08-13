@@ -337,9 +337,6 @@ void StartTaskLVGL(void *argument)
 	// Init GT911
 	GT911_Init(sampleConfig);
 
-	// Init QSPI Flash
-	//BSP_QSPI_Init();
-
 	// Test Read SD-Card
 	Mount_FATFS();
 
