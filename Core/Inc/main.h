@@ -77,7 +77,7 @@ void Error_Handler(void);
 #define TP_IRQ_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-
+#define QSPI_ASSET  __attribute__((section(".qspi_data")))
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
