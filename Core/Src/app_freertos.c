@@ -36,6 +36,8 @@
 #include "../App/UI/screen_mp3.h"
 #include "../App/UI/screen_tuner.h"
 #include "../App/UI/screen_boot.h"
+//
+#include "../App/UI/Screen_Main.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -350,14 +352,15 @@ void StartTaskLVGL(void *argument)
 	disp = lv_display_create(480, 320);
 	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
 	lv_display_set_buffers(disp, buf1, buf2, 480 * 16 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
-	lv_display_set_flush_cb(disp, ILI9488_Flush_DMA);
+	lv_display_set_flush_cb(disp, ILI9488_Flush);
 
 	lv_indev_t * indev = lv_indev_create();
 	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
 	lv_indev_set_read_cb(indev, touch_read_cb);
 
 	// Tela Debug
-	screen_boot();
+	//screen_boot();
+	Screen_Main();
 
   /* Infinite loop */
   for(;;)

@@ -11,6 +11,7 @@
 #include "lvgl.h"
 
 #include "../App/UI/screen_debug.h"
+#include "../App/UI/Screen_Main.h"
 
 LV_IMG_DECLARE(LOGO_ONE_2);
 
@@ -34,7 +35,7 @@ void update_boot_screen(lv_timer_t * timer)
 {
     cont_boot++;
     if(cont_boot >= 6) {
-    	_ui_screen_change(&Tela_Debug, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 10, &screen_debug);
+    	_ui_screen_change(&Tela_Debug, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 10, &Screen_Main);
     }
 }
 
@@ -47,8 +48,8 @@ void screen_boot(void)
 
 	// Imagem de Fundo
 	img_boot = lv_img_create(Tela_Boot);
-	//lv_img_set_src(img_boot, "S:/LOGO_ONE_2.bin");
-	lv_img_set_src(img_boot, &LOGO_ONE_2);
+	lv_img_set_src(img_boot, "S:/LOGO_ONE_2.bin");
+	//lv_img_set_src(img_boot, &LOGO_ONE_2);
 
     lv_obj_set_pos(img_boot, 0, 0);
 
