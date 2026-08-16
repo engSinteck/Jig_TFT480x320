@@ -29,6 +29,7 @@
 #include "../App/src/GT911.h"
 #include "../App/src/stm32_qspi.h"
 #include "../App/src/file_handle.h"
+#include "../App/src/log_cdc.h"
 
 #include "../App/UI/screen_dac.h"
 #include "../App/UI/screen_debug.h"
@@ -138,8 +139,10 @@ volatile unsigned long ulHighFrequencyTimerTicks = 0;
 // Buffers de renderização alinhados a 32 bytes para o DMA e D-Cache do STM32H5
 #define DISP_HOR_RES 480
 #define DISP_VER_RES 320
-#define DRAW_BUF_HEIGHT 16 // Renderização parcial de 16 linhas por vez
-#define DRAW_BUF_SIZE_BYTES (DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) // 23040 Bytes (RGB888)
+#define DRAW_BUF_HEIGHT 32 // Renderização parcial de 16 linhas por vez
+//#define DRAW_BUF_SIZE_BYTES (DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) // 23040 Bytes (RGB888)
+#define DRAW_BUF_SIZE_BYTES ((DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) + 256)
+
 
 static uint8_t buf1[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
 static uint8_t buf2[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
@@ -180,7 +183,7 @@ osThreadId_t TaskLVGLHandle;
 const osThreadAttr_t TaskLVGL_attributes = {
   .name = "TaskLVGL",
   .priority = (osPriority_t) osPriorityLow,
-  .stack_size = 2048 * 4
+  .stack_size = 8192 * 4
 };
 /* Definitions for MutexI2C */
 osMutexId_t MutexI2CHandle;
@@ -191,6 +194,11 @@ const osMutexAttr_t MutexI2C_attributes = {
 osMutexId_t Mutex485Handle;
 const osMutexAttr_t Mutex485_attributes = {
   .name = "Mutex485"
+};
+/* Definitions for MutexLog */
+osMutexId_t MutexLogHandle;
+const osMutexAttr_t MutexLog_attributes = {
+  .name = "MutexLog"
 };
 /* Definitions for BinarySemI2C */
 osSemaphoreId_t BinarySemI2CHandle;
@@ -244,6 +252,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of Mutex485 */
   Mutex485Handle = osMutexNew(&Mutex485_attributes);
+
+  /* creation of MutexLog */
+  MutexLogHandle = osMutexNew(&MutexLog_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -351,8 +362,8 @@ void StartTaskLVGL(void *argument)
 
 	disp = lv_display_create(480, 320);
 	lv_display_set_color_format(disp, LV_COLOR_FORMAT_RGB888);
-	lv_display_set_buffers(disp, buf1, buf2, 480 * 16 * 3, LV_DISPLAY_RENDER_MODE_PARTIAL);
-	lv_display_set_flush_cb(disp, ILI9488_Flush);
+	lv_display_set_buffers(disp, buf1, buf2, DRAW_BUF_SIZE_BYTES, LV_DISPLAY_RENDER_MODE_PARTIAL);
+	lv_display_set_flush_cb(disp, ILI9488_Flush_DMA);
 
 	lv_indev_t * indev = lv_indev_create();
 	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
@@ -383,7 +394,7 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 
 void my_log_cb(lv_log_level_t level, const char * buf)
 {
-	//logI(buf, strlen(buf));
+	logI(buf, strlen(buf));
 }
 /* USER CODE END Application */
 

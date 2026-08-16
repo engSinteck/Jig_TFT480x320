@@ -4,6 +4,8 @@
  *  Created on: 10 de jul. de 2026
  *      Author: rinaldo.santos
  */
+#include "main.h"
+#include "usart.h"
 #include "log_cdc.h"
 #include "FreeRTOS.h"
 #include "cmsis_os2.h"
@@ -16,6 +18,8 @@
 #define PRINT_BUFFER_SIZE 4096
 char string_usb[PRINT_BUFFER_SIZE];
 
+extern osMutexId_t MutexLogHandle;
+
 
 /** Custom printf function in order to use HAL_UART_Transmit()
  * @param *fmt String to print
@@ -23,7 +27,14 @@ char string_usb[PRINT_BUFFER_SIZE];
  */
 void HAL_printf_valist(const char *fmt, va_list argp)
 {
-
+//	xSemaphoreTake(MutexLogHandle, portMAX_DELAY);
+//
+	int len = vsnprintf(string_usb, sizeof(string_usb), fmt, argp);
+	if(len > 0) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)string_usb, strlen(string_usb), 1000);
+	}
+//
+//	xSemaphoreGive(MutexLogHandle);
 }
 
 /** Custom printf function, only translate to va_list arg HAL_UART.

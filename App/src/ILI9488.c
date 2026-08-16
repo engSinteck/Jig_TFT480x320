@@ -144,23 +144,45 @@ void ILI9488_Write_Data(uint8_t Data)
 	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
 }
 
-/* Set Address - Location block - to draw into */
+/* Set Address - Versão Otimizada e Protegida contra Atropelamento de DMA */
 void ILI9488_Set_Address(uint16_t X1, uint16_t Y1, uint16_t X2, uint16_t Y2)
 {
-	ILI9488_Write_Command(0x2A);
-	ILI9488_Write_Data(X1 >> 8);
-	ILI9488_Write_Data(X1);
-	ILI9488_Write_Data(X2 >> 8);
-	ILI9488_Write_Data(X2);
+    // 1. TRAVA CRÍTICA: Aguarda o término real do DMA anterior antes de mexer nos pinos
+    while (HAL_SPI_GetState(&hspi2) != HAL_SPI_STATE_READY) {}
 
-	ILI9488_Write_Command(0x2B);
-	ILI9488_Write_Data(Y1 >> 8);
-	ILI9488_Write_Data(Y1);
-	ILI9488_Write_Data(Y2 >> 8);
-	ILI9488_Write_Data(Y2);
+    // Agrupa os dados em arrays para enviar tudo de uma vez só via SPI (evita bater pinos byte a byte)
+    uint8_t cmd_col = 0x2A; // Column Address Set
+    uint8_t data_col[4] = { (X1 >> 8) & 0xFF, X1 & 0xFF, (X2 >> 8) & 0xFF, X2 & 0xFF };
 
-	ILI9488_Write_Command(0x2C);
+    uint8_t cmd_row = 0x2B; // Page/Row Address Set
+    uint8_t data_row[4] = { (Y1 >> 8) & 0xFF, Y1 & 0xFF, (Y2 >> 8) & 0xFF, Y2 & 0xFF };
+
+    uint8_t cmd_mem = 0x2C; // Memory Write
+
+    // --- Configura Colunas (X) ---
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET); // Modo COMANDO
+    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET); // Ativa o Display
+    HAL_SPI_Transmit(&hspi2, &cmd_col, 1, HAL_MAX_DELAY);
+
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);   // Modo DADO
+    HAL_SPI_Transmit(&hspi2, data_col, 4, HAL_MAX_DELAY);
+
+    // --- Configura Linhas (Y) ---
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET); // Modo COMANDO
+    HAL_SPI_Transmit(&hspi2, &cmd_row, 1, HAL_MAX_DELAY);
+
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);   // Modo DADO
+    HAL_SPI_Transmit(&hspi2, data_row, 4, HAL_MAX_DELAY);
+
+    // --- Prepara para receber a rajada de pixels do DMA ---
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET); // Modo COMANDO
+    HAL_SPI_Transmit(&hspi2, &cmd_mem, 1, HAL_MAX_DELAY);
+
+    // IMPORTANTE: Deixa o pino D/C preparado em modo DADO e o CS ativo (LOW).
+    // Quem vai subir o CS no final da transmissão inteira será apenas a interrupção do DMA!
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
 }
+
 
 /*HARDWARE RESET*/
 void ILI9488_Reset(void)
@@ -734,26 +756,33 @@ void ILI9488_Flush(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map
 
 void ILI9488_Flush_DMA(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map)
 {
+    // Aguarda o SPI estar totalmente livre
+    while (HAL_SPI_GetState(&hspi2) != HAL_SPI_STATE_READY) {}
+
     int32_t w = lv_area_get_width(area);
     int32_t h = lv_area_get_height(area);
-    //int32_t size = w * h;
-    int32_t bytes_to_send = w * h * 3;			// 3 bytes por pixel
+    int32_t bytes_to_send = w * h * 3;
 
-    HAL_DCACHE_CleanByAddr(&hdcache1, (uint32_t *)px_map, bytes_to_send);
+    // Limpeza estrita de Cache (Alinhamento 32 bytes para o STM32H5)
+    uint32_t start_addr = (uint32_t)px_map;
+    uint32_t end_addr = start_addr + bytes_to_send;
+    start_addr &= ~0x1F;
+    end_addr = (end_addr + 0x1F) & ~0x1F;
+    HAL_DCACHE_CleanByAddr(&hdcache1, (uint32_t *)start_addr, end_addr - start_addr);
 
+    // Define as coordenadas de forma segura e síncrona
     ILI9488_Set_Address(area->x1, area->y1, area->x2, area->y2);
 
-    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_RESET);
-
-    // px_map já está em RGB888 (3 bytes/pixel) — envia direto, sem conversão
-    HAL_SPI_Transmit_DMA(HSPI_INSTANCE, px_map, bytes_to_send);
+    // Dispara a rajada de pixels via DMA (os pinos já estão prontos)
+    HAL_SPI_Transmit_DMA(&hspi2, px_map, bytes_to_send);
 }
 
 void ILI9488_Flush_End_DMA(lv_display_t * disp)
 {
 	HAL_GPIO_WritePin(LCD_CS_PORT, LCD_CS_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET); // Força modo COMANDO imediatamente
 
 	lv_disp_flush_ready(disp);                  /* Tell you are ready with the flushing*/
+
 }
 
