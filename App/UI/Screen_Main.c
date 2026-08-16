@@ -15,6 +15,11 @@
 #include "../App/UI/Screen_Main.h"
 #include "../App/UI/led_ring.h"
 
+extern void create_vumeter_left(void);
+extern void create_vumeter_right(void);
+extern void set_vumeter_left(int32_t value);
+extern void set_vumeter_right(int32_t value);
+
 void create_fm_symbol(void);
 void create_text_lr(void);
 void create_tuned(void);
@@ -24,8 +29,8 @@ void create_buttons_tunner(void);
 void create_buttons_volume(void);
 void create_buttons_menu_1(void);
 void create_buttons_menu_2(void);
-void create_vumeter_left(void);
-void create_vumeter_right(void);
+//void create_vumeter_left(void);
+//void create_vumeter_right(void);
 void create_vumeter_xlr(void);
 void create_vumeter_aes(void);
 void create_vumeter_pc(void);
@@ -60,7 +65,7 @@ LV_IMG_DECLARE(KNOB_CENTRAL);
 LV_IMG_DECLARE(PHONE);
 LV_IMG_DECLARE(BT_INDIC);
 
-static lv_obj_t * Tela_Main;
+lv_obj_t * Tela_Main;
 static lv_obj_t * img_fundo;
 static lv_obj_t * bt_rev;
 static lv_obj_t * bt_next;
@@ -75,8 +80,8 @@ static lv_obj_t * bt_configs;
 static lv_obj_t * label_rds;
 static lv_obj_t * label_frequency;
 static lv_obj_t * label_scale[8];
-static lv_obj_t * vu_left;
-static lv_obj_t * vu_right;
+//static lv_obj_t * vu_left;
+//static lv_obj_t * vu_right;
 static lv_obj_t * vu_xlr_l;
 static lv_obj_t * vu_xlr_r;
 static lv_obj_t * vu_aes_l;
@@ -139,7 +144,7 @@ uint32_t Gerar_Aleatorio_0_64(void)
 
 void update_main_screen(lv_timer_t * timer)
 {
-/*
+
 	// Vu-Meter Left+Right
 	if(!flag_vumeter_lr) {
 		demo_vumeter_lr++;
@@ -153,9 +158,9 @@ void update_main_screen(lv_timer_t * timer)
 	}
 
 	uint32_t val_left = Gerar_Aleatorio_0_64();
-	lv_slider_set_value(vu_left, val_left, LV_ANIM_OFF);
-	lv_slider_set_value(vu_right, val_left, LV_ANIM_OFF);
-
+	set_vumeter_left(val_left);
+	set_vumeter_right(val_left);
+/*
 	// Vu-Meter XLR
 	if( !flag_vu_xlr) {
 		demo_vu_xlr++;
@@ -638,6 +643,7 @@ void create_buttons_menu_2(void)
     lv_obj_align_to(text_menu_4, bt_menu[4], LV_ALIGN_CENTER, 0, 1);
 }
 
+/*
 void create_vumeter_left(void)
 {
     vu_left = lv_slider_create(Tela_Main);
@@ -708,6 +714,7 @@ void create_vumeter_right(void)
 
     lv_slider_set_value(vu_right, 50, LV_ANIM_OFF);
 }
+*/
 
 void create_vumeter_xlr(void)
 {
@@ -1309,8 +1316,8 @@ void create_img_button_volume(void)
 	lv_img_set_src(img_phone, &PHONE);
 	lv_obj_set_pos(img_phone, 456, 165);
 
-	// INDICADOR Symbol
-	lv_obj_t * img_bt = lv_img_create(Tela_Main);
-	lv_img_set_src(img_bt, &BT_INDIC);
-	lv_obj_set_pos(img_bt, 404, 136);
+//	// INDICADOR Symbol
+//	lv_obj_t * img_bt = lv_img_create(Tela_Main);
+//	lv_img_set_src(img_bt, &BT_INDIC);
+//	lv_obj_set_pos(img_bt, 404, 136);
 }
