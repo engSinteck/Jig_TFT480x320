@@ -11,6 +11,7 @@ extern const lv_image_dsc_t LED_GR;       /* barra acesa (cresce)  */
 #define VU_W        445
 #define VU_H         28
 #define VU_RANGE     64
+
 /* Quantos SEGMENTOS de LED existem desenhados na imagem de 445px.
  * Se cada unidade do range e 1 segmento, use 64. Se a barra e continua
  * (sem segmentos), coloque VU_W p/ nao quantizar. CONFIRME NA SUA ARTE. */

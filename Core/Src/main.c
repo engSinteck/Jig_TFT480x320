@@ -289,13 +289,30 @@ void PeriphCommonClock_Config(void)
 void MPU_Config(void)
 {
   MPU_Region_InitTypeDef MPU_InitStruct = {0};
-  MPU_Attributes_InitTypeDef MPU_AttributesInit = {0};
+  MPU_Attributes_InitTypeDef MPU_AttributesInit = {0}; // Correção do tipo de estrutura do HAL
 
-  /* Disables the MPU */
+  /* Desativa a MPU para configuração */
   HAL_MPU_Disable();
 
-  /** Initializes and configures the Region 0 and the memory to be protected
-  */
+  /******************************************************************************/
+  /* CONFIGURAÇÃO DOS ATRIBUTOS DE MEMÓRIA                                      */
+  /******************************************************************************/
+
+  /* Atributo 0: Não cacheável (Usado pela sua Região 0 atual) */
+  MPU_AttributesInit.Number = MPU_ATTRIBUTES_NUMBER0;
+  MPU_AttributesInit.Attributes = INNER_OUTER(MPU_NOT_CACHEABLE);
+  HAL_MPU_ConfigMemoryAttributes(&MPU_AttributesInit);
+
+  /* Atributo 1: Cacheável Write-Through (Novo atributo para performance da Flash QSPI) */
+  MPU_AttributesInit.Number = MPU_ATTRIBUTES_NUMBER1;
+  MPU_AttributesInit.Attributes = INNER_OUTER(MPU_NOT_CACHEABLE);;
+  HAL_MPU_ConfigMemoryAttributes(&MPU_AttributesInit);
+
+  /******************************************************************************/
+  /* CONFIGURAÇÃO DAS REGIÕES DA MPU                                            */
+  /******************************************************************************/
+
+  /* REGIAO 0: Sua configuração atual (Proteção do final da Flash interna) */
   MPU_InitStruct.Enable = MPU_REGION_ENABLE;
   MPU_InitStruct.Number = MPU_REGION_NUMBER0;
   MPU_InitStruct.BaseAddress = 0x08FFF000;
@@ -304,18 +321,21 @@ void MPU_Config(void)
   MPU_InitStruct.AccessPermission = MPU_REGION_ALL_RO;
   MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
   MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
-
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
-  /** Initializes and configures the Attribute 0 and the memory to be protected
-  */
-  MPU_AttributesInit.Number = MPU_ATTRIBUTES_NUMBER0;
-  MPU_AttributesInit.Attributes = INNER_OUTER(MPU_NOT_CACHEABLE);
+  /* REGIAO 1: Nova configuração para a Flash Externa W25Q128 (16MB) */
+  MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+  MPU_InitStruct.Number = MPU_REGION_NUMBER1;                   // ID da nova região
+  MPU_InitStruct.BaseAddress = 0x90000000;                     // Início do mapeamento QSPI
+  MPU_InitStruct.LimitAddress = 0x90FFFFFF;                    // Fim exato dos 16MB
+  MPU_InitStruct.AttributesIndex = MPU_ATTRIBUTES_NUMBER1;     // Associa ao Atributo 1 (Cacheável)
+  MPU_InitStruct.AccessPermission = MPU_REGION_ALL_RO;       // Apenas leitura de dados
+  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;  // Bloqueia execução de código
+  MPU_InitStruct.IsShareable = MPU_ACCESS_NOT_SHAREABLE;
+  HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
-  HAL_MPU_ConfigMemoryAttributes(&MPU_AttributesInit);
-  /* Enables the MPU */
+  /* Reativa a MPU com as duas regiões ativas */
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-
 }
 
 /**

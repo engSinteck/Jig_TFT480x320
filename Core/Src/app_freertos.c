@@ -370,7 +370,6 @@ void StartTaskLVGL(void *argument)
 	lv_indev_set_read_cb(indev, touch_read_cb);
 
 	// Tela Debug
-	//screen_boot();
 	Screen_Main();
 
   /* Infinite loop */
