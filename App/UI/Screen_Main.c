@@ -12,7 +12,9 @@
 #include "stdio.h"
 #include "string.h"
 
+#include "../App/UI/lvgl_data.h"
 #include "../App/UI/Screen_Main.h"
+#include "../App/UI/Screen_Inputs.h"
 #include "../App/UI/led_ring.h"
 
 extern void create_vumeter_left(void);
@@ -65,7 +67,6 @@ LV_IMG_DECLARE(KNOB_CENTRAL);
 LV_IMG_DECLARE(PHONE);
 LV_IMG_DECLARE(BT_INDIC);
 
-lv_obj_t * Tela_Main;
 static lv_obj_t * img_fundo;
 static lv_obj_t * bt_rev;
 static lv_obj_t * bt_next;
@@ -80,8 +81,6 @@ static lv_obj_t * bt_configs;
 static lv_obj_t * label_rds;
 static lv_obj_t * label_frequency;
 static lv_obj_t * label_scale[8];
-//static lv_obj_t * vu_left;
-//static lv_obj_t * vu_right;
 static lv_obj_t * vu_xlr_l;
 static lv_obj_t * vu_xlr_r;
 static lv_obj_t * vu_aes_l;
@@ -95,9 +94,7 @@ static lv_obj_t * vu_usb_r;
 static lv_obj_t * vu_mpx_1;
 static lv_obj_t * vu_mpx_2;
 
-static lv_timer_t * task_Main;
-
-static uint32_t cont_main = 0;
+static lv_timer_t * task_Main = NULL;
 
 uint8_t flag_vumeter_lr = 0;
 uint32_t demo_vumeter_lr = 0;
@@ -204,12 +201,38 @@ void update_main_screen(lv_timer_t * timer)
 */
 }
 
-void Screen_Main(void)
+static void screen_main_lifecycle_event_cb(lv_event_t * e)
 {
+    lv_event_code_t code = lv_event_get_code(e);
+    static uint32_t user_data = 10;
+
+    if(code == LV_EVENT_SCREEN_LOADED) {
+        // Cria o timer apenas quando a tela entra de fato no display
+        if(task_Main == NULL) {
+            task_Main = lv_timer_create(update_main_screen, 33, &user_data);
+        }
+    }
+    else if(code == LV_EVENT_SCREEN_UNLOADED) {
+        // Deleta o timer e limpa o ponteiro quando a tela sai
+        if(task_Main != NULL) {
+            lv_timer_delete(task_Main);
+            task_Main = NULL;
+        }
+        Tela_Main = NULL; // Ponteiro limpo (objeto já deletado pelo auto_del)
+    }
+}
+
+void Screen_Main_Create(void)
+{
+	if(Tela_Main != NULL) return; // Evita duplicar se já existir
+
 	Tela_Main = lv_obj_create(NULL);
 	lv_obj_clear_flag(Tela_Main, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
 	lv_obj_set_style_bg_color(Tela_Main, lv_color_hex(0x000000), 0);
 	lv_obj_set_style_bg_grad_color(Tela_Main, lv_color_hex(0x000000), 0);
+
+    // Registra os callbacks de ciclo de vida
+    lv_obj_add_event_cb(Tela_Main, screen_main_lifecycle_event_cb, LV_EVENT_ALL, NULL);
 
 	// Imagem de Fundo
 	img_fundo = lv_img_create(Tela_Main);
@@ -257,11 +280,11 @@ void Screen_Main(void)
 	// Phone + BT Indicador
 	create_img_button_volume();
 
-    cont_main = 0;
-    static uint32_t user_data = 10;
-    task_Main = lv_timer_create(update_main_screen, 200,  &user_data);
+    //cont_main = 0;
+    //static uint32_t user_data = 10;
+    //task_Main = lv_timer_create(update_main_screen, 200,  &user_data);
 
-	lv_scr_load(Tela_Main);
+	//lv_scr_load(Tela_Main);
 }
 
 void create_fm_symbol(void)
@@ -505,6 +528,16 @@ void create_buttons_volume(void)
     lv_obj_add_event_cb(bt_vol_dec, event_bt_vol_dec, LV_EVENT_ALL, NULL);
 }
 
+static void event_bt_inputs(lv_event_t * e)
+{
+	if(lv_event_get_code(e) == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Inputs_Create();
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Inputs, LV_SCREEN_LOAD_ANIM_MOVE_LEFT, 500, 10, true);
+	}
+}
+
 void create_buttons_menu_1(void)
 {
     // Button INPUTS
@@ -517,7 +550,7 @@ void create_buttons_menu_1(void)
     lv_imagebutton_set_src(bt_inputs, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/MAIN/BT_INPUT.bin", NULL);
     lv_obj_add_state(bt_inputs, LV_IMAGEBUTTON_STATE_RELEASED);
     lv_obj_set_pos(bt_inputs, 2, 93);
-    //lv_obj_add_event_cb(bt_inputs, event_utils_bt_back, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(bt_inputs, event_bt_inputs, LV_EVENT_ALL, NULL);
 
 	// Text
     lv_obj_t * text_inputs = lv_label_create(bt_inputs);

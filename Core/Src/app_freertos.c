@@ -31,14 +31,8 @@
 #include "../App/src/file_handle.h"
 #include "../App/src/log_cdc.h"
 
-#include "../App/UI/screen_dac.h"
-#include "../App/UI/screen_debug.h"
-#include "../App/UI/screen_gpio.h"
-#include "../App/UI/screen_mp3.h"
-#include "../App/UI/screen_tuner.h"
-#include "../App/UI/screen_boot.h"
-//
-#include "../App/UI/Screen_Main.h"
+#include "../App/UI/screen_Splash.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -370,7 +364,7 @@ void StartTaskLVGL(void *argument)
 	lv_indev_set_read_cb(indev, touch_read_cb);
 
 	// Tela Debug
-	Screen_Main();
+	app_init();
 
   /* Infinite loop */
   for(;;)

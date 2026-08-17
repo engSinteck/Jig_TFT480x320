@@ -1,7 +1,6 @@
 #include "lvgl.h"
 
-/* Tela onde os VUs sao criados (seu global existente). */
-extern lv_obj_t * Tela_Main;
+#include "../App/UI/Screen_Main.h"
 
 /* Imagens (C-array). IDEAL: RGB565 SEM alpha p/ blit direto por DMA2D. */
 extern const lv_image_dsc_t LED_GR_OFF;   /* barra apagada (fundo) */
