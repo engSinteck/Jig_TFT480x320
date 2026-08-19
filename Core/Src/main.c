@@ -113,7 +113,7 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_USART1_UART_Init();
-  MX_FATFS_Init();
+  //MX_FATFS_Init();
   MX_CRC_Init();
   MX_RNG_Init();
   MX_TIM12_Init();
@@ -194,7 +194,11 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+// Redirecionamento do printf para o USART1 (GCC / STM32CubeIDE)
+int _write(int file, char *ptr, int len) {
+    HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+    return len;
+}
 /* USER CODE END 4 */
 
 /**

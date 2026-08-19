@@ -32,6 +32,7 @@
 #include "../App/src/GT911.h"
 #include "../App/src/log_cdc.h"
 #include "../App/src/file_handle.h"
+#include "../App/src/Teste_FATFS.h"
 
 #include "../App/UI/screen_dac.h"
 #include "../App/UI/screen_debug.h"
@@ -131,8 +132,14 @@ void my_log_cb(lv_log_level_t level, const char * buf);
 
 GT911_Config_t sampleConfig = {.X_Resolution = 320, .Y_Resolution = 480, .Number_Of_Touch_Support = 1, .ReverseY = true, .ReverseX = false, .SwithX2Y = true, .SoftwareNoiseReduction = false};
 
-static uint8_t buf1[(480 * 10 * 3)] /*__attribute__((section(".tftram")))*/ __attribute__((aligned(32)));
-static uint8_t buf2[(480 * 10 * 3)] /*__attribute__((section(".tftram")))*/ __attribute__((aligned(32)));
+// Buffers de renderização alinhados a 32 bytes para o DMA e D-Cache do STM32F4
+#define DISP_HOR_RES 480
+#define DISP_VER_RES 320
+#define DRAW_BUF_HEIGHT 8 // Renderização parcial de 16 linhas por vez
+#define DRAW_BUF_SIZE_BYTES ((DISP_HOR_RES * DRAW_BUF_HEIGHT * 3))
+
+static uint8_t buf1[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
+static uint8_t buf2[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
 static lv_display_t * disp;
 
 uint32_t timer_led = 0;
@@ -277,7 +284,7 @@ void StartDefaultTask(void *argument)
 		  timer_led = HAL_GetTick();
 		  HAL_GPIO_TogglePin(LED_INT_GPIO_Port, LED_INT_Pin);
 	  }
-
+/*
 	    if (rx_flag) {
 	        rx_flag = 0; // Limpa a flag de aviso de novos dados
 
@@ -315,7 +322,7 @@ void StartDefaultTask(void *argument)
 	            }
 	        }
 	    }
-
+*/
 	  osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
@@ -336,10 +343,13 @@ void StartTaskLVGL(void *argument)
   ILI9488_Fill_Screen(0x0000);
 
   // Init GT911
-  GT911_Init(sampleConfig);
+  //GT911_Init(sampleConfig);
 
   // Test Read SD-Card
   Mount_FATFS();
+
+  // Speed FATFS
+  Test_FATFS();
 
   lv_init();
 
@@ -354,11 +364,12 @@ void StartTaskLVGL(void *argument)
   
 #if LV_USE_LOG
   // Log LVGL
-  lv_log_register_print_cb(my_log_cb);
+  //lv_log_register_print_cb(my_log_cb);
 #endif
 
   // Tela Debug
-  screen_boot();
+  //screen_boot();
+  screen_debug();
 
    /* Infinite loop */
   for(;;)
@@ -401,7 +412,9 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 
 void my_log_cb(lv_log_level_t level, const char * buf)
 {
-	logI(buf, strlen(buf));
+	//logI(buf, strlen(buf));
+	HAL_UART_Transmit(&huart1, (uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
 }
+
 /* USER CODE END Application */
 

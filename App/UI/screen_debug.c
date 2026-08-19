@@ -84,6 +84,8 @@ void screen_debug(void)
 	Button_Menu(Tela_Debug);
 
 	 lv_scr_load(Tela_Debug);
+
+	 LV_LOG_USER("Tela_Debug Start\n");
 }
 
 void update_debug_screen(lv_timer_t * timer)
