@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usart.h"
 #include "lvgl.h"
 
 #include "string.h"
@@ -391,7 +392,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 
 void my_log_cb(lv_log_level_t level, const char * buf)
 {
-	logI(buf, strlen(buf));
+	//logI(buf, strlen(buf));
+	HAL_UART_Transmit(&huart1, (uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
 }
 /* USER CODE END Application */
 
