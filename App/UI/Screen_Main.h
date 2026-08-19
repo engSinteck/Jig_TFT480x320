@@ -10,7 +10,6 @@
 
 static lv_obj_t * Tela_Main = NULL;
 
-
 void Screen_Main_Create(void);
 
 #endif /* UI_SCREEN_MAIN_H_ */

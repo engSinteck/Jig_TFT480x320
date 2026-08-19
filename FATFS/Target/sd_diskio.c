@@ -28,6 +28,7 @@
 #include "ff_gen_drv.h"
 #include "sd_diskio.h"
 
+#include "dcache.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -75,7 +76,7 @@ See BSP_SD_ErrorCallback() and BSP_SD_AbortCallback() below
  * Notice: This is applicable only for cortex M7 based platform.
  */
 /* USER CODE BEGIN enableSDDmaCacheMaintenance */
-/* #define ENABLE_SD_DMA_CACHE_MAINTENANCE  1 */
+#define ENABLE_SD_DMA_CACHE_MAINTENANCE  1
 /* USER CODE END enableSDDmaCacheMaintenance */
 
 /*
@@ -84,7 +85,7 @@ See BSP_SD_ErrorCallback() and BSP_SD_AbortCallback() below
 * transfer data
 */
 /* USER CODE BEGIN enableScratchBuffer */
-/* #define ENABLE_SCRATCH_BUFFER */
+#define ENABLE_SCRATCH_BUFFER
 /* USER CODE END enableScratchBuffer */
 
 /* Private variables ---------------------------------------------------------*/
@@ -307,7 +308,7 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
                 adjust the address and the D-Cache size to invalidate accordingly.
                 */
                 alignedAddr = (uint32_t)buff & ~0x1F;
-                SCB_InvalidateDCache_by_Addr((uint32_t*)alignedAddr, count*BLOCKSIZE + ((uint32_t)buff - alignedAddr));
+                HAL_DCACHE_InvalidateByAddr(&hdcache1, (uint32_t*)alignedAddr, count*BLOCKSIZE + ((uint32_t)buff - alignedAddr));
 #endif
                 break;
               }
@@ -377,7 +378,9 @@ DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
           *
           * invalidate the scratch buffer before the next read to get the actual data instead of the cached one
           */
-          SCB_InvalidateDCache_by_Addr((uint32_t*)scratch, BLOCKSIZE);
+          //SCB_InvalidateDCache_by_Addr((uint32_t*)scratch, BLOCKSIZE);
+          HAL_DCACHE_InvalidateByAddr(&hdcache1, (uint32_t*)scratch, BLOCKSIZE);
+
 #endif
           memcpy(buff, scratch, BLOCKSIZE);
           buff += BLOCKSIZE;
@@ -444,7 +447,8 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
     adjust the address and the D-Cache size to clean accordingly.
   */
   alignedAddr = (uint32_t)buff & ~0x1F;
-  SCB_CleanDCache_by_Addr((uint32_t*)alignedAddr, count*BLOCKSIZE + ((uint32_t)buff - alignedAddr));
+  //SCB_CleanDCache_by_Addr((uint32_t*)alignedAddr, count*BLOCKSIZE + ((uint32_t)buff - alignedAddr));
+  HAL_DCACHE_InvalidateByAddr(&hdcache1, (uint32_t*)alignedAddr, count*BLOCKSIZE + ((uint32_t)buff - alignedAddr));
 #endif
 
   if(BSP_SD_WriteBlocks_DMA((uint32_t*)buff,
@@ -497,7 +501,7 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
     /*
      * invalidate the scratch buffer before the next write to get the actual data instead of the cached one
      */
-     SCB_InvalidateDCache_by_Addr((uint32_t*)scratch, BLOCKSIZE);
+     HAL_DCACHE_InvalidateByAddr(&hdcache1, (uint32_t*)scratch, BLOCKSIZE);
 #endif
       for (i = 0; i < count; i++)
       {
@@ -521,7 +525,7 @@ DRESULT SD_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
               while(osKernelSysTick() - timer <SD_TIMEOUT)
 #else
                 status = osMessageQueueGet(SDQueueID, (void *)&event, NULL, SD_TIMEOUT);
-              if ((status == osOK) && (event == READ_CPLT_MSG))
+              if ((status == osOK) && (event == WRITE_CPLT_MSG))
               {
                 timer = osKernelGetTickCount();
                 /* block until SDIO IP is ready or a timeout occur */

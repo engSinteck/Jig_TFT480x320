@@ -30,6 +30,7 @@
 #include "../App/src/stm32_qspi.h"
 #include "../App/src/file_handle.h"
 #include "../App/src/log_cdc.h"
+#include "../App/src/Teste_FATFS.h"
 
 #include "../App/UI/screen_Splash.h"
 
@@ -135,7 +136,7 @@ volatile unsigned long ulHighFrequencyTimerTicks = 0;
 #define DISP_VER_RES 320
 #define DRAW_BUF_HEIGHT 32 // Renderização parcial de 16 linhas por vez
 //#define DRAW_BUF_SIZE_BYTES (DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) // 23040 Bytes (RGB888)
-#define DRAW_BUF_SIZE_BYTES ((DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) + 256)
+#define DRAW_BUF_SIZE_BYTES ((DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) + 1024)
 
 
 static uint8_t buf1[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
@@ -347,11 +348,14 @@ void StartTaskLVGL(void *argument)
 	// Test Read SD-Card
 	Mount_FATFS();
 
+	// Test Speed FATFS
+	Test_FATFS();
+
 	lv_init();
 
 #if LV_USE_LOG
 	// Log LVGL
-	lv_log_register_print_cb(my_log_cb);
+//	lv_log_register_print_cb(my_log_cb);
 #endif
 
 	disp = lv_display_create(480, 320);
