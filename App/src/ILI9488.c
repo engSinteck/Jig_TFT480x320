@@ -757,7 +757,7 @@ void ILI9488_Flush(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map
 void ILI9488_Flush_DMA(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map)
 {
     // Aguarda o SPI estar totalmente livre
-    while (HAL_SPI_GetState(&hspi2) != HAL_SPI_STATE_READY) {}
+    //while (HAL_SPI_GetState(&hspi2) != HAL_SPI_STATE_READY) {}
 
     int32_t w = lv_area_get_width(area);
     int32_t h = lv_area_get_height(area);
@@ -783,6 +783,5 @@ void ILI9488_Flush_End_DMA(lv_display_t * disp)
     HAL_GPIO_WritePin(LCD_DC_PORT, LCD_DC_PIN, GPIO_PIN_RESET); // Força modo COMANDO imediatamente
 
 	lv_disp_flush_ready(disp);                  /* Tell you are ready with the flushing*/
-
 }
 

@@ -259,7 +259,7 @@ void Screen_Main(void)
 
     cont_main = 0;
     static uint32_t user_data = 10;
-    task_Main = lv_timer_create(update_main_screen, 200,  &user_data);
+    task_Main = lv_timer_create(update_main_screen, 30,  &user_data);
 
 	lv_scr_load(Tela_Main);
 }

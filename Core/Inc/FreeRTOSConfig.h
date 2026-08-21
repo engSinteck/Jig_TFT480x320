@@ -106,7 +106,7 @@ extern unsigned long getRunTimeCounterValue(void);
 #define configMESSAGE_BUFFER_LENGTH_TYPE         size_t
 /* USER CODE END MESSAGE_BUFFER_LENGTH_TYPE */
 
-#define configRUN_TIME_COUNTER_TYPE              size_t
+#define configRUN_TIME_COUNTER_TYPE              unsigned long
 
 #define configSTACK_DEPTH_TYPE                   size_t
 

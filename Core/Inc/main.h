@@ -78,6 +78,12 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 #define QSPI_ASSET  __attribute__((section(".qspi_data")))
+
+// Buffers de renderizacao alinhados a 32 bytes para o DMA e D-Cache do STM32H5
+#define DISP_HOR_RES 480
+#define DISP_VER_RES 320
+#define DRAW_BUF_HEIGHT 40 // Renderizacao parcial de 40 linhas por vez
+#define DRAW_BUF_SIZE_BYTES ((DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) + 1024)
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

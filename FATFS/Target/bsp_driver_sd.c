@@ -63,6 +63,10 @@ __weak uint8_t BSP_SD_Init(void)
     {
       sd_state = MSD_ERROR;
     }
+    if( HAL_SD_ConfigSpeedBusOperation(&hsd1, SDMMC_SPEED_MODE_HIGH) != HAL_OK)
+    {
+    	sd_state = MSD_ERROR;
+    }
   }
 
   return sd_state;

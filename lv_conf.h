@@ -88,7 +88,7 @@
  *====================*/
 
 /** Default display refresh, input device read and animation step period. */
-#define LV_DEF_REFR_PERIOD  20      /**< [ms] */
+#define LV_DEF_REFR_PERIOD  33      /**< [ms] */
 
 /** Default Dots Per Inch. Used to initialize default sizes such as widgets sized, style paddings.
  * (Not so important, you can adjust it to modify default sizes and spaces.) */
@@ -470,7 +470,7 @@
 
     /** - 1: Print log with 'printf';
      *  - 0: User needs to register a callback with `lv_log_register_print_cb()`. */
-    #define LV_LOG_PRINTF 0
+    #define LV_LOG_PRINTF 1
 
     /** Set callback to print logs.
      *  E.g `my_print`. The prototype should be `void my_print(lv_log_level_t level, const char * buf)`.
@@ -937,7 +937,7 @@
 #if LV_USE_FS_FATFS
     #define LV_FS_FATFS_LETTER 'S'     /**< Set an upper-case driver-identifier letter for this driver (e.g. 'A'). */
     #define LV_FS_FATFS_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
-    #define LV_FS_FATFS_CACHE_SIZE 0    /**< >0 to cache this number of bytes in lv_fs_read() */
+    #define LV_FS_FATFS_CACHE_SIZE 8192    /**< >0 to cache this number of bytes in lv_fs_read() */
 #endif
 
 /** API for memory-mapped file access. */
@@ -1096,7 +1096,7 @@
 #define LV_USE_SNAPSHOT 0
 
 /** 1: Enable system monitor component */
-#define LV_USE_SYSMON   0
+#define LV_USE_SYSMON   1
 #if LV_USE_SYSMON
     /** Get the idle percentage. E.g. uint32_t my_get_idle(void); */
     #define LV_SYSMON_GET_IDLE lv_os_get_idle_percent
@@ -1257,7 +1257,7 @@
 #endif /*LV_USE_TEST*/
 
 /** 1: Enable text translation support */
-#define LV_USE_TRANSLATION 0
+#define LV_USE_TRANSLATION 1
 
 /*1: Enable color filter style*/
 #define LV_USE_COLOR_FILTER     0

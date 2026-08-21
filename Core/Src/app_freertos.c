@@ -22,6 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "tim.h"
+#include "usart.h"
 #include "lvgl.h"
 
 #include "string.h"
@@ -30,6 +32,8 @@
 #include "../App/src/stm32_qspi.h"
 #include "../App/src/file_handle.h"
 #include "../App/src/log_cdc.h"
+#include "../App/src/Teste_FATFS.h"
+
 
 #include "../App/UI/screen_dac.h"
 #include "../App/UI/screen_debug.h"
@@ -51,7 +55,7 @@ extern uint8_t rx_byte;
 extern volatile uint16_t head;
 extern uint16_t tail;
 
-// Defini��o dos comandos esperados
+// Definicao dos comandos esperados
 const uint8_t CMD1[8] = {0x81, 0x03, 0x00, 0x00, 0x00, 0x7C, 0x5B, 0xEB};
 const uint8_t CMD2[8] = {0x81, 0x03, 0x01, 0x00, 0x00, 0x78, 0x5B, 0xD4};
 
@@ -129,20 +133,15 @@ extern lv_obj_t * Tela_Debug;
 extern lv_obj_t * Tela_DAC;
 
 void my_log_cb(lv_log_level_t level, const char * buf);
+void print_runtime_stats(void);
 
 GT911_Config_t sampleConfig = {.X_Resolution = 320, .Y_Resolution = 480, .Number_Of_Touch_Support = 1, .ReverseY = true, .ReverseX = false, .SwithX2Y = true, .SoftwareNoiseReduction = false};
 
 uint32_t timer_led = 0;
 uint32_t timer_lvgl = 0;
+uint32_t timer_stat = 0;
+
 volatile unsigned long ulHighFrequencyTimerTicks = 0;
-
-// Buffers de renderização alinhados a 32 bytes para o DMA e D-Cache do STM32H5
-#define DISP_HOR_RES 480
-#define DISP_VER_RES 320
-#define DRAW_BUF_HEIGHT 32 // Renderização parcial de 16 linhas por vez
-//#define DRAW_BUF_SIZE_BYTES (DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) // 23040 Bytes (RGB888)
-#define DRAW_BUF_SIZE_BYTES ((DISP_HOR_RES * DRAW_BUF_HEIGHT * 3) + 256)
-
 
 static uint8_t buf1[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
 static uint8_t buf2[DRAW_BUF_SIZE_BYTES] __attribute__((aligned(32)));
@@ -227,13 +226,16 @@ void vApplicationStackOverflowHook(xTaskHandle xTask, char *pcTaskName)
 
 /* USER CODE BEGIN 1 */
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
-__weak void configureTimerForRunTimeStats(void)
+void configureTimerForRunTimeStats(void)
 {
 	ulHighFrequencyTimerTicks = 0;
+	__HAL_TIM_SET_COUNTER(&htim12, 0);
+	HAL_TIM_Base_Start_IT(&htim12);
 }
 
-__weak unsigned long getRunTimeCounterValue(void)
+unsigned long getRunTimeCounterValue(void)
 {
+	/* Retorna (Voltas * Período) + Passos Atuais do Timer */
 	return ulHighFrequencyTimerTicks;
 }
 /* USER CODE END 1 */
@@ -314,6 +316,11 @@ void StartDefaultTask(void *argument)
 			HAL_GPIO_TogglePin(LED_INT_GPIO_Port, LED_INT_Pin);
 		}
 
+		if(HAL_GetTick() - timer_stat > 5000) {
+			timer_stat = HAL_GetTick();
+			print_runtime_stats();
+		}
+
 		osDelay(10);
 	}
   /* USER CODE END defaultTask */
@@ -353,11 +360,14 @@ void StartTaskLVGL(void *argument)
 	// Test Read SD-Card
 	Mount_FATFS();
 
+	// Test Speed FATFS
+	//Test_FATFS();
+
 	lv_init();
 
 #if LV_USE_LOG
 	// Log LVGL
-	lv_log_register_print_cb(my_log_cb);
+//	lv_log_register_print_cb(my_log_cb);
 #endif
 
 	disp = lv_display_create(480, 320);
@@ -376,9 +386,10 @@ void StartTaskLVGL(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  lv_timer_handler();
-
-	  osDelay(5);
+	  // Testar codigo abaixo
+      uint32_t time_till_next = lv_timer_handler();
+      if(time_till_next == 0) time_till_next = 1; // Evita travar
+      vTaskDelay(pdMS_TO_TICKS(time_till_next));
   }
   /* USER CODE END TaskLVGL */
 }
@@ -394,7 +405,31 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 
 void my_log_cb(lv_log_level_t level, const char * buf)
 {
-	logI(buf, strlen(buf));
+	//logI(buf, strlen(buf));
+	HAL_UART_Transmit(&huart1, (uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
+}
+
+void print_runtime_stats(void)
+{
+    TaskStatus_t *pxArr;
+    UBaseType_t n = uxTaskGetNumberOfTasks();
+    uint32_t total;
+
+    pxArr = pvPortMalloc(n * sizeof(TaskStatus_t));
+    if (pxArr == NULL) return;
+
+    n = uxTaskGetSystemState(pxArr, n, &total);
+    uint32_t div = total / 100U;          /* 1% em ticks */
+
+    printf("%-16s %10s  %5s\r\n", "Task", "Ticks", "CPU%");
+    for (UBaseType_t i = 0; i < n; i++) {
+        uint32_t pct = (div > 0) ? (pxArr[i].ulRunTimeCounter / div) : 0;
+        printf("%-16s %10lu  %4lu%%\r\n",
+               pxArr[i].pcTaskName,
+               (unsigned long)pxArr[i].ulRunTimeCounter,
+               (unsigned long)pct);
+    }
+    vPortFree(pxArr);
 }
 /* USER CODE END Application */
 

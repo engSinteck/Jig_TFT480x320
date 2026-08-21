@@ -59,6 +59,7 @@ extern osThreadId_t Task485Handle;
 extern osThreadId_t TaskLVGLHandle;
 extern osMutexId_t MutexI2CHandle;
 extern osMutexId_t Mutex485Handle;
+extern osMutexId_t MutexLogHandle;
 extern osSemaphoreId_t BinarySemI2CHandle;
 extern osSemaphoreId_t BinarySemLVGLHandle;
 
