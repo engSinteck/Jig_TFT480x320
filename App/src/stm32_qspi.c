@@ -17,6 +17,9 @@
 
 #include "stm32_qspi.h"
 #include "octospi.h"
+#include "dcache.h"
+#include "string.h"
+#include "stdio.h"
 
 #define QSPIHandle hxspi1
 
@@ -102,6 +105,34 @@ uint8_t BSP_QSPI_ReadID(uint8_t *pID)
     return QSPI_OK;
 }
 
+uint8_t BSP_QSPI_Read_Simple(uint8_t *pData, uint32_t ReadAddr, uint32_t Size)
+{
+    XSPI_RegularCmdTypeDef s = {0};
+
+    s.OperationType      = HAL_XSPI_OPTYPE_COMMON_CFG;
+    s.InstructionMode    = HAL_XSPI_INSTRUCTION_1_LINE;
+    s.InstructionWidth   = HAL_XSPI_INSTRUCTION_8_BITS;
+    s.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_DISABLE;
+    s.Instruction        = FAST_READ_CMD;        /* 0x0B, 1-1-1 */
+    s.AddressMode        = HAL_XSPI_ADDRESS_1_LINE;
+    s.AddressWidth       = HAL_XSPI_ADDRESS_24_BITS;
+    s.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_DISABLE;
+    s.Address            = ReadAddr;
+    s.AlternateBytesMode = HAL_XSPI_ALT_BYTES_NONE;
+    s.DataMode           = HAL_XSPI_DATA_1_LINE;
+    s.DataLength         = Size;
+    s.DummyCycles        = 8;                     /* 0x0B => 8 dummy */
+    s.DataDTRMode        = HAL_XSPI_DATA_DTR_DISABLE;
+    s.DQSMode            = HAL_XSPI_DQS_DISABLE;
+    s.SIOOMode           = HAL_XSPI_SIOO_INST_EVERY_CMD;
+
+    if (HAL_XSPI_Command(&hxspi1, &s, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+        return QSPI_ERROR;
+    if (HAL_XSPI_Receive(&hxspi1, pData, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+        return QSPI_ERROR;
+    return QSPI_OK;
+}
+
 /* ==========================================================================
  *  Leitura (modo indireto, polling). Usada apenas fora do Memory-Mapped.
  * ========================================================================== */
@@ -132,6 +163,10 @@ uint8_t BSP_QSPI_Read(uint8_t *pData, uint32_t ReadAddr, uint32_t Size)
     if (HAL_XSPI_Command(&QSPIHandle, &s_command, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
+
+    // Invalida cache ANTES do DMA escrever (garante que não há linhas sujas)
+    HAL_DCACHE_InvalidateByAddr(&hdcache1, (uint32_t*)pData, (int32_t)Size);
+
     if (HAL_XSPI_Receive(&QSPIHandle, pData, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
@@ -488,8 +523,201 @@ static uint8_t QSPI_AutoPollingMemReady(uint32_t Timeout)
     return QSPI_OK;
 }
 
+uint8_t BSP_QSPI_EraseSector(uint32_t EraseStartAddress, uint32_t EraseEndAddress)
+{
+
+	XSPI_RegularCmdTypeDef sCommand;
+
+    EraseStartAddress = EraseStartAddress - EraseStartAddress % W25Q128FV_SECTOR_SIZE;
+
+    /* Erasing Sequence -------------------------------------------------- */
+    sCommand.InstructionMode    = HAL_XSPI_INSTRUCTION_1_LINE;
+    sCommand.AddressWidth       = HAL_XSPI_ADDRESS_32_BITS;
+    sCommand.AlternateBytesMode = HAL_XSPI_ALT_BYTES_NONE;
+    sCommand.DataDTRMode        = HAL_XSPI_DATA_DTR_DISABLE;
+    //sCommand.DdrHoldHalfCycle   = QSPI_DDR_HHC_ANALOG_DELAY;
+    sCommand.DQSMode            = HAL_XSPI_DQS_DISABLE;
+    sCommand.SIOOMode           = HAL_XSPI_SIOO_INST_EVERY_CMD;
+    sCommand.Instruction        = SECTOR_ERASE_CMD;
+    sCommand.AddressMode        = HAL_XSPI_ADDRESS_1_LINE;
+
+    sCommand.DataMode           = HAL_XSPI_DATA_NONE;
+    sCommand.DummyCycles        = 0;
+
+    while (EraseEndAddress >= EraseStartAddress) {
+        sCommand.Address = (EraseStartAddress & 0x0FFFFFFF);
+
+        if (QSPI_WriteEnable() != HAL_OK) {
+            return HAL_ERROR;
+        }
+
+        if (HAL_XSPI_Command(&QSPIHandle, &sCommand, HAL_XSPI_TIMEOUT_DEFAULT_VALUE)
+            != HAL_OK) {
+            return HAL_ERROR;
+        }
+        EraseStartAddress += W25Q128FV_SECTOR_SIZE;
+
+        if (QSPI_AutoPollingMemReady(10) != HAL_OK) {
+            return HAL_ERROR;
+        }
+    }
+
+    return HAL_OK;
+}
+
 void HAL_XSPI_RxCpltCallback(XSPI_HandleTypeDef *hxspi)
 {
     (void)hxspi;
     rx_complete = 1;
+}
+
+/* Endereco de teste: ultimo subsetor de 4 KB da W25Q128 (16 MB) */
+#define QSPI_TEST_ADDR   (W25Q128FV_FLASH_SIZE - W25Q128FV_SUBSECTOR_SIZE) /* 0x00FFF000 */
+#define QSPI_TEST_LEN    256   /* 1 pagina */
+
+uint8_t BSP_QSPI_Test(void)
+{
+    static uint8_t wbuf[QSPI_TEST_LEN];
+    static uint8_t rbuf[QSPI_TEST_LEN];
+    uint32_t i;
+
+    printf("\r\n=== QSPI WRITE/ERASE TEST @ 0x%06lX ===\r\n",
+           (unsigned long)QSPI_TEST_ADDR);
+
+    /* ---- 1) Apaga o subsetor de 4 KB que contem o endereco de teste ---- */
+    printf("QSPI TEST - Erase subsetor...\r\n");
+    if (BSP_QSPI_Erase_Block(QSPI_TEST_ADDR) != QSPI_OK) {
+        printf("QSPI TEST - Erase FAIL\r\n");
+        return QSPI_ERROR;
+    }
+
+    /* ---- 2) Le de volta e confirma que ficou tudo 0xFF ---- */
+    if (BSP_QSPI_Read(rbuf, QSPI_TEST_ADDR, QSPI_TEST_LEN) != QSPI_OK) {
+        printf("QSPI TEST - Read (pos-erase) FAIL\r\n");
+        return QSPI_ERROR;
+    }
+    for (i = 0; i < QSPI_TEST_LEN; i++) {
+        if (rbuf[i] != 0xFF) {
+            printf("QSPI TEST - Erase verify FAIL @ %lu: 0x%02X\r\n",
+                   (unsigned long)i, rbuf[i]);
+            return QSPI_ERROR;
+        }
+    }
+    printf("QSPI TEST - Erase verify OK (tudo 0xFF)\r\n");
+
+    /* ---- 3) Preenche um padrao conhecido e grava ---- */
+    for (i = 0; i < QSPI_TEST_LEN; i++) {
+        wbuf[i] = (uint8_t)(i ^ 0xA5);
+    }
+    if (BSP_QSPI_Write(wbuf, QSPI_TEST_ADDR, QSPI_TEST_LEN) != QSPI_OK) {
+        printf("QSPI TEST - Write FAIL\r\n");
+        return QSPI_ERROR;
+    }
+    printf("QSPI TEST - Write OK\r\n");
+
+    /* ---- 4) Le de volta e compara ---- */
+    memset(rbuf, 0, sizeof(rbuf));
+    if (BSP_QSPI_Read(rbuf, QSPI_TEST_ADDR, QSPI_TEST_LEN) != QSPI_OK) {
+        printf("QSPI TEST - Read (pos-write) FAIL\r\n");
+        return QSPI_ERROR;
+    }
+    if (memcmp(wbuf, rbuf, QSPI_TEST_LEN) != 0) {
+        printf("QSPI TEST - Verify FAIL\r\n");
+        for (i = 0; i < QSPI_TEST_LEN; i++) {
+            if (wbuf[i] != rbuf[i]) {
+                printf("  @ %3lu  w=0x%02X  r=0x%02X\r\n",
+                       (unsigned long)i, wbuf[i], rbuf[i]);
+            }
+        }
+        return QSPI_ERROR;
+    }
+
+    printf("QSPI TEST - Verify OK  ==> write/erase FUNCIONANDO!\r\n");
+    return QSPI_OK;
+}
+
+uint8_t BSP_QSPI_Test_MMap(void)
+{
+    uint8_t wbuf[16];
+    volatile uint32_t *p;
+    uint32_t i;
+
+    /* Garante que estamos em modo indireto (sai do mem-mapped se estiver) */
+    HAL_XSPI_Abort(&hxspi1);
+
+    /* Padrao conhecido: wbuf[i] = i ^ 0x5A */
+    for (i = 0; i < 16; i++) {
+        wbuf[i] = (uint8_t)(i ^ 0x5A);
+    }
+
+    /* 1) Erase indireto */
+    if (BSP_QSPI_Erase_Block(QSPI_TEST_ADDR) != QSPI_OK) {
+        printf("MMAP TEST - Erase FAIL\r\n");
+        return QSPI_ERROR;
+    }
+    printf("MMAP TEST - Erase OK\r\n");
+
+    /* 2) Write indireto (Quad Input Page Program 0x32) */
+    if (BSP_QSPI_Write(wbuf, QSPI_TEST_ADDR, 16) != QSPI_OK) {
+        printf("MMAP TEST - Write FAIL\r\n");
+        return QSPI_ERROR;
+    }
+    printf("MMAP TEST - Write OK\r\n");
+
+    /* 3) Verifica lendo pelo caminho memory-mapped (que funciona) */
+    if (BSP_QSPI_MemoryMappedMode() != QSPI_OK) {
+        printf("MMAP TEST - remap FAIL\r\n");
+        return QSPI_ERROR;
+    }
+
+    p = (volatile uint32_t *)(QSPI_MAPPED_ADDR + QSPI_TEST_ADDR);
+    printf("MMAP TEST - lido : %08lX %08lX %08lX %08lX\r\n",
+           (unsigned long)p[0], (unsigned long)p[1],
+           (unsigned long)p[2], (unsigned long)p[3]);
+    printf("MMAP TEST - esper: 59585B5A 5D5C5F5E 51505352 55545756\r\n");
+
+    if (p[0] == 0x59585B5AUL && p[1] == 0x5D5C5F5EUL &&
+        p[2] == 0x51505352UL && p[3] == 0x55545756UL) {
+        printf("MMAP TEST - OK  ==> ERASE + WRITE FUNCIONANDO!\r\n");
+        return QSPI_OK;
+    }
+
+    printf("MMAP TEST - MISMATCH (veja acima)\r\n");
+    return QSPI_ERROR;
+}
+
+uint8_t BSP_QSPI_Read_DMA(uint8_t *pData, uint32_t ReadAddr, uint32_t Size)
+{
+    XSPI_RegularCmdTypeDef s = {0};
+    uint32_t t0;
+
+    s.OperationType      = HAL_XSPI_OPTYPE_COMMON_CFG;
+    s.InstructionMode    = HAL_XSPI_INSTRUCTION_1_LINE;
+    s.InstructionWidth   = HAL_XSPI_INSTRUCTION_8_BITS;
+    s.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_DISABLE;
+    s.Instruction        = FAST_READ_CMD;        /* 0x0B, 1 linha */
+    s.AddressMode        = HAL_XSPI_ADDRESS_1_LINE;
+    s.AddressWidth       = HAL_XSPI_ADDRESS_24_BITS;
+    s.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_DISABLE;
+    s.Address            = ReadAddr;
+    s.AlternateBytesMode = HAL_XSPI_ALT_BYTES_NONE;
+    s.DataMode           = HAL_XSPI_DATA_1_LINE;
+    s.DataLength         = Size;
+    s.DummyCycles        = 8;
+    s.DataDTRMode        = HAL_XSPI_DATA_DTR_DISABLE;
+    s.DQSMode            = HAL_XSPI_DQS_DISABLE;
+    s.SIOOMode           = HAL_XSPI_SIOO_INST_EVERY_CMD;
+
+    if (HAL_XSPI_Command(&hxspi1, &s, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+        return QSPI_ERROR;
+
+    rx_complete = 0;
+    if (HAL_XSPI_Receive_DMA(&hxspi1, pData) != HAL_OK)
+        return QSPI_ERROR;
+
+    t0 = HAL_GetTick();
+    while (!rx_complete) {
+        if (HAL_GetTick() - t0 > 1000) return QSPI_ERROR;   /* 1 s */
+    }
+    return QSPI_OK;
 }

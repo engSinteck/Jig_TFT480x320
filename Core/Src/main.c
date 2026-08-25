@@ -38,6 +38,7 @@
 /* USER CODE BEGIN Includes */
 #include "../App/src/ILI9488.h"
 #include "../App/src/stm32_qspi.h"
+
 #include "../App/src/log_cdc.h"
 /* USER CODE END Includes */
 
@@ -45,6 +46,21 @@
 /* USER CODE BEGIN PTD */
 extern volatile unsigned long ulHighFrequencyTimerTicks;
 uint8_t id[3] = {0};
+
+#define RX_BUFFER_SIZE 1024
+
+uint8_t rx_byte = 0;
+volatile uint8_t rx_buffer[RX_BUFFER_SIZE] = {0};
+volatile uint8_t rx_flag = 0;
+volatile uint16_t head = 0;
+uint16_t tail = 0;
+
+uint8_t rbuf[16] = {0};
+uint8_t rc = 0;
+uint32_t qspi_dur = 0;
+
+uint8_t tx_buf[] = "Hello QSPI STM32H5 !";
+uint8_t rx_buf[64] = {0};
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -130,22 +146,49 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   __HAL_TIM_SetCompare(&htim3, TIM_CHANNEL_2, 4095);		// PWM_CH2 = 2048 TFT_BACKLIGHT
 
+  // USART 2 - RS485
+  HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
+
   ILI9488_Init();
   ILI9488_Set_Address(0, 0, ILI9488_SCREEN_WIDTH-1, ILI9488_SCREEN_HEIGHT-1);
   ILI9488_Fill_Screen(0x0000);
 
   if (BSP_QSPI_Init() != QSPI_OK) {
-      logI("QSPI - Init FAIL\r\n");
+      printf("QSPI - Init FAIL\r\n");
   } else {
+	  printf("QSPI - OK !!!\r\n");
       BSP_QSPI_ReadID(id);                          /* esperado: EF 40 18 */
-      logI("QSPI - JEDEC ID: %02X %02X %02X\r\n", id[0], id[1], id[2]);
+      printf("QSPI - JEDEC ID: %02X %02X %02X\r\n", id[0], id[1], id[2]);
+/*
+      printf("QSPI_Erase_Block\n\r");
+      qspi_dur = HAL_GetTick();
+      rc = BSP_QSPI_Erase_Block(0x00000000);
+      printf("Erase_Block - rc=%u Duracao=%ld\r\n", rc, (HAL_GetTick()-qspi_dur));
 
+      printf("QSPI_Erase_Chip\n\r");
+      qspi_dur = HAL_GetTick();
+      rc = BSP_QSPI_Erase_Chip();
+      printf("Chip_Erase - rc=%u Duracao=%ld\r\n", rc, (HAL_GetTick()-qspi_dur));
+
+      rc = BSP_QSPI_Write(tx_buf, 0x00000000, sizeof(tx_buf));
+      printf("Chip_Write - rc=%u [0]=0x%X%X%X%X\r\n", rc, tx_buf[0], tx_buf[1], tx_buf[2], tx_buf[3]);
+
+      rc = BSP_QSPI_Read(rx_buf, 0x00000000, sizeof(tx_buf));
+      printf("Chip_Read - rc=%u [0]=0x%X%X%X%X\r\n", rc, rx_buf[0], rx_buf[1], rx_buf[2], rx_buf[3]);
+
+      // Compara rx_buf
+      for(uint8_t x = 0; x < sizeof(tx_buf); x++) {
+    	  if(tx_buf[x] != rx_buf[x]) {
+    		  printf("Compare Buffer Fail ! [%d]\r\n", x);
+    	  }
+      }
+*/
       if (BSP_QSPI_MemoryMappedMode() != QSPI_OK) {
-          logI("QSPI - MemMapped FAIL\r\n");
+          printf("QSPI - MemMapped FAIL\r\n");
       } else {
           /* Sanity check: le os 4 primeiros bytes ja pelo barramento */
           volatile uint32_t first = *(volatile uint32_t *)QSPI_MAPPED_ADDR;
-          logI("QSPI - Mapped OK, [0]=0x%08lX\r\n", first);
+          printf("QSPI - Mapped OK, [0]=0x%08lX\r\n", first);
       }
   }
   /* USER CODE END 2 */

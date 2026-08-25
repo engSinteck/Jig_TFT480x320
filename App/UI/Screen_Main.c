@@ -160,7 +160,7 @@ void update_main_screen(lv_timer_t * timer)
 	uint32_t val_left = Gerar_Aleatorio_0_64();
 	set_vumeter_left(val_left);
 	set_vumeter_right(val_left);
-/*
+
 	// Vu-Meter XLR
 	if( !flag_vu_xlr) {
 		demo_vu_xlr++;
@@ -201,7 +201,6 @@ void update_main_screen(lv_timer_t * timer)
 	lv_slider_set_value(vu_pc_r, val, LV_ANIM_OFF);
 	lv_slider_set_value(vu_tuner_l, val, LV_ANIM_OFF);
 	lv_slider_set_value(vu_tuner_r, val, LV_ANIM_OFF);
-*/
 }
 
 void Screen_Main(void)

@@ -339,7 +339,43 @@ void StartTask485(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(10);
+	  if (rx_flag) {
+		  rx_flag = 0; // Limpa a flag de aviso de novos dados
+
+		  // Processa os bytes enquanto a fila circular não estiver vazia
+		  while (tail != head) {
+			  // Retira o byte atual da fila circular
+			  uint8_t byte_atual = rx_buffer[tail];
+			  tail = (tail + 1) % 1024;
+
+			  // Alinha o início do frame: se o buffer local estiver vazio, o byte DEVE ser 0x81
+			  if (cmd_idx == 0 && byte_atual != 0x81) {
+				  continue; // Ignora lixo na linha de comunicação
+			  }
+
+			  // Adiciona o byte ao buffer de comando local
+			  cmd_buffer[cmd_idx] = byte_atual;
+			  cmd_idx++;
+
+			  // Se completou os 8 bytes do comando, realiza a validação
+			  if (cmd_idx == 8) {
+
+				  // Compara com o Comando 1
+				  if (memcmp(cmd_buffer, CMD1, 8) == 0) {
+					  // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_0); // Toggle no LED 1 (ex: PA0)
+					  HAL_UART_Transmit(&huart2, RESP1, sizeof(RESP1), 1000);
+				  }
+				  // Compara com o Comando 2
+				  else if (memcmp(cmd_buffer, CMD2, 8) == 0) {
+					  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_1); // Toggle no LED 2 (ex: PA1)
+					  HAL_UART_Transmit(&huart2, RESP2, sizeof(RESP2), 1000);
+				  }
+				  // Reseta o índice para aguardar o próximo comando de 8 bytes
+				  cmd_idx = 0;
+			  }
+		  }
+	  }
+	  osDelay(10);
   }
   /* USER CODE END Task485 */
 }
@@ -396,6 +432,22 @@ void StartTaskLVGL(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(huart->Instance==USART2) {	// COMM. UART1
+		// Salva Byte Recebido
+		rx_buffer[head] = rx_byte;
+
+		// Avança o head de forma circular (volta para 0 se estourar o tamanho)
+		head = (head + 1) % 1024;
+
+		// Sinaliza ao loop principal que existem dados novos
+		rx_flag = 1;
+
+		HAL_UART_Receive_IT(&huart2, &rx_byte, 1);
+	}
+}
+
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
 	if(hspi->Instance == SPI2) {
@@ -421,7 +473,7 @@ void print_runtime_stats(void)
     n = uxTaskGetSystemState(pxArr, n, &total);
     uint32_t div = total / 100U;          /* 1% em ticks */
 
-    printf("%-16s %10s  %5s\r\n", "Task", "Ticks", "CPU%");
+    printf("\n%-16s %10s  %5s\r\n", "Task", "Ticks", "CPU%");
     for (UBaseType_t i = 0; i < n; i++) {
         uint32_t pct = (div > 0) ? (pxArr[i].ulRunTimeCounter / div) : 0;
         printf("%-16s %10lu  %4lu%%\r\n",

@@ -37,10 +37,15 @@ uint8_t BSP_QSPI_ReadID          (uint8_t *pID);          /* JEDEC 0x9F: EF 40 1
 uint8_t BSP_QSPI_Read            (uint8_t *pData, uint32_t ReadAddr, uint32_t Size);
 uint8_t BSP_QSPI_Write           (uint8_t *pData, uint32_t WriteAddr, uint32_t Size);
 uint8_t BSP_QSPI_Erase_Block     (uint32_t BlockAddress);
+uint8_t BSP_QSPI_EraseSector     (uint32_t EraseStartAddress, uint32_t EraseEndAddress);
 uint8_t BSP_QSPI_Erase_Chip      (void);
 uint8_t BSP_QSPI_GetStatus       (void);
 uint8_t BSP_QSPI_GetInfo         (QSPI_Info *pInfo);
 uint8_t BSP_QSPI_MemoryMappedMode(void);
+uint8_t BSP_QSPI_Read_Simple     (uint8_t *pData, uint32_t ReadAddr, uint32_t Size);
+uint8_t BSP_QSPI_Read_DMA        (uint8_t *pData, uint32_t ReadAddr, uint32_t Size);
+uint8_t BSP_QSPI_Test            (void);
+uint8_t BSP_QSPI_Test_MMap       (void);
 
 #ifdef __cplusplus
 }
