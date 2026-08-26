@@ -8,6 +8,9 @@
 #ifndef UI_SCREEN_MAIN_H_
 #define UI_SCREEN_MAIN_H_
 
-void Screen_Main(void);
+#include "main.h"
+#include "lvgl.h"
+
+void Screen_Create_Main(void);
 
 #endif /* UI_SCREEN_MAIN_H_ */

@@ -5,14 +5,13 @@
  *      Author: rinaldo.santos
  */
 
-#include "main.h"
 #include "stdbool.h"
-#include "lvgl.h"
 #include "rng.h"
 #include "stdio.h"
 #include "string.h"
 
 #include "../App/UI/Screen_Main.h"
+#include "../App/UI/Screen_Inputs.h"
 #include "../App/UI/led_ring.h"
 
 extern void create_vumeter_left(void);
@@ -29,8 +28,6 @@ void create_buttons_tunner(void);
 void create_buttons_volume(void);
 void create_buttons_menu_1(void);
 void create_buttons_menu_2(void);
-//void create_vumeter_left(void);
-//void create_vumeter_right(void);
 void create_vumeter_xlr(void);
 void create_vumeter_aes(void);
 void create_vumeter_pc(void);
@@ -64,8 +61,14 @@ LV_IMG_DECLARE(LED_OFF);
 LV_IMG_DECLARE(KNOB_CENTRAL);
 LV_IMG_DECLARE(PHONE);
 LV_IMG_DECLARE(BT_INDIC);
+LV_IMG_DECLARE(TELA_FUNDO_MAIN);
+LV_IMG_DECLARE(IMG_FM);
+LV_IMG_DECLARE(BT_TUNED);
+LV_IMG_DECLARE(BT_STEREO);
+LV_IMG_DECLARE(BT_RDS);
 
-lv_obj_t * Tela_Main;
+lv_obj_t * Tela_Main = NULL;
+
 static lv_obj_t * img_fundo;
 static lv_obj_t * bt_rev;
 static lv_obj_t * bt_next;
@@ -80,8 +83,6 @@ static lv_obj_t * bt_configs;
 static lv_obj_t * label_rds;
 static lv_obj_t * label_frequency;
 static lv_obj_t * label_scale[8];
-//static lv_obj_t * vu_left;
-//static lv_obj_t * vu_right;
 static lv_obj_t * vu_xlr_l;
 static lv_obj_t * vu_xlr_r;
 static lv_obj_t * vu_aes_l;
@@ -127,7 +128,6 @@ uint8_t ObterNumeroAleatorio0a13(void)
     return 0; // Retorno de segurança em caso de erro no periférico
 }
 
-
 uint32_t Gerar_Aleatorio_0_64(void)
 {
     uint32_t valor_32bit = 0;
@@ -144,7 +144,7 @@ uint32_t Gerar_Aleatorio_0_64(void)
 
 void update_main_screen(lv_timer_t * timer)
 {
-
+/*
 	// Vu-Meter Left+Right
 	if(!flag_vumeter_lr) {
 		demo_vumeter_lr++;
@@ -201,9 +201,10 @@ void update_main_screen(lv_timer_t * timer)
 	lv_slider_set_value(vu_pc_r, val, LV_ANIM_OFF);
 	lv_slider_set_value(vu_tuner_l, val, LV_ANIM_OFF);
 	lv_slider_set_value(vu_tuner_r, val, LV_ANIM_OFF);
+*/
 }
 
-void Screen_Main(void)
+void Screen_Create_Main(void)
 {
 	Tela_Main = lv_obj_create(NULL);
 	lv_obj_clear_flag(Tela_Main, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
@@ -212,6 +213,7 @@ void Screen_Main(void)
 
 	// Imagem de Fundo
 	img_fundo = lv_img_create(Tela_Main);
+	//lv_img_set_src(img_fundo, &TELA_FUNDO_MAIN);
 	lv_img_set_src(img_fundo, "S:/MAIN/TELA_FUNDO_MAIN.bin");
 	lv_obj_set_pos(img_fundo, 0, 0);
 
@@ -258,9 +260,7 @@ void Screen_Main(void)
 
     cont_main = 0;
     static uint32_t user_data = 10;
-    task_Main = lv_timer_create(update_main_screen, 30,  &user_data);
-
-	lv_scr_load(Tela_Main);
+    task_Main = lv_timer_create(update_main_screen, 100,  &user_data);
 }
 
 void create_fm_symbol(void)
@@ -268,6 +268,7 @@ void create_fm_symbol(void)
 	// FM Symbol
 	lv_obj_t * img_fm = lv_img_create(Tela_Main);
 	lv_img_set_src(img_fm, "S:/MAIN/IMG_FM.bin");
+	//lv_img_set_src(img_fm, &IMG_FM);
 	lv_obj_set_pos(img_fm, 8, 8);
 	//
     lv_obj_t * text_fm = lv_label_create(img_fm);
@@ -307,6 +308,8 @@ void create_tuned(void)
 	// TUNED Symbol
 	lv_obj_t * img_tuned = lv_img_create(Tela_Main);
 	lv_img_set_src(img_tuned, "S:/MAIN/BT_TUNED.bin");
+	//lv_img_set_src(img_tuned, &BT_TUNED);
+
 	lv_obj_set_pos(img_tuned, 332, 8);
 
 	// Text
@@ -324,7 +327,8 @@ void create_stereo(void)
 {
 	// STEREO Symbol
 	lv_obj_t * img_stereo = lv_img_create(Tela_Main);
-	lv_img_set_src(img_stereo, "S:/MAIN/BT_STEREO.bin");
+	//lv_img_set_src(img_stereo, &BT_STEREO);
+	lv_img_set_src(img_stereo, "S/MAIN/BT_STEREO.bin");
 	lv_obj_set_pos(img_stereo, 330, 38);
 
 	// Text
@@ -342,6 +346,7 @@ void create_rds(void)
 {
 	// RDS Symbol
 	lv_obj_t * img_rds = lv_img_create(Tela_Main);
+	//lv_img_set_src(img_rds, &BT_RDS);
 	lv_img_set_src(img_rds, "S:/MAIN/BT_RDS.bin");
 	lv_obj_set_pos(img_rds, 332, 66);
 
@@ -504,6 +509,37 @@ void create_buttons_volume(void)
     lv_obj_add_event_cb(bt_vol_dec, event_bt_vol_dec, LV_EVENT_ALL, NULL);
 }
 
+static void event_menu_inputs(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Inputs_Create();
+
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Inputs, LV_SCREEN_LOAD_ANIM_FADE_ON, 500, 10, true);
+	 }
+}
+
+static void event_menu_outputs(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	 }
+}
+
+static void event_menu_config(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	 }
+}
+
 void create_buttons_menu_1(void)
 {
     // Button INPUTS
@@ -516,7 +552,7 @@ void create_buttons_menu_1(void)
     lv_imagebutton_set_src(bt_inputs, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/MAIN/BT_INPUT.bin", NULL);
     lv_obj_add_state(bt_inputs, LV_IMAGEBUTTON_STATE_RELEASED);
     lv_obj_set_pos(bt_inputs, 2, 93);
-    //lv_obj_add_event_cb(bt_inputs, event_utils_bt_back, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(bt_inputs, event_menu_inputs, LV_EVENT_ALL, NULL);
 
 	// Text
     lv_obj_t * text_inputs = lv_label_create(bt_inputs);
@@ -538,7 +574,7 @@ void create_buttons_menu_1(void)
     lv_imagebutton_set_src(bt_outputs, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/MAIN/BT_INPUT.bin", NULL);
     lv_obj_add_state(bt_outputs, LV_IMAGEBUTTON_STATE_RELEASED);
     lv_obj_set_pos(bt_outputs, 2, 134);
-    //lv_obj_add_event_cb(bt_outputs, event_utils_bt_back, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(bt_outputs, event_menu_outputs, LV_EVENT_ALL, NULL);
 
 	// Text
     lv_obj_t * text_outputs = lv_label_create(bt_outputs);
@@ -560,7 +596,7 @@ void create_buttons_menu_1(void)
     lv_imagebutton_set_src(bt_configs, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/MAIN/BT_INPUT.bin", NULL);
     lv_obj_add_state(bt_configs, LV_IMAGEBUTTON_STATE_RELEASED);
     lv_obj_set_pos(bt_configs, 2, 175);
-    //lv_obj_add_event_cb(bt_configs, event_utils_bt_back, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(bt_configs, event_menu_config, LV_EVENT_ALL, NULL);
 
 	// Text
     lv_obj_t * text_configs = lv_label_create(bt_configs);
@@ -641,79 +677,6 @@ void create_buttons_menu_2(void)
     lv_obj_set_style_text_font(text_menu_4, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align_to(text_menu_4, bt_menu[4], LV_ALIGN_CENTER, 0, 1);
 }
-
-/*
-void create_vumeter_left(void)
-{
-    vu_left = lv_slider_create(Tela_Main);
-    lv_obj_clear_flag(vu_left, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-    lv_slider_set_range(vu_left, 0, 64);
-    lv_obj_set_width(vu_left, 445);
-    lv_obj_set_height(vu_left, 28);
-    lv_obj_set_pos(vu_left, 31, 228);
-
-    // --- FUNDO DO SLIDER (MAIN) ---
-    lv_obj_set_style_radius(vu_left, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(vu_left, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // Remove as margens internas para que o preenchimento de pixels bata com o tamanho da imagem
-    lv_obj_set_style_pad_all(vu_left, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_all(vu_left, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    // API Estrita do LVGL 9.5 para Imagem de Fundo
-    lv_obj_set_style_bg_image_src(vu_left, &LED_GR_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_image_opa(vu_left, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // --- BARRA QUE CRESCE (INDICATOR) ---
-    lv_obj_set_style_radius(vu_left, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    // Força o indicador a usar puramente a imagem sem misturar cor sólida por baixo
-    lv_obj_set_style_bg_opa(vu_left, LV_OPA_TRANSP, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_image_src(vu_left, &LED_GR, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_image_opa(vu_left, LV_OPA_COVER, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    // --- BOTÃO (KNOB) - ESCONDIDO ---
-    lv_obj_set_style_bg_opa(vu_left, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-    lv_slider_set_value(vu_left, 30, LV_ANIM_OFF);
-}
-
-void create_vumeter_right(void)
-{
-	 // VU-Meter
-	vu_right = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_right, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_right, 0, 64);
-	lv_obj_set_width(vu_right, 445);
-	lv_obj_set_height(vu_right, 28);
-	lv_obj_set_pos(vu_right, 31, 258);
-
-    // --- FUNDO DO SLIDER (MAIN) ---
-    lv_obj_set_style_radius(vu_right, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_border_width(vu_right, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // Remove as margens internas para que o preenchimento de pixels bata com o tamanho da imagem
-    lv_obj_set_style_pad_all(vu_right, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_pad_all(vu_right, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    // API Estrita do LVGL 9.5 para Imagem de Fundo
-    lv_obj_set_style_bg_image_src(vu_right, &LED_GR_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_image_opa(vu_right, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    // --- BARRA QUE CRESCE (INDICATOR) ---
-    lv_obj_set_style_radius(vu_right, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    // Força o indicador a usar puramente a imagem sem misturar cor sólida por baixo
-    lv_obj_set_style_bg_opa(vu_right, LV_OPA_TRANSP, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_image_src(vu_right, &LED_GR, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_image_opa(vu_right, LV_OPA_COVER, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    // --- BOTÃO (KNOB) - ESCONDIDO ---
-    lv_obj_set_style_bg_opa(vu_right, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-    lv_slider_set_value(vu_right, 50, LV_ANIM_OFF);
-}
-*/
 
 void create_vumeter_xlr(void)
 {
@@ -1313,10 +1276,6 @@ void create_img_button_volume(void)
 	// PHONE Symbol
 	lv_obj_t * img_phone = lv_img_create(Tela_Main);
 	lv_img_set_src(img_phone, &PHONE);
+	//lv_img_set_src(img_phone, "S:/MAIN/PHONE.bin");
 	lv_obj_set_pos(img_phone, 456, 165);
-
-//	// INDICADOR Symbol
-//	lv_obj_t * img_bt = lv_img_create(Tela_Main);
-//	lv_img_set_src(img_bt, &BT_INDIC);
-//	lv_obj_set_pos(img_bt, 404, 136);
 }

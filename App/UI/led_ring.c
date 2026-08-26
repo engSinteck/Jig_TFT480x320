@@ -149,21 +149,4 @@ void led_ring_create(lv_obj_t * parent)
     g_ring.ind = ind;
 
     ring_refresh();
-
-    /* ---- botoes  -  e  +  ---- */
-//    lv_obj_t * btn_minus = lv_button_create(parent);
-//    lv_obj_set_size(btn_minus, 72, 46);
-//    lv_obj_align(btn_minus, LV_ALIGN_BOTTOM_LEFT, 6, -6);
-//   lv_obj_add_event_cb(btn_minus, minus_cb, LV_EVENT_CLICKED, NULL);
-//    lv_obj_add_event_cb(btn_minus, minus_cb, LV_EVENT_LONG_PRESSED_REPEAT, NULL);
-//    lv_obj_t * lm = lv_label_create(btn_minus);
-//    lv_label_set_text(lm, LV_SYMBOL_MINUS); lv_obj_center(lm);
-//
-//    lv_obj_t * btn_plus = lv_button_create(parent);
-//    lv_obj_set_size(btn_plus, 72, 46);
-//    lv_obj_align(btn_plus, LV_ALIGN_BOTTOM_RIGHT, -6, -6);
-//    lv_obj_add_event_cb(btn_plus, plus_cb, LV_EVENT_CLICKED, NULL);
-//    lv_obj_add_event_cb(btn_plus, plus_cb, LV_EVENT_LONG_PRESSED_REPEAT, NULL);
-//    lv_obj_t * lp = lv_label_create(btn_plus);
-//    lv_label_set_text(lp, LV_SYMBOL_PLUS); lv_obj_center(lp);
 }

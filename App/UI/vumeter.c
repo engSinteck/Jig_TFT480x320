@@ -1,11 +1,14 @@
 #include "lvgl.h"
 
-/* Tela onde os VUs sao criados (seu global existente). */
 extern lv_obj_t * Tela_Main;
 
 /* Imagens (C-array). IDEAL: RGB565 SEM alpha p/ blit direto por DMA2D. */
-extern const lv_image_dsc_t LED_GR_OFF;   /* barra apagada (fundo) */
-extern const lv_image_dsc_t LED_GR;       /* barra acesa (cresce)  */
+//extern const lv_image_dsc_t LED_GR_OFF;   /* barra apagada (fundo) */
+//extern const lv_image_dsc_t LED_GR;       /* barra acesa (cresce)  */
+
+LV_IMG_DECLARE(LED_GR_OFF);
+LV_IMG_DECLARE(LED_GR);
+
 
 /* ----------------------------- CONFIG ----------------------------- */
 #define VU_W        445

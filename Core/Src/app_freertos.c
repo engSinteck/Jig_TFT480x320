@@ -40,9 +40,10 @@
 #include "../App/UI/screen_gpio.h"
 #include "../App/UI/screen_mp3.h"
 #include "../App/UI/screen_tuner.h"
-#include "../App/UI/screen_boot.h"
 //
 #include "../App/UI/Screen_Main.h"
+#include "../App/UI/Screen_Splash.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -415,9 +416,9 @@ void StartTaskLVGL(void *argument)
 	lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
 	lv_indev_set_read_cb(indev, touch_read_cb);
 
-	// Tela Debug
-	//screen_boot();
-	Screen_Main();
+	// Tela Splash
+	Screen_Create_Splash();
+	//Screen_Create_Main();
 
   /* Infinite loop */
   for(;;)
