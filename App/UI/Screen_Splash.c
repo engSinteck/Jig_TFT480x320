@@ -27,7 +27,7 @@ void update_screen_splash(lv_timer_t * timer)
 	Screen_Create_Main();
 
     // 2. Transiciona para a Main (auto_del = true deleta a Tela_Splash automaticamente)
-    lv_screen_load_anim(Tela_Main, LV_SCREEN_LOAD_ANIM_FADE_ON, 500, 2, true);
+    lv_screen_load_anim(Tela_Main, LV_SCREEN_LOAD_ANIM_NONE, 500, 2, true);
 
     // 3. Deleta este timer de disparo único
     lv_timer_delete(timer);

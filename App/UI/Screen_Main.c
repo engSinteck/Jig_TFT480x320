@@ -12,6 +12,7 @@
 
 #include "../App/UI/Screen_Main.h"
 #include "../App/UI/Screen_Inputs.h"
+#include "../App/UI/Screen_Outputs.h"
 #include "../App/UI/led_ring.h"
 
 extern void create_vumeter_left(void);
@@ -99,6 +100,8 @@ static lv_obj_t * vu_mpx_2;
 static lv_timer_t * task_Main;
 
 static uint32_t cont_main = 0;
+
+static led_ring_t ring_vol;
 
 uint8_t flag_vumeter_lr = 0;
 uint32_t demo_vumeter_lr = 0;
@@ -252,7 +255,7 @@ void Screen_Create_Main(void)
 	// Text Scale VU
 	create_text_scale_vu();
 	// Knob Volume
-	led_ring_create(Tela_Main);
+	led_ring_create(Tela_Main, &ring_vol, 386, 95);
 	// Buttons Tunner
 	create_buttons_tunner();
 	// Phone + BT Indicador
@@ -469,7 +472,7 @@ static void event_bt_vol_inc(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		led_ring_inc();
+		led_ring_inc(&ring_vol);
 	 }
 }
 
@@ -478,7 +481,7 @@ static void event_bt_vol_dec(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		led_ring_dec();
+		led_ring_dec(&ring_vol);
 	 }
 }
 
@@ -518,7 +521,7 @@ static void event_menu_inputs(lv_event_t * e)
 		Screen_Inputs_Create();
 
 		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
-		lv_screen_load_anim(Tela_Inputs, LV_SCREEN_LOAD_ANIM_FADE_ON, 500, 10, true);
+		lv_screen_load_anim(Tela_Inputs, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
 	 }
 }
 
@@ -527,7 +530,11 @@ static void event_menu_outputs(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Outputs_Create();
 
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Outputs, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
 	 }
 }
 
