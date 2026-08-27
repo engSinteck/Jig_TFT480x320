@@ -14,6 +14,7 @@
 #include "../App/UI/Screen_Inputs.h"
 #include "../App/UI/Screen_Outputs.h"
 #include "../App/UI/led_ring.h"
+#include "../App/UI/bar_leds.h"
 
 extern void create_vumeter_left(void);
 extern void create_vumeter_right(void);
@@ -42,6 +43,12 @@ void create_text_scale_vu(void);
 void create_leds_volume(void);
 void formatar_frequencia(int32_t valor, char *resultado, size_t tamanho);
 void create_img_button_volume(void);
+void create_main_barmeter_xlr(void);
+void create_main_barmeter_aes(void);
+void create_main_barmeter_pc(void);
+void create_main_barmeter_tuner(void);
+void create_main_barmeter_usb(void);
+void create_main_barmeter_mpx(void);
 
 LV_FONT_DECLARE(Neue_Medium_10);
 LV_FONT_DECLARE(Neue_Medium_11);
@@ -84,18 +91,6 @@ static lv_obj_t * bt_configs;
 static lv_obj_t * label_rds;
 static lv_obj_t * label_frequency;
 static lv_obj_t * label_scale[8];
-static lv_obj_t * vu_xlr_l;
-static lv_obj_t * vu_xlr_r;
-static lv_obj_t * vu_aes_l;
-static lv_obj_t * vu_aes_r;
-static lv_obj_t * vu_pc_l;
-static lv_obj_t * vu_pc_r;
-static lv_obj_t * vu_tuner_l;
-static lv_obj_t * vu_tuner_r;
-static lv_obj_t * vu_usb_l;
-static lv_obj_t * vu_usb_r;
-static lv_obj_t * vu_mpx_1;
-static lv_obj_t * vu_mpx_2;
 
 static lv_timer_t * task_Main;
 
@@ -117,6 +112,19 @@ uint32_t demo_vu_pc = 0;
 
 static int32_t fm_frequency = 104100;	// Escala de 76.000 - 108.100 MHz
 char str_freq[20] = {0};
+
+static barmeter_t main_xlr_l;
+static barmeter_t main_xlr_r;
+static barmeter_t main_aes_l;
+static barmeter_t main_aes_r;
+static barmeter_t main_pc_l;
+static barmeter_t main_pc_r;
+static barmeter_t main_tuner_l;
+static barmeter_t main_tuner_r;
+static barmeter_t main_usb_l;
+static barmeter_t main_usb_r;
+static barmeter_t main_mpx1;
+static barmeter_t main_mpx2;
 
 uint8_t ObterNumeroAleatorio0a13(void)
 {
@@ -163,47 +171,6 @@ void update_main_screen(lv_timer_t * timer)
 	uint32_t val_left = Gerar_Aleatorio_0_64();
 	set_vumeter_left(val_left);
 	set_vumeter_right(val_left);
-
-	// Vu-Meter XLR
-	if( !flag_vu_xlr) {
-		demo_vu_xlr++;
-		if(demo_vu_xlr > 13) flag_vu_xlr = 1;
-	}
-	else {
-		if(demo_vu_xlr >= 1) {
-			demo_vu_xlr--;
-		}
-		else flag_vu_xlr = 0;
-	}
-	lv_slider_set_value(vu_xlr_l, demo_vu_xlr, LV_ANIM_OFF);
-	lv_slider_set_value(vu_xlr_r, demo_vu_xlr, LV_ANIM_OFF);
-	lv_slider_set_value(vu_mpx_1, demo_vu_xlr, LV_ANIM_OFF);
-	lv_slider_set_value(vu_mpx_2, demo_vu_xlr, LV_ANIM_OFF);
-
-
-	// Vu-Meter AES
-	if( !flag_vu_aes) {
-		demo_vu_aes++;
-		if(demo_vu_aes > 13) flag_vu_aes = 1;
-	}
-	else {
-		if(demo_vu_aes >= 1) {
-			demo_vu_aes--;
-		}
-		else flag_vu_aes = 0;
-	}
-	lv_slider_set_value(vu_aes_l, demo_vu_aes, LV_ANIM_OFF);
-	lv_slider_set_value(vu_aes_r, demo_vu_aes, LV_ANIM_OFF);
-	lv_slider_set_value(vu_usb_l, demo_vu_aes, LV_ANIM_OFF);
-	lv_slider_set_value(vu_usb_r, demo_vu_aes, LV_ANIM_OFF);
-
-	// Vu-Meter PC
-	uint8_t val = ObterNumeroAleatorio0a13();
-
-	lv_slider_set_value(vu_pc_l, val, LV_ANIM_OFF);
-	lv_slider_set_value(vu_pc_r, val, LV_ANIM_OFF);
-	lv_slider_set_value(vu_tuner_l, val, LV_ANIM_OFF);
-	lv_slider_set_value(vu_tuner_r, val, LV_ANIM_OFF);
 */
 }
 
@@ -240,12 +207,14 @@ void Screen_Create_Main(void)
 	// Vu-Meter L+R
 	create_vumeter_left();
 	create_vumeter_right();
-	create_vumeter_xlr();
-	create_vumeter_aes();
-	create_vumeter_pc();
-	create_vumeter_tunner();
-	create_vumeter_usb();
-	create_vumeter_mpx();
+	// Bar-Meter
+	create_main_barmeter_xlr();
+	create_main_barmeter_aes();
+	create_main_barmeter_pc();
+	create_main_barmeter_tuner();
+	create_main_barmeter_usb();
+	create_main_barmeter_mpx();
+
 	// Label RDS
 	create_Label_RDS();
 	// Label Frequency
@@ -685,409 +654,6 @@ void create_buttons_menu_2(void)
     lv_obj_align_to(text_menu_4, bt_menu[4], LV_ALIGN_CENTER, 0, 1);
 }
 
-void create_vumeter_xlr(void)
-{
-	// VU-Meter XLR
-	vu_xlr_l = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_xlr_l, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_xlr_l, 0, 13);
-	lv_obj_set_width(vu_xlr_l, 21);
-	lv_obj_set_height(vu_xlr_l, 84);
-	lv_obj_set_pos(vu_xlr_l, 100, 126);
-
-	lv_obj_set_style_radius(vu_xlr_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_xlr_l, lv_color_hex(0xFFFF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_xlr_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_xlr_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_xlr_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_xlr_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_xlr_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_xlr_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_xlr_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_xlr_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_xlr_l, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_xlr_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_xlr_l, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_xlr_l, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_xlr_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_xlr_l, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_xlr_l, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_xlr_l, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_xlr_l, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_xlr_l, 4, LV_ANIM_OFF);
-
-	// Right
-	vu_xlr_r = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_xlr_r, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_xlr_r, 0, 13);
-	lv_obj_set_width(vu_xlr_r, 21);
-	lv_obj_set_height(vu_xlr_r, 84);
-	lv_obj_set_pos(vu_xlr_r, 123, 126);
-
-	lv_obj_set_style_radius(vu_xlr_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_xlr_r, lv_color_hex(0xFFFF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_xlr_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_xlr_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_xlr_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_xlr_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_xlr_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_xlr_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_xlr_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_xlr_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_xlr_r, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_xlr_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_xlr_r, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_xlr_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_xlr_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_xlr_r, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_xlr_r, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_xlr_r, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_xlr_r, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_xlr_r, 4, LV_ANIM_OFF);
-}
-
-void create_vumeter_aes(void)
-{
-	// VU-Meter AES
-	vu_aes_l = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_aes_l, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_aes_l, 0, 13);
-	lv_obj_set_width(vu_aes_l, 21);
-	lv_obj_set_height(vu_aes_l, 84);
-	lv_obj_set_pos(vu_aes_l, 147, 126);
-
-	lv_obj_set_style_radius(vu_aes_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_aes_l, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_aes_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_aes_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_aes_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_aes_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_aes_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_aes_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_aes_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_aes_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_aes_l, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_aes_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_aes_l, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_aes_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_aes_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_aes_l, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_aes_l, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_aes_l, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_aes_l, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_aes_l, 7, LV_ANIM_OFF);
-
-	// Right
-	vu_aes_r = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_aes_r, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_aes_r, 0, 13);
-	lv_obj_set_width(vu_aes_r, 21);
-	lv_obj_set_height(vu_aes_r, 84);
-	lv_obj_set_pos(vu_aes_r, 170, 126);
-
-	lv_obj_set_style_radius(vu_aes_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_aes_r, lv_color_hex(0xFF0000), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_aes_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_aes_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_aes_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_aes_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_aes_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_aes_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_aes_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_aes_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_aes_r, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_aes_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_aes_r, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_aes_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_aes_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_aes_r, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_aes_r, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_aes_r, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_aes_r, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_aes_r, 7, LV_ANIM_OFF);
-}
-
-void create_vumeter_pc(void)
-{
-	// VU-Meter PC
-	vu_pc_l = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_pc_l, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_pc_l, 0, 13);
-	lv_obj_set_width(vu_pc_l, 21);
-	lv_obj_set_height(vu_pc_l, 84);
-	lv_obj_set_pos(vu_pc_l, 194, 126);
-
-	lv_obj_set_style_radius(vu_pc_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_pc_l, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_pc_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_pc_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_pc_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_pc_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_pc_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_pc_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_pc_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_pc_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_pc_l, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_pc_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_pc_l, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_pc_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_pc_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_pc_l, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_pc_l, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_pc_l, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_pc_l, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_pc_l, 13, LV_ANIM_OFF);
-
-	// Right
-	vu_pc_r = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_pc_r, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_pc_r, 0, 13);
-	lv_obj_set_width(vu_pc_r, 21);
-	lv_obj_set_height(vu_pc_r, 84);
-	lv_obj_set_pos(vu_pc_r, 217, 126);
-
-	lv_obj_set_style_radius(vu_pc_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_pc_r, lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_pc_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_pc_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_pc_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_pc_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_pc_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_pc_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_pc_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_pc_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_pc_r, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_pc_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_pc_r, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_pc_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_pc_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_pc_r, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_pc_r, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_pc_r, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_pc_r, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_pc_r, 13, LV_ANIM_OFF);
-}
-
-void create_vumeter_tunner(void)
-{
-	// VU-Meter TUNNER
-	vu_tuner_l = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_tuner_l, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_tuner_l, 0, 13);
-	lv_obj_set_width(vu_tuner_l, 21);
-	lv_obj_set_height(vu_tuner_l, 84);
-	lv_obj_set_pos(vu_tuner_l, 241, 126);
-
-	lv_obj_set_style_radius(vu_tuner_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_tuner_l, lv_color_hex(0x0000FF), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_tuner_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_tuner_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_tuner_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_tuner_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_tuner_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_tuner_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_tuner_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_tuner_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_tuner_l, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_tuner_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_tuner_l, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_tuner_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_tuner_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_tuner_l, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_tuner_l, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_tuner_l, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_tuner_l, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_tuner_l, 10, LV_ANIM_OFF);
-
-	// Right
-	vu_tuner_r = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_tuner_r, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_tuner_r, 0, 13);
-	lv_obj_set_width(vu_tuner_r, 21);
-	lv_obj_set_height(vu_tuner_r, 84);
-	lv_obj_set_pos(vu_tuner_r, 264, 126);
-
-	lv_obj_set_style_radius(vu_tuner_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_tuner_r, lv_color_hex(0x0000FF), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_tuner_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_tuner_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_tuner_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_tuner_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_tuner_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_tuner_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_tuner_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_tuner_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_tuner_r, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_tuner_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_tuner_r, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_tuner_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_tuner_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_tuner_r, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_tuner_r, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_tuner_r, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_tuner_r, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_tuner_r, 10, LV_ANIM_OFF);
-}
-
-void create_vumeter_usb(void)
-{
-	// VU-Meter USB
-	vu_usb_l = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_usb_l, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_usb_l, 0, 13);
-	lv_obj_set_width(vu_usb_l, 21);
-	lv_obj_set_height(vu_usb_l, 84);
-	lv_obj_set_pos(vu_usb_l, 288, 126);
-
-	lv_obj_set_style_radius(vu_usb_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_usb_l, lv_color_hex(0xFF00FF), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_usb_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_usb_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_usb_l, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_usb_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_usb_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_usb_l, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_usb_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_usb_l, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_usb_l, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_usb_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_usb_l, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_usb_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_usb_l, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_usb_l, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_usb_l, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_usb_l, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_usb_l, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_usb_l, 6, LV_ANIM_OFF);
-
-	// Right
-	vu_usb_r = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_usb_r, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_usb_r, 0, 13);
-	lv_obj_set_width(vu_usb_r, 21);
-	lv_obj_set_height(vu_usb_r, 84);
-	lv_obj_set_pos(vu_usb_r, 311, 126);
-
-	lv_obj_set_style_radius(vu_usb_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_usb_r, lv_color_hex(0xFF00FF), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_usb_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_usb_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_usb_r, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_usb_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_usb_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_usb_r, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_usb_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_usb_r, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_usb_r, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_usb_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_usb_r, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_usb_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_usb_r, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_usb_r, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_usb_r, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_usb_r, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_usb_r, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_usb_r, 6, LV_ANIM_OFF);
-}
-
-
-void create_vumeter_mpx(void)
-{
-	// VU-Meter MPX
-	vu_mpx_1 = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_mpx_1, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_mpx_1, 0, 13);
-	lv_obj_set_width(vu_mpx_1, 21);
-	lv_obj_set_height(vu_mpx_1, 84);
-	lv_obj_set_pos(vu_mpx_1, 335, 126);
-
-	lv_obj_set_style_radius(vu_mpx_1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_mpx_1, lv_color_hex(0x00FFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_mpx_1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_mpx_1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_mpx_1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_mpx_1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_mpx_1, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_mpx_1, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_mpx_1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_mpx_1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_mpx_1, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_mpx_1, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_mpx_1, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_mpx_1, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_mpx_1, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_mpx_1, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_mpx_1, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_mpx_1, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_mpx_1, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_mpx_1, 2, LV_ANIM_OFF);
-
-	// Right
-	vu_mpx_2 = lv_slider_create(Tela_Main);
-	lv_obj_clear_flag(vu_mpx_2, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-	lv_slider_set_range(vu_mpx_2, 0, 13);
-	lv_obj_set_width(vu_mpx_2, 21);
-	lv_obj_set_height(vu_mpx_2, 84);
-	lv_obj_set_pos(vu_mpx_2, 358, 126);
-
-	lv_obj_set_style_radius(vu_mpx_2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_mpx_2, lv_color_hex(0x00FFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_mpx_2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_mpx_2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_mpx_2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_border_width(vu_mpx_2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_left(vu_mpx_2, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_right(vu_mpx_2, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_top(vu_mpx_2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_pad_bottom(vu_mpx_2, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_mpx_2, &LED_OFF, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_radius(vu_mpx_2, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_color(vu_mpx_2, lv_color_hex(0xFFFFFF), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_mpx_2, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_main_stop(vu_mpx_2, 0, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_grad_stop(vu_mpx_2, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_img_src(vu_mpx_2, &LED, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-	lv_obj_set_style_bg_color(vu_mpx_2, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-	lv_obj_set_style_bg_opa(vu_mpx_2, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
-	lv_slider_set_value(vu_mpx_2, 2, LV_ANIM_OFF);
-}
-
 void create_Label_RDS(void)
 {
     label_rds = lv_label_create(Tela_Main);
@@ -1285,4 +851,198 @@ void create_img_button_volume(void)
 	lv_img_set_src(img_phone, &PHONE);
 	//lv_img_set_src(img_phone, "S:/MAIN/PHONE.bin");
 	lv_obj_set_pos(img_phone, 456, 165);
+}
+
+void create_main_barmeter_xlr(void)
+{
+	main_xlr_l.on       = NULL;
+	main_xlr_l.last_seg = -1;
+	main_xlr_l.x        = 100;
+	main_xlr_l.y        = 126;
+	main_xlr_l.w        = BAR_W;
+	main_xlr_l.h        = BAR_H;
+	main_xlr_l.range    = BAR_RANGE;
+	main_xlr_l.segs     = BAR_SEGMENTS;
+	main_xlr_l.bounds   = NULL;
+	main_xlr_l.img_off  = &LED_OFF;
+	main_xlr_l.img_on   = &LED;
+
+	main_xlr_r.on       = NULL;
+	main_xlr_r.last_seg = -1;
+	main_xlr_r.x        = 123;
+	main_xlr_r.y        = 126;
+	main_xlr_r.w        = BAR_W;
+	main_xlr_r.h        = BAR_H;
+	main_xlr_r.range    = BAR_RANGE;
+	main_xlr_r.segs     = BAR_SEGMENTS;
+	main_xlr_r.bounds   = NULL;
+	main_xlr_r.img_off  = &LED_OFF;
+	main_xlr_r.img_on   = &LED;
+
+	barmeter_create(Tela_Main, &main_xlr_l);
+	barmeter_create(Tela_Main, &main_xlr_r);
+	barmeter_set(&main_xlr_l, 4);
+	barmeter_set(&main_xlr_r, 4);
+}
+
+void create_main_barmeter_aes(void)
+{
+	main_aes_l.on       = NULL;
+	main_aes_l.last_seg = -1;
+	main_aes_l.x        = 147;
+	main_aes_l.y        = 126;
+	main_aes_l.w        = BAR_W;
+	main_aes_l.h        = BAR_H;
+	main_aes_l.range    = BAR_RANGE;
+	main_aes_l.segs     = BAR_SEGMENTS;
+	main_aes_l.bounds   = NULL;
+	main_aes_l.img_off  = &LED_OFF;
+	main_aes_l.img_on   = &LED;
+
+	main_aes_r.on       = NULL;
+	main_aes_r.last_seg = -1;
+	main_aes_r.x        = 170;
+	main_aes_r.y        = 126;
+	main_aes_r.w        = BAR_W;
+	main_aes_r.h        = BAR_H;
+	main_aes_r.range    = BAR_RANGE;
+	main_aes_r.segs     = BAR_SEGMENTS;
+	main_aes_r.bounds   = NULL;
+	main_aes_r.img_off  = &LED_OFF;
+	main_aes_r.img_on   = &LED;
+
+	barmeter_create(Tela_Main, &main_aes_l);
+	barmeter_create(Tela_Main, &main_aes_r);
+	barmeter_set(&main_aes_l, 7);
+	barmeter_set(&main_aes_r, 7);
+}
+
+void create_main_barmeter_pc(void)
+{
+	main_pc_l.on       = NULL;
+	main_pc_l.last_seg = -1;
+	main_pc_l.x        = 194;
+	main_pc_l.y        = 126;
+	main_pc_l.w        = BAR_W;
+	main_pc_l.h        = BAR_H;
+	main_pc_l.range    = BAR_RANGE;
+	main_pc_l.segs     = BAR_SEGMENTS;
+	main_pc_l.bounds   = NULL;
+	main_pc_l.img_off  = &LED_OFF;
+	main_pc_l.img_on   = &LED;
+
+	main_pc_r.on       = NULL;
+	main_pc_r.last_seg = -1;
+	main_pc_r.x        = 217;
+	main_pc_r.y        = 126;
+	main_pc_r.w        = BAR_W;
+	main_pc_r.h        = BAR_H;
+	main_pc_r.range    = BAR_RANGE;
+	main_pc_r.segs     = BAR_SEGMENTS;
+	main_pc_r.bounds   = NULL;
+	main_pc_r.img_off  = &LED_OFF;
+	main_pc_r.img_on   = &LED;
+
+	barmeter_create(Tela_Main, &main_pc_l);
+	barmeter_create(Tela_Main, &main_pc_r);
+	barmeter_set(&main_pc_l, 11);
+	barmeter_set(&main_pc_r, 11);
+}
+
+void create_main_barmeter_tuner(void)
+{
+	main_tuner_l.on       = NULL;
+	main_tuner_l.last_seg = -1;
+	main_tuner_l.x        = 241;
+	main_tuner_l.y        = 126;
+	main_tuner_l.w        = BAR_W;
+	main_tuner_l.h        = BAR_H;
+	main_tuner_l.range    = BAR_RANGE;
+	main_tuner_l.segs     = BAR_SEGMENTS;
+	main_tuner_l.bounds   = NULL;
+	main_tuner_l.img_off  = &LED_OFF;
+	main_tuner_l.img_on   = &LED;
+
+	main_tuner_r.on       = NULL;
+	main_tuner_r.last_seg = -1;
+	main_tuner_r.x        = 264;
+	main_tuner_r.y        = 126;
+	main_tuner_r.w        = BAR_W;
+	main_tuner_r.h        = BAR_H;
+	main_tuner_r.range    = BAR_RANGE;
+	main_tuner_r.segs     = BAR_SEGMENTS;
+	main_tuner_r.bounds   = NULL;
+	main_tuner_r.img_off  = &LED_OFF;
+	main_tuner_r.img_on   = &LED;
+
+	barmeter_create(Tela_Main, &main_tuner_l);
+	barmeter_create(Tela_Main, &main_tuner_r);
+
+	barmeter_set(&main_tuner_l, 8);
+	barmeter_set(&main_tuner_r, 8);
+}
+
+void create_main_barmeter_usb(void)
+{
+	main_usb_l.on       = NULL;
+	main_usb_l.last_seg = -1;
+	main_usb_l.x        = 288;
+	main_usb_l.y        = 126;
+	main_usb_l.w        = BAR_W;
+	main_usb_l.h        = BAR_H;
+	main_usb_l.range    = BAR_RANGE;
+	main_usb_l.segs     = BAR_SEGMENTS;
+	main_usb_l.bounds   = NULL;
+	main_usb_l.img_off  = &LED_OFF;
+	main_usb_l.img_on   = &LED;
+
+	main_usb_r.on       = NULL;
+	main_usb_r.last_seg = -1;
+	main_usb_r.x        = 311;
+	main_usb_r.y        = 126;
+	main_usb_r.w        = BAR_W;
+	main_usb_r.h        = BAR_H;
+	main_usb_r.range    = BAR_RANGE;
+	main_usb_r.segs     = BAR_SEGMENTS;
+	main_usb_r.bounds   = NULL;
+	main_usb_r.img_off  = &LED_OFF;
+	main_usb_r.img_on   = &LED;
+
+	barmeter_create(Tela_Main, &main_usb_l);
+	barmeter_create(Tela_Main, &main_usb_r);
+	barmeter_set(&main_usb_l, 5);
+	barmeter_set(&main_usb_r, 5);
+}
+
+void create_main_barmeter_mpx(void)
+{
+	main_mpx1.on       = NULL;
+	main_mpx1.last_seg = -1;
+	main_mpx1.x        = 335;
+	main_mpx1.y        = 126;
+	main_mpx1.w        = BAR_W;
+	main_mpx1.h        = BAR_H;
+	main_mpx1.range    = BAR_RANGE;
+	main_mpx1.segs     = BAR_SEGMENTS;
+	main_mpx1.bounds   = NULL;
+	main_mpx1.img_off  = &LED_OFF;
+	main_mpx1.img_on   = &LED;
+
+	main_mpx2.on       = NULL;
+	main_mpx2.last_seg = -1;
+	main_mpx2.x        = 358;
+	main_mpx2.y        = 126;
+	main_mpx2.w        = BAR_W;
+	main_mpx2.h        = BAR_H;
+	main_mpx2.range    = BAR_RANGE;
+	main_mpx2.segs     = BAR_SEGMENTS;
+	main_mpx2.bounds   = NULL;
+	main_mpx2.img_off  = &LED_OFF;
+	main_mpx2.img_on   = &LED;
+
+	barmeter_create(Tela_Main, &main_mpx1);
+	barmeter_create(Tela_Main, &main_mpx2);
+
+	barmeter_set(&main_mpx1, 1);
+	barmeter_set(&main_mpx2, 1);
 }
