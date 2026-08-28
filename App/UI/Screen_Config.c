@@ -60,6 +60,87 @@ void create_labels_config(void)
     lv_obj_set_pos(text_config_top, 7, 5);
 }
 
+static void event_config_impedance(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_input(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_output(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_rate(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_silence(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_lock(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_display(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_signal(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_config_about(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
 void create_buttons_config(void)
 {
     // Button
@@ -83,15 +164,15 @@ void create_buttons_config(void)
 	    //lv_obj_align_to(label_bt_config[x], bt_config[x], LV_ALIGN_CENTER, 0, 0);
 	}
 
-	lv_obj_set_pos(bt_config[0], 30, 50);
-	lv_obj_set_pos(bt_config[1], 30, 100);
-	lv_obj_set_pos(bt_config[2], 30, 150);
-	lv_obj_set_pos(bt_config[3], 30, 200);
+	lv_obj_set_pos(bt_config[0], 30, 54);
+	lv_obj_set_pos(bt_config[1], 30, 104);
+	lv_obj_set_pos(bt_config[2], 30, 154);
+	lv_obj_set_pos(bt_config[3], 30, 204);
 
-	lv_obj_set_pos(bt_config[4], 225, 50);
-	lv_obj_set_pos(bt_config[5], 225, 100);
-	lv_obj_set_pos(bt_config[6], 225, 150);
-	lv_obj_set_pos(bt_config[7], 225, 200);
+	lv_obj_set_pos(bt_config[4], 225, 54);
+	lv_obj_set_pos(bt_config[5], 225, 104);
+	lv_obj_set_pos(bt_config[6], 225, 154);
+	lv_obj_set_pos(bt_config[7], 225, 204);
 
 	// Text
     lv_label_set_text(label_bt_config[0], "XLR INPUT IMPEDANCE");
@@ -112,7 +193,15 @@ void create_buttons_config(void)
     lv_label_set_text(label_bt_config[7], "SIGNAL GENERATOR");
     lv_obj_align_to(label_bt_config[7], bt_config[7], LV_ALIGN_CENTER, 0, 0);
 
-	//lv_obj_add_event_cb(bt_config[0], event_bt_out_phone_inc, LV_EVENT_ALL, NULL);
+    // Events
+	lv_obj_add_event_cb(bt_config[0], event_config_impedance, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[1], event_config_input, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[2], event_config_output, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[3], event_config_rate, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[4], event_config_silence, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[5], event_config_lock, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[6], event_config_display, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_config[7], event_config_signal, LV_EVENT_ALL, NULL);
 }
 
 void create_buttons_config_about(void)
@@ -125,8 +214,8 @@ void create_buttons_config_about(void)
 	lv_imagebutton_set_src(bt_config_about, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_VD.bin", NULL);
 	lv_imagebutton_set_src(bt_config_about, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_VD.bin", NULL);
 	lv_obj_add_state(bt_config_about, LV_IMAGEBUTTON_STATE_RELEASED);
-	//lv_obj_add_event_cb(bt_config_about, event_bt_out_phone_inc, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_about, 225, 250);
+	lv_obj_add_event_cb(bt_config_about, event_config_about, LV_EVENT_ALL, NULL);
+	lv_obj_set_pos(bt_config_about, 225, 254);
 
 	// Text
     lv_obj_t * text_config_about = lv_label_create(bt_config_about);

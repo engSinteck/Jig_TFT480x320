@@ -597,6 +597,51 @@ void create_buttons_menu_1(void)
     lv_obj_align_to(text_configs, bt_configs, LV_ALIGN_CENTER, 0, 0);
 }
 
+static void event_menu_usb(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_menu_pc(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_menu_proc(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_menu_mp3(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
+static void event_menu_tuner(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+
+	}
+}
+
 void create_buttons_menu_2(void)
 {
     // Menu
@@ -610,7 +655,6 @@ void create_buttons_menu_2(void)
 		lv_imagebutton_set_src(bt_menu[x], LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/MAIN/BT_MENU.bin", NULL);
 		lv_imagebutton_set_src(bt_menu[x], LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/MAIN/BT_MENU.bin", NULL);
 		lv_obj_add_state(bt_menu[x], LV_IMAGEBUTTON_STATE_RELEASED);
-		//lv_obj_add_event_cb(bt_menu[x], event_utils_bt_back, LV_EVENT_ALL, NULL);
 	}
 	// Pos
 	lv_obj_set_pos(bt_menu[0], 2, 286);
@@ -664,6 +708,13 @@ void create_buttons_menu_2(void)
     lv_obj_set_style_text_opa(text_menu_4, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_menu_4, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_align_to(text_menu_4, bt_menu[4], LV_ALIGN_CENTER, 0, 1);
+
+    // Events
+	lv_obj_add_event_cb(bt_menu[0], event_menu_usb, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_menu[1], event_menu_pc, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_menu[2], event_menu_proc, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_menu[3], event_menu_mp3, LV_EVENT_ALL, NULL);
+	lv_obj_add_event_cb(bt_menu[4], event_menu_tuner, LV_EVENT_ALL, NULL);
 }
 
 void create_Label_RDS(void)
