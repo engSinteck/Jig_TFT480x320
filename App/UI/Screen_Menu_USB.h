@@ -8,6 +8,11 @@
 #ifndef UI_SCREEN_MENU_USB_H_
 #define UI_SCREEN_MENU_USB_H_
 
+#include "main.h"
+#include "lvgl.h"
 
+extern lv_obj_t * Tela_Menu_USB;
+
+void Screen_Menu_USB_Create(void);
 
 #endif /* UI_SCREEN_MENU_USB_H_ */

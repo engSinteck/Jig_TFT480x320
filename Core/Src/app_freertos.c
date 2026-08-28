@@ -423,10 +423,11 @@ void StartTaskLVGL(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  // Testar codigo abaixo
+	  //// Testar codigo abaixo
       uint32_t time_till_next = lv_timer_handler();
       if(time_till_next == 0) time_till_next = 1; // Evita travar
-      vTaskDelay(pdMS_TO_TICKS(time_till_next));
+      //vTaskDelay(pdMS_TO_TICKS(time_till_next));
+      osDelay(5);
   }
   /* USER CODE END TaskLVGL */
 }

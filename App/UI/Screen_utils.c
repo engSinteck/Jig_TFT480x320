@@ -25,7 +25,7 @@ static void event_menu_back(lv_event_t * e)
 		Screen_Create_Main();
 
 		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
-		lv_screen_load_anim(Tela_Main, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
+		lv_screen_load_anim(Tela_Main, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
 	 }
 }
 

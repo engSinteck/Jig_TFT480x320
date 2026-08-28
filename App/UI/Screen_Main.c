@@ -14,6 +14,11 @@
 #include "../App/UI/Screen_Inputs.h"
 #include "../App/UI/Screen_Outputs.h"
 #include "../App/UI/Screen_Config.h"
+#include "../App/UI/Screen_Menu_USB.h"
+#include "../App/UI/Screen_Menu_PC.h"
+#include "../App/UI/Screen_Menu_PROC.h"
+#include "../App/UI/Screen_Menu_MP3.h"
+#include "../App/UI/Screen_Menu_TUNER.h"
 #include "../App/UI/led_ring.h"
 #include "../App/UI/bar_leds.h"
 
@@ -498,7 +503,7 @@ static void event_menu_inputs(lv_event_t * e)
 		Screen_Inputs_Create();
 
 		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
-		lv_screen_load_anim(Tela_Inputs, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
+		lv_screen_load_anim(Tela_Inputs, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
 	 }
 }
 
@@ -511,7 +516,7 @@ static void event_menu_outputs(lv_event_t * e)
 		Screen_Outputs_Create();
 
 		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
-		lv_screen_load_anim(Tela_Outputs, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
+		lv_screen_load_anim(Tela_Outputs, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
 	 }
 }
 
@@ -524,7 +529,7 @@ static void event_menu_config(lv_event_t * e)
 		Screen_Config_Create();
 
 		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
-		lv_screen_load_anim(Tela_Config, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
+		lv_screen_load_anim(Tela_Config, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
 	}
 }
 
@@ -602,8 +607,12 @@ static void event_menu_usb(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Menu_USB_Create();
 
-	}
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Menu_USB, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+	 }
 }
 
 static void event_menu_pc(lv_event_t * e)
@@ -611,8 +620,12 @@ static void event_menu_pc(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Menu_PC_Create();
 
-	}
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Menu_PC, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+	 }
 }
 
 static void event_menu_proc(lv_event_t * e)
@@ -620,8 +633,12 @@ static void event_menu_proc(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Menu_PROC_Create();
 
-	}
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Menu_PROC, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+	 }
 }
 
 static void event_menu_mp3(lv_event_t * e)
@@ -629,8 +646,12 @@ static void event_menu_mp3(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Menu_MP3_Create();
 
-	}
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Menu_MP3, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+	 }
 }
 
 static void event_menu_tuner(lv_event_t * e)
@@ -638,8 +659,12 @@ static void event_menu_tuner(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Menu_TUNER_Create();
 
-	}
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Menu_TUNER, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+	 }
 }
 
 void create_buttons_menu_2(void)

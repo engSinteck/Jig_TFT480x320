@@ -8,6 +8,11 @@
 #ifndef UI_SCREEN_MENU_TUNER_H_
 #define UI_SCREEN_MENU_TUNER_H_
 
+#include "main.h"
+#include "lvgl.h"
 
+extern lv_obj_t * Tela_Menu_TUNER;
+
+void Screen_Menu_TUNER_Create(void);
 
 #endif /* UI_SCREEN_MENU_TUNER_H_ */
