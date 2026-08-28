@@ -13,6 +13,7 @@
 #include "../App/UI/Screen_Main.h"
 #include "../App/UI/Screen_Inputs.h"
 #include "../App/UI/Screen_Outputs.h"
+#include "../App/UI/Screen_Config.h"
 #include "../App/UI/led_ring.h"
 #include "../App/UI/bar_leds.h"
 
@@ -156,21 +157,28 @@ uint32_t Gerar_Aleatorio_0_64(void)
 void update_main_screen(lv_timer_t * timer)
 {
 /*
-	// Vu-Meter Left+Right
-	if(!flag_vumeter_lr) {
-		demo_vumeter_lr++;
-		if(demo_vumeter_lr > 64) flag_vumeter_lr = 1;
-	}
-	else {
-		if(demo_vumeter_lr >= 1) {
-			demo_vumeter_lr--;
-		}
-		else flag_vumeter_lr = 0;
-	}
+	uint32_t val_64 = Gerar_Aleatorio_0_64();
+	set_vumeter_left(val_64);
+	set_vumeter_right(val_64);
 
-	uint32_t val_left = Gerar_Aleatorio_0_64();
-	set_vumeter_left(val_left);
-	set_vumeter_right(val_left);
+	uint8_t val_13_0 = ObterNumeroAleatorio0a13();
+	barmeter_set(&main_xlr_l, (int32_t)val_13_0);
+	barmeter_set(&main_xlr_r, (int32_t)val_13_0);
+
+	barmeter_set(&main_aes_l, (int32_t)val_13_0);
+	barmeter_set(&main_aes_r, (int32_t)val_13_0);
+
+	barmeter_set(&main_pc_l, (int32_t)val_13_0);
+	barmeter_set(&main_pc_r, (int32_t)val_13_0);
+
+	barmeter_set(&main_tuner_l, (int32_t)val_13_0);
+	barmeter_set(&main_tuner_r, (int32_t)val_13_0);
+
+	barmeter_set(&main_usb_l, (int32_t)val_13_0);
+	barmeter_set(&main_usb_r, (int32_t)val_13_0);
+
+	barmeter_set(&main_mpx1, (int32_t)val_13_0);
+	barmeter_set(&main_mpx2, (int32_t)val_13_0);
 */
 }
 
@@ -512,8 +520,12 @@ static void event_menu_config(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
+		// Cria a próxima tela antes de carregar
+		Screen_Config_Create();
 
-	 }
+		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+		lv_screen_load_anim(Tela_Config, LV_SCREEN_LOAD_ANIM_NONE, 500, 10, true);
+	}
 }
 
 void create_buttons_menu_1(void)

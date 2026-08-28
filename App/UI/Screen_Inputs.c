@@ -121,7 +121,7 @@ void Screen_Inputs_Create(void)
 	led_ring_set(&ring_in_bluetooth, 8);
 	led_ring_set(&ring_in_pc, 10);
 	//
-	create_button_back_main(Tela_Inputs);
+	create_button_back_main(Tela_Inputs, 381, 265);
 	create_text_footer(Tela_Inputs);
 }
 
@@ -419,6 +419,7 @@ void create_input_barmeter_xlr(void)
 	in_xlr_l.bounds   = NULL;
 	in_xlr_l.img_off  = &LED_OFF;
 	in_xlr_l.img_on   = &LED;
+	in_xlr_l.rotation = 0;
 
 	in_xlr_r.on       = NULL;
 	in_xlr_r.last_seg = -1;
@@ -431,6 +432,7 @@ void create_input_barmeter_xlr(void)
 	in_xlr_r.bounds   = NULL;
 	in_xlr_r.img_off  = &LED_OFF;
 	in_xlr_r.img_on   = &LED;
+	in_xlr_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &in_xlr_l);
 	barmeter_create(Tela_Inputs, &in_xlr_r);
@@ -452,6 +454,7 @@ void create_output_barmeter_xlr(void)
 	out_xlr_l.bounds   = NULL;
 	out_xlr_l.img_off  = &LED_OFF;
 	out_xlr_l.img_on   = &LED;
+	out_xlr_r.rotation = 0;
 
 	out_xlr_r.on       = NULL;
 	out_xlr_r.last_seg = -1;
@@ -464,6 +467,7 @@ void create_output_barmeter_xlr(void)
 	out_xlr_r.bounds   = NULL;
 	out_xlr_r.img_off  = &LED_OFF;
 	out_xlr_r.img_on   = &LED;
+	out_xlr_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &out_xlr_l);
 	barmeter_create(Tela_Inputs, &out_xlr_r);
@@ -485,6 +489,7 @@ void create_input_barmeter_usb(void)
 	in_usb_l.bounds   = NULL;
 	in_usb_l.img_off  = &LED_OFF;
 	in_usb_l.img_on   = &LED;
+	in_usb_l.rotation = 0;
 
 	in_usb_r.on       = NULL;
 	in_usb_r.last_seg = -1;
@@ -497,6 +502,7 @@ void create_input_barmeter_usb(void)
 	in_usb_r.bounds   = NULL;
 	in_usb_r.img_off  = &LED_OFF;
 	in_usb_r.img_on   = &LED;
+	in_usb_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &in_usb_l);
 	barmeter_create(Tela_Inputs, &in_usb_r);
@@ -518,6 +524,7 @@ void create_output_barmeter_usb(void)
 	out_usb_l.bounds   = NULL;
 	out_usb_l.img_off  = &LED_OFF;
 	out_usb_l.img_on   = &LED;
+	out_usb_l.rotation = 0;
 
 	out_usb_r.on       = NULL;
 	out_usb_r.last_seg = -1;
@@ -530,6 +537,7 @@ void create_output_barmeter_usb(void)
 	out_usb_r.bounds   = NULL;
 	out_usb_r.img_off  = &LED_OFF;
 	out_usb_r.img_on   = &LED;
+	out_usb_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &out_usb_l);
 	barmeter_create(Tela_Inputs, &out_usb_r);
@@ -551,6 +559,7 @@ void create_input_barmeter_ble(void)
 	in_ble_l.bounds   = NULL;
 	in_ble_l.img_off  = &LED_OFF;
 	in_ble_l.img_on   = &LED;
+	in_ble_l.rotation = 0;
 
 	in_ble_r.on       = NULL;
 	in_ble_r.last_seg = -1;
@@ -563,6 +572,7 @@ void create_input_barmeter_ble(void)
 	in_ble_r.bounds   = NULL;
 	in_ble_r.img_off  = &LED_OFF;
 	in_ble_r.img_on   = &LED;
+	in_ble_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &in_ble_l);
 	barmeter_create(Tela_Inputs, &in_ble_r);
@@ -584,6 +594,7 @@ void create_output_barmeter_ble(void)
 	out_ble_l.bounds   = NULL;
 	out_ble_l.img_off  = &LED_OFF;
 	out_ble_l.img_on   = &LED;
+	out_ble_l.rotation = 0;
 
 	out_ble_r.on       = NULL;
 	out_ble_r.last_seg = -1;
@@ -596,6 +607,7 @@ void create_output_barmeter_ble(void)
 	out_ble_r.bounds   = NULL;
 	out_ble_r.img_off  = &LED_OFF;
 	out_ble_r.img_on   = &LED;
+	out_ble_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &out_ble_l);
 	barmeter_create(Tela_Inputs, &out_ble_r);
@@ -617,6 +629,7 @@ void create_input_barmeter_pc(void)
 	in_pc_l.bounds   = NULL;
 	in_pc_l.img_off  = &LED_OFF;
 	in_pc_l.img_on   = &LED;
+	in_pc_l.rotation = 0;
 
 	in_pc_r.on       = NULL;
 	in_pc_r.last_seg = -1;
@@ -629,6 +642,7 @@ void create_input_barmeter_pc(void)
 	in_pc_r.bounds   = NULL;
 	in_pc_r.img_off  = &LED_OFF;
 	in_pc_r.img_on   = &LED;
+	in_pc_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &in_pc_l);
 	barmeter_create(Tela_Inputs, &in_pc_r);
@@ -650,6 +664,7 @@ void create_output_barmeter_pc(void)
 	out_pc_l.bounds   = NULL;
 	out_pc_l.img_off  = &LED_OFF;
 	out_pc_l.img_on   = &LED;
+	out_pc_l.rotation = 0;
 
 	out_pc_r.on       = NULL;
 	out_pc_r.last_seg = -1;
@@ -662,6 +677,7 @@ void create_output_barmeter_pc(void)
 	out_pc_r.bounds   = NULL;
 	out_pc_r.img_off  = &LED_OFF;
 	out_pc_r.img_on   = &LED;
+	out_pc_r.rotation = 0;
 
 	barmeter_create(Tela_Inputs, &out_pc_l);
 	barmeter_create(Tela_Inputs, &out_pc_r);
@@ -669,4 +685,3 @@ void create_output_barmeter_pc(void)
 	barmeter_set(&out_pc_l, 8);
 	barmeter_set(&out_pc_r, 8);
 }
-

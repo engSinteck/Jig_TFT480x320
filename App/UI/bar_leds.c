@@ -19,11 +19,14 @@ void barmeter_create(lv_obj_t * parent, barmeter_t * bar)
     /* fundo estatico: desenhado UMA vez, nunca mais invalida */
     lv_obj_t * bg = lv_image_create(parent);
     lv_image_set_src(bg, bar->img_off);
+    lv_obj_set_style_transform_rotation(bg, bar->rotation, 0);
     lv_obj_set_pos(bg, bar->x, bar->y);
 
     /* barra acesa: imagem CLIPADA (nao escalada) pela largura do objeto */
     bar->on = lv_image_create(parent);
     lv_image_set_src(bar->on, bar->img_on);
+    lv_obj_set_style_transform_rotation(bar->on, bar->rotation, 0);
+
     lv_image_set_inner_align(bar->on, LV_IMAGE_ALIGN_BOTTOM_LEFT);
     lv_obj_set_height(bar->on, 0);
     lv_obj_set_width(bar->on, bar->w);

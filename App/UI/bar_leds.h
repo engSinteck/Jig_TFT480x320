@@ -29,6 +29,7 @@ typedef struct {
     const int16_t *        bounds;   /* tabela de bordas em px (NULL=linear) */
     const lv_image_dsc_t * img_off;
     const lv_image_dsc_t * img_on;
+    int32_t				   rotation;
 } barmeter_t;
 
 void barmeter_create(lv_obj_t * parent, barmeter_t * bar);

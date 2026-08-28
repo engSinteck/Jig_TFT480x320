@@ -29,7 +29,7 @@ static void event_menu_back(lv_event_t * e)
 	 }
 }
 
-void create_button_back_main(lv_obj_t * parent)
+void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y)
 {
     // Button BACK/MAIN
     bt_backmain = lv_imagebutton_create(parent);
@@ -40,7 +40,7 @@ void create_button_back_main(lv_obj_t * parent)
     lv_imagebutton_set_src(bt_backmain, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/Inputs/BT_BACK.bin", NULL);
     lv_imagebutton_set_src(bt_backmain, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/Inputs/BT_BACK.bin", NULL);
     lv_obj_add_state(bt_backmain, LV_IMAGEBUTTON_STATE_RELEASED);
-    lv_obj_set_pos(bt_backmain, 381, 265);
+    lv_obj_set_pos(bt_backmain, x, y);
     lv_obj_add_event_cb(bt_backmain, event_menu_back, LV_EVENT_ALL, NULL);
 
 	// Text
