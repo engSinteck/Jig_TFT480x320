@@ -16,6 +16,7 @@
 LV_FONT_DECLARE(Neue_Medium_14);
 
 void create_config_display_label(void);
+void create_config_display_label_2(void);
 
 lv_obj_t * Tela_Config_Display = NULL;
 static lv_obj_t * text_config_display_top = NULL;
@@ -29,6 +30,7 @@ void Screen_Config_Display_Create(void)
 
 	// Label Screen
 	create_config_display_label();
+	create_config_display_label_2();
 
 	create_button_back_main(Tela_Config_Display, 380, 8, PAGE_CONFIG);
 }
@@ -43,4 +45,31 @@ void create_config_display_label(void)
     lv_obj_set_style_text_opa(text_config_display_top, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_config_display_top, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_pos(text_config_display_top, 7, 16);
+}
+
+void create_config_display_label_2(void)
+{
+	// Criar o label pai na tela atual
+	lv_obj_t * label_main = lv_label_create(Tela_Config_Display);
+
+	// Font
+	lv_obj_set_style_text_color(label_main, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_opa(label_main, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_main, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+	// Definir o texto
+	lv_label_set_text(label_main,
+	    "Select how long the display remains on before\n"
+	    "automatically turning off. Reducing the display on-time helps\n"
+	    "extend the display's service life and reduces power\n"
+	    "consumption. To wake the display again, simply touch anywhere\n"
+	    "on the screen.");
+
+	// Definir largura fixa para forçar a quebra de linha (word wrap)
+	lv_obj_set_width(label_main, 440); // Ajuste conforme a resolução da tela
+	lv_label_set_long_mode(label_main, LV_LABEL_LONG_WRAP);
+
+	// Centralizar o alinhamento das linhas de texto e a posição no container
+	lv_obj_set_style_text_align(label_main, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_align(label_main, LV_ALIGN_CENTER, 0, -20);
 }

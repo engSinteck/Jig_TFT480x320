@@ -16,6 +16,7 @@
 LV_FONT_DECLARE(Neue_Medium_14);
 
 void create_config_silence_label(void);
+void create_config_silence_label_2(void);
 
 lv_obj_t * Tela_Config_Silence = NULL;
 static lv_obj_t * text_config_silence_top = NULL;
@@ -29,6 +30,7 @@ void Screen_Config_Silence_Create(void)
 
 	// Label Screen
 	create_config_silence_label();
+	create_config_silence_label_2();
 
 	create_button_back_main(Tela_Config_Silence, 380, 8, PAGE_CONFIG);
 }
@@ -43,4 +45,53 @@ void create_config_silence_label(void)
     lv_obj_set_style_text_opa(text_config_silence_top, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_config_silence_top, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_pos(text_config_silence_top, 7, 16);
+}
+
+void create_config_silence_label_2(void)
+{
+	// Criar o label pai na tela atual
+	lv_obj_t * label_main = lv_label_create(Tela_Config_Silence);
+
+	// Font
+	lv_obj_set_style_text_color(label_main, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_opa(label_main, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_main, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+	// Definir o texto
+	// Texto do bloco superior
+	lv_label_set_text(label_main,
+	    "Set the delay before the audio interface automatically\n"
+	    "switches to the USB audio input when no audio is detected on the\n"
+	    "selected primary input.");
+
+	// Definir largura fixa para forçar a quebra de linha (word wrap)
+	lv_obj_set_width(label_main, 440); // Ajuste conforme a resolução da tela
+	lv_label_set_long_mode(label_main, LV_LABEL_LONG_WRAP);
+
+	// Centralizar o alinhamento das linhas de texto e a posição no container
+	lv_obj_set_style_text_align(label_main, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_align(label_main, LV_ALIGN_CENTER, 0, -20);
+
+	// Criar o label pai na tela atual
+	lv_obj_t * label_main_b = lv_label_create(Tela_Config_Silence);
+
+	// Font
+	lv_obj_set_style_text_color(label_main_b, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_opa(label_main_b, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_main_b, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+	// Definir o texto
+	// Texto do bloco superior
+	lv_label_set_text(label_main_b,
+	    "If no audio is available from the USB drive, or if no USB\n"
+	    "drive is connected, select the backup audio source to be used by\n"
+	    "the Silence Detector:");
+
+	// Definir largura fixa para forçar a quebra de linha (word wrap)
+	lv_obj_set_width(label_main_b, 440); // Ajuste conforme a resolução da tela
+	lv_label_set_long_mode(label_main_b, LV_LABEL_LONG_WRAP);
+
+	// Centralizar o alinhamento das linhas de texto e a posição no container
+	lv_obj_set_style_text_align(label_main_b, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_align(label_main_b, LV_ALIGN_CENTER, 20, -20);
 }

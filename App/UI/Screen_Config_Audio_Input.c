@@ -13,9 +13,11 @@
 #include "../App/UI/Screen_Config_Audio_Input.h"
 #include "../App/UI/Screen_Utils.h"
 
+LV_FONT_DECLARE(Neue_Medium_12);
 LV_FONT_DECLARE(Neue_Medium_14);
 
 void create_config_audio_in_label(void);
+void create_config_audio_in_label_2(void);
 
 lv_obj_t * Tela_Config_Audio_Input = NULL;
 static lv_obj_t * text_config_Audio_In_top = NULL;
@@ -29,6 +31,7 @@ void Screen_Config_Audio_Input_Create(void)
 
 	// Label Screen
 	create_config_audio_in_label();
+	create_config_audio_in_label_2();
 
 	create_button_back_main(Tela_Config_Audio_Input, 380, 8, PAGE_CONFIG);
 }
@@ -43,4 +46,34 @@ void create_config_audio_in_label(void)
     lv_obj_set_style_text_opa(text_config_Audio_In_top, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_config_Audio_In_top, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_pos(text_config_Audio_In_top, 7, 16);
+}
+
+void create_config_audio_in_label_2(void)
+{
+	// Criar o label pai na tela atual
+	lv_obj_t * label_main = lv_label_create(Tela_Config_Audio_Input);
+
+	// Font
+	lv_obj_set_style_text_color(label_main, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_opa(label_main, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_main, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+	// Definir o texto
+	lv_label_set_text(label_main,
+	    "This AUDIO INTERFACE supports both analog and\n"
+	    "AES/EBU digital audio inputs. Since the input type is not detected\n"
+	    "automatically, you must manually select the correct input mode.\n"
+	    "If the selected mode does not match the connected audio source,\n"
+	    "the audio will not be processed correctly and the interface may\n"
+	    "remain muted. Optical output port operate independently of this\n"
+	    "setting and remain available regardless of the selected input\n"
+	    "mode.");
+
+	// Definir largura fixa para forçar a quebra de linha (word wrap)
+	lv_obj_set_width(label_main, 440); // Ajuste conforme a resolução da tela
+	lv_label_set_long_mode(label_main, LV_LABEL_LONG_WRAP);
+
+	// Centralizar o alinhamento das linhas de texto e a posição no container
+	lv_obj_set_style_text_align(label_main, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_align(label_main, LV_ALIGN_CENTER, 0, -20);
 }
