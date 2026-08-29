@@ -11,7 +11,12 @@
 #include "main.h"
 #include "lvgl.h"
 
-void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y);
+enum page {
+	PAGE_MAIN = 0,
+	PAGE_CONFIG
+};
+
+void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y, uint32_t page);
 void create_text_footer(lv_obj_t * parent);
 
 #endif /* UI_SCREEN_UTILS_H_ */

@@ -30,7 +30,7 @@ void Screen_Config_Signal_Create(void)
 	// Label Screen
 	create_config_signal_label();
 
-	create_button_back_main(Tela_Config_Signal, 380, 8);
+	create_button_back_main(Tela_Config_Signal, 380, 8, PAGE_CONFIG);
 }
 
 void create_config_signal_label(void)

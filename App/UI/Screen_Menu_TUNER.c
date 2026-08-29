@@ -28,5 +28,5 @@ void Screen_Menu_TUNER_Create(void)
 	lv_img_set_src(img_fundo_menu_tuner, "S:/CONFIG/TELA_FUNDO.bin");
 	lv_obj_set_pos(img_fundo_menu_tuner, 0, 0);
 
-	create_button_back_main(Tela_Menu_TUNER, 380, 265);
+	create_button_back_main(Tela_Menu_TUNER, 380, 265, PAGE_MAIN);
 }

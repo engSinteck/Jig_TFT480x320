@@ -55,7 +55,7 @@ void Screen_Config_Create(void)
 	create_buttons_config();
 	create_buttons_config_about();
 
-	create_button_back_main(Tela_Config, 380, 8);
+	create_button_back_main(Tela_Config, 380, 8, PAGE_MAIN);
 }
 
 void create_labels_config(void)

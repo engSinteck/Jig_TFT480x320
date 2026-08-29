@@ -30,7 +30,7 @@ void Screen_Config_Lock_Create(void)
 	// Label Screen
 	create_config_lock_label();
 
-	create_button_back_main(Tela_Config_Lock, 380, 8);
+	create_button_back_main(Tela_Config_Lock, 380, 8, PAGE_CONFIG);
 }
 
 void create_config_lock_label(void)

@@ -31,7 +31,7 @@ void Screen_Config_Audio_Output_Create(void)
 	// Label Screen
 	create_config_audio_out_label();
 
-	create_button_back_main(Tela_Config_Audio_Output, 380, 8);
+	create_button_back_main(Tela_Config_Audio_Output, 380, 8, PAGE_CONFIG);
 }
 
 void create_config_audio_out_label(void)

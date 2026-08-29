@@ -30,7 +30,7 @@ void Screen_Config_Sample_Create(void)
 	// Label Screen
 	create_config_sample_label();
 
-	create_button_back_main(Tela_Config_Sample, 380, 8);
+	create_button_back_main(Tela_Config_Sample, 380, 8, PAGE_CONFIG);
 }
 
 void create_config_sample_label(void)

@@ -30,7 +30,7 @@ void Screen_Config_Silence_Create(void)
 	// Label Screen
 	create_config_silence_label();
 
-	create_button_back_main(Tela_Config_Silence, 380, 8);
+	create_button_back_main(Tela_Config_Silence, 380, 8, PAGE_CONFIG);
 }
 
 void create_config_silence_label(void)
