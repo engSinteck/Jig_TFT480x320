@@ -190,6 +190,11 @@ header file. */
 
 /* USER CODE BEGIN Defines */
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
+void lv_freertos_task_switch_in(const char * name);
+void lv_freertos_task_switch_out(void);
+
+#define traceTASK_SWITCHED_IN()  lv_freertos_task_switch_in(pxCurrentTCB->pcTaskName)
+#define traceTASK_SWITCHED_OUT() lv_freertos_task_switch_out()
 /* USER CODE END Defines */
 
 #endif /* __FREERTOS_CONFIG_H */
