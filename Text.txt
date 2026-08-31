@@ -1,0 +1,108 @@
+lv_label_set_text(label_text, 
+    "Select the desired audio output format. The audio\n"
+    "interface supports both analog XLR outputs and AES192 digital\n"
+    "output. Choose the output type that matches the connected\n"
+    "equipment to ensure proper operation and optimum audio\n"
+    "quality. Optical output port operate independently of this setting\n"
+    "and remain available regardless of the selected input mode.");
+	
+	
+lv_label_set_text(label_text, 
+    "Select the desired sample rate for the AES/EBU digital\n"
+    "output. Choose 48 kHz, 96 kHz or 192 kHz to match the\n"
+    "requirements of the connected equipment. When AES192 is\n"
+    "selected, the output automatically operates at a fixed sample\n"
+    "rate of 192 kHz.");
+	
+
+// Texto do bloco superior
+lv_label_set_text(label_text_top, 
+    "Set the delay before the audio interface automatically\n"
+    "switches to the USB audio input when no audio is detected on the\n"
+    "selected primary input.");
+
+// Texto do bloco inferior (abaixo dos botões)
+lv_label_set_text(label_text_bottom, 
+    "If no audio is available from the USB drive, or if no USB\n"
+    "drive is connected, select the backup audio source to be used by\n"
+    "the Silence Detector:");
+	
+lv_label_set_text(label_text, 
+    "The Lock Settings feature prevents unauthorized or\n"
+    "accidental modification of the device configuration. When\n"
+    "enabled, users cannot change any settings until the lock is\n"
+    "disabled. This feature is recommended for installations where\n"
+    "the equipment is accessible to multiple users, helping to protect\n"
+    "the system from unintended or unauthorized adjustments.");
+	
+
+lv_label_set_text(label_text, 
+    "Select how long the display remains on before\n"
+    "automatically turning off. Reducing the display on-time helps\n"
+    "extend the display's service life and reduces power\n"
+    "consumption. To wake the display again, simply touch anywhere\n"
+    "on the screen.");
+	
+	
+lv_label_set_text(label_text, 
+    "Designed primarily for FM broadcast applications, this\n"
+    "professional audio interface is equally suited for recording\n"
+    "studios, production environments and other applications where\n"
+    "exceptional audio quality is required. Its advanced engineering\n"
+    "delivers outstanding performance through ultra-low distortion,\n"
+    "excellent signal integrity and high-precision galvanic isolation\n"
+    "between the host computer and external audio equipment,\n"
+    "ensuring clean, noise-free operation even in demanding\n"
+    "installations.\n"
+    "This product has been developed by the engineering\n"
+    "team at Sinteck Next, a Brazilian company specializing in\n"
+    "professional broadcast equipment, including FM transmitters,\n"
+    "STL systems and related technologies.");
+	
+	
+	// Texto principal (Branco)
+lv_label_set_text(label_text_main, 
+    "Every detail has been carefully designed to provide the\n"
+    "reliability, precision and performance expected by professional\n"
+    "users.\n"
+    "We are committed to the continuous improvement of our\n"
+    "products. If you have suggestions, feature requests or\n"
+    "comments that could help us enhance this audio interface, we\n"
+    "would be delighted to hear from you.\n"
+    "Your feedback is greatly appreciated and plays an\n"
+    "important role in the future development of our products.\n"
+    "Thank you for your confidence in Sinteck Next. It is our\n"
+    "pleasure to have you as a customer, and we sincerely appreciate\n"
+    "your support.");
+
+
+// Texto de contato em amarelo (ou use recolor tags: "#ffff00 texto#")
+lv_label_set_text(label_text_contact, 
+    "www.sinteck.com | cs@sinteck.com | +55 11 20438640");
+	
+	
+	
+	
+from PIL import Image, ImageOps
+
+def redimensionar_para_canvas(caminho_imagem, caminho_saida, largura_alvo=179, altura_alvo=36):
+    img = Image.open(caminho_imagem).convert("RGBA")
+    
+    # Redimensiona mantendo a proporção para caber dentro de 179x36
+    img.thumbnail((largura_alvo, altura_alvo), Image.Resampling.LANCZOS)
+    
+    # Cria uma nova imagem com o tamanho exato de 179x36 com fundo transparente
+    canvas = Image.new("RGBA", (largura_alvo, altura_alvo), (0, 0, 0, 0))
+    
+    # Centraliza o botão dentro do canvas 179x36
+    pos_x = (largura_alvo - img.width) // 2
+    pos_y = (altura_alvo - img.height) // 2
+    canvas.paste(img, (pos_x, pos_y), img)
+    
+    # Salva como PNG transparente
+    canvas.save(caminho_saida, "PNG")
+
+# Execute para cada uma das suas 3 imagens originais:
+redimensionar_para_canvas("botao_normal.png", "btn_normal_179x36.png")
+redimensionar_para_canvas("botao_apertado.png", "btn_pressed_179x36.png")
+redimensionar_para_canvas("botao_selecionado.png", "btn_selected_179x36.png")

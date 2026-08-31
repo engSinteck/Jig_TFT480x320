@@ -7,6 +7,7 @@
 
 #include "../App/UI/Screen_Utils.h"
 #include "../App/UI/Screen_Main.h"
+#include "../App/UI/Screen_Config.h"
 
 LV_FONT_DECLARE(Neue_Medium_14);
 LV_FONT_DECLARE(Neue_Medium_16);
@@ -21,15 +22,26 @@ static void event_menu_back(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
-		// Cria a próxima tela antes de carregar
-		Screen_Create_Main();
+		uint32_t page = (uint32_t)(uintptr_t)lv_event_get_user_data(e);
 
-		// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
-		lv_screen_load_anim(Tela_Main, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+		switch(page) {
+			case PAGE_MAIN:
+				// Cria a próxima tela antes de carregar
+				Screen_Create_Main();
+				// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+				lv_screen_load_anim(Tela_Main, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+				break;
+			case PAGE_CONFIG:
+				// Cria a próxima tela antes de carregar
+				Screen_Config_Create();
+				// auto_del = true vai deletar a Tela_Main automaticamente ao fim da animação
+				lv_screen_load_anim(Tela_Config, LV_SCREEN_LOAD_ANIM_NONE, 0, 0, true);
+				break;
+		}
 	 }
 }
 
-void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y)
+void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y, uint32_t page)
 {
     // Button BACK/MAIN
     bt_backmain = lv_imagebutton_create(parent);
@@ -39,9 +51,8 @@ void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y)
     lv_imagebutton_set_src(bt_backmain, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/Inputs/BT_BACK_P.bin", NULL);
     lv_imagebutton_set_src(bt_backmain, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/Inputs/BT_BACK.bin", NULL);
     lv_imagebutton_set_src(bt_backmain, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/Inputs/BT_BACK.bin", NULL);
-    lv_obj_add_state(bt_backmain, LV_IMAGEBUTTON_STATE_RELEASED);
     lv_obj_set_pos(bt_backmain, x, y);
-    lv_obj_add_event_cb(bt_backmain, event_menu_back, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(bt_backmain, event_menu_back, LV_EVENT_ALL, (void *)(uintptr_t)page);
 
 	// Text
     lv_obj_t * text_back = lv_label_create(bt_backmain);

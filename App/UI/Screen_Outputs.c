@@ -102,7 +102,7 @@ void Screen_Outputs_Create(void)
 	// Text 7-Segment
 	create_outputs_7Segment();
 
-	create_button_back_main(Tela_Outputs, 381, 265);
+	create_button_back_main(Tela_Outputs, 381, 265, PAGE_MAIN);
 	create_text_footer(Tela_Outputs);
 }
 

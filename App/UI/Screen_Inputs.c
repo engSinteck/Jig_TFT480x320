@@ -121,7 +121,7 @@ void Screen_Inputs_Create(void)
 	led_ring_set(&ring_in_bluetooth, 8);
 	led_ring_set(&ring_in_pc, 10);
 	//
-	create_button_back_main(Tela_Inputs, 381, 265);
+	create_button_back_main(Tela_Inputs, 381, 265, PAGE_MAIN);
 	create_text_footer(Tela_Inputs);
 }
 
