@@ -19,6 +19,7 @@ void create_config_signal_label(void);
 
 lv_obj_t * Tela_Config_Signal = NULL;
 static lv_obj_t * text_config_signal_top = NULL;
+static lv_obj_t * img_fundo_signal = NULL;
 
 void Screen_Config_Signal_Create(void)
 {
@@ -26,6 +27,12 @@ void Screen_Config_Signal_Create(void)
 	lv_obj_clear_flag(Tela_Config_Signal, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
 	lv_obj_set_style_bg_color(Tela_Config_Signal, lv_color_hex(0x000000), 0);
 	lv_obj_set_style_bg_grad_color(Tela_Config_Signal, lv_color_hex(0x000000), 0);
+
+	// Imagem de Fundo
+	img_fundo_signal = lv_img_create(Tela_Config_Signal);
+	//lv_img_set_src(img_fundo_signal, &TELA_FUNDO_MAIN);
+	lv_img_set_src(img_fundo_signal, "S:/GENERATOR/TELA_GENERATOR.bin");
+	lv_obj_set_pos(img_fundo_signal, 0, 0);
 
 	// Label Screen
 	create_config_signal_label();

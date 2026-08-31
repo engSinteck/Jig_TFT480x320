@@ -13,8 +13,8 @@
 #include "../App/UI/Screen_Config_Impedance.h"
 #include "../App/UI/Screen_Utils.h"
 
-LV_FONT_DECLARE(Neue_Medium_12);
 LV_FONT_DECLARE(Neue_Medium_14);
+LV_FONT_DECLARE(Neue_Medium_16);
 
 void create_config_imp_label(void);
 void create_btn_config_imp_600(void);
@@ -61,21 +61,22 @@ static void event_bt_600(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
-
+		lv_imagebutton_set_state(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+		lv_imagebutton_set_state(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_RELEASED);
 	}
 }
 
 void create_btn_config_imp_600(void)
 {
 	bt_config_imp_600 = lv_imagebutton_create(Tela_Config_IMP);
-	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_SEL.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_G_P.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_G_P.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_G_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_imp_600, event_bt_600, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_imp_600, 40, 200);
+	lv_obj_set_pos(bt_config_imp_600, 23, 240);
 	lv_imagebutton_set_state(bt_config_imp_600, LV_IMAGEBUTTON_STATE_RELEASED);
 
 	// Text
@@ -94,22 +95,23 @@ static void event_bt_10k(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
-
+		lv_imagebutton_set_state(bt_config_imp_600, LV_IMAGEBUTTON_STATE_RELEASED);
+		lv_imagebutton_set_state(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 	}
 }
 
 void create_btn_config_imp_10k(void)
 {
 	bt_config_imp_10k = lv_imagebutton_create(Tela_Config_IMP);
-	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_SEL.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_G_P.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_G_P.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
+	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_G_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_imp_10k, event_bt_10k, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_imp_10k, 261, 200);
-	lv_imagebutton_set_state(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_RELEASED);
+	lv_obj_set_pos(bt_config_imp_10k, 252, 240);
+	lv_imagebutton_set_state(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 
 	// Text
     lv_obj_t * text_bt_imp_10k = lv_label_create(bt_config_imp_10k);
@@ -130,18 +132,18 @@ void create_config_imp_label_2(void)
 	// Font
 	lv_obj_set_style_text_color(label_main, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
 	lv_obj_set_style_text_opa(label_main, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(label_main, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_main, &Neue_Medium_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 	// Definir o texto
 	lv_label_set_text(label_main,
 	    "Select the input impedance that matches your audio source.\n"
-	    "Proper impedance matching ensures the best audio performance and signal integrity\n");
+	    "Proper impedance matching ensures the best audio performance and signal integrity:\n");
 
 	// Definir largura fixa para forçar a quebra de linha (word wrap)
 	lv_obj_set_width(label_main, 400); // Ajuste conforme a resolução da tela
 	lv_label_set_long_mode(label_main, LV_LABEL_LONG_WRAP);
 
 	// Centralizar o alinhamento das linhas de texto e a posição no container
-	lv_obj_set_style_text_align(label_main, LV_TEXT_ALIGN_CENTER, 0);
+	lv_obj_set_style_text_align(label_main, LV_TEXT_ALIGN_LEFT, 0);
 	lv_obj_align(label_main, LV_ALIGN_CENTER, 0, -20);
 }

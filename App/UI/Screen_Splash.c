@@ -54,7 +54,8 @@ void Screen_Create_Splash(void)
 
 	// Imagem de Fundo
 	img_fundo_splash = lv_img_create(Tela_Splash);
-	lv_img_set_src(img_fundo_splash, &LOGO_ONE_2);
+	//lv_img_set_src(img_fundo_splash, &LOGO_ONE_2);
+	lv_img_set_src(img_fundo_splash, "S:/SPLASH/LOGO_ONE.bin");
 	lv_obj_set_pos(img_fundo_splash, 0, 0);
 
 	// Cria o timer de 3000ms (3 segundos)

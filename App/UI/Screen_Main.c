@@ -390,7 +390,7 @@ static void event_bt_prevff(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	 if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency > 76000) {
+		 if(fm_frequency > 76100) {
 			 fm_frequency -= 1000; // Decrementa de 1000
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_frequency, str_freq);
@@ -757,10 +757,10 @@ void create_Label_RDS(void)
 
 void formatar_frequencia(int32_t valor, char *resultado, size_t tamanho)
 {
-    if (valor < 76000 || valor > 108100) {
-        snprintf(resultado, tamanho, "Fora do intervalo");
-        return;
-    }
+    //if (valor < 76000 || valor > 108100) {
+    //    snprintf(resultado, tamanho, "Fora do intervalo");
+    //    return;
+    //}
 
     int milhares = valor / 1000;
     int unidades = valor % 1000;
@@ -771,15 +771,19 @@ void formatar_frequencia(int32_t valor, char *resultado, size_t tamanho)
 void create_Label_Frequency(int32_t frequency)
 {
     label_frequency = lv_label_create(Tela_Main);
-    lv_obj_set_width(label_frequency, LV_SIZE_CONTENT);
+    lv_obj_set_width(label_frequency, 316);
     lv_obj_set_height(label_frequency, LV_SIZE_CONTENT);
-    lv_obj_set_style_text_letter_space(label_frequency, 0, 1);
-    lv_obj_set_style_text_line_space(label_frequency, 0, 1);
-    formatar_frequencia(frequency, str_freq, sizeof(str_freq));
-    lv_label_set_text_fmt(label_frequency, str_freq);
+    // Color Font
     lv_obj_set_style_text_color(label_frequency, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(label_frequency, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(label_frequency, &Neue_Medium_52, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_letter_space(label_frequency, 0, 1);
+    lv_obj_set_style_text_line_space(label_frequency, 0, 1);
+    lv_obj_set_style_text_align(label_frequency, LV_TEXT_ALIGN_CENTER, 0);
+
+    formatar_frequencia(frequency, str_freq, sizeof(str_freq));
+    lv_label_set_text_fmt(label_frequency, str_freq);
+
     lv_obj_set_pos(label_frequency, 12, 34);
 }
 
@@ -936,8 +940,8 @@ void create_img_button_volume(void)
 {
 	// PHONE Symbol
 	lv_obj_t * img_phone = lv_img_create(Tela_Main);
-	lv_img_set_src(img_phone, &PHONE);
-	//lv_img_set_src(img_phone, "S:/MAIN/PHONE.bin");
+	//lv_img_set_src(img_phone, &PHONE);
+	lv_img_set_src(img_phone, "S:/MAIN/PHONE.bin");
 	lv_obj_set_pos(img_phone, 456, 165);
 }
 

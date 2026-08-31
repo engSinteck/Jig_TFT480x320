@@ -17,10 +17,10 @@
 
 LV_FONT_DECLARE(Neue_Medium_12);
 LV_FONT_DECLARE(Neue_Medium_14);
-LV_FONT_DECLARE(Segment_BoldItalic_28);
+LV_FONT_DECLARE(Segment_BoldItalic_30);
 
-LV_IMG_DECLARE(LED);
-LV_IMG_DECLARE(LED_OFF);
+LV_IMG_DECLARE(LED_12);
+LV_IMG_DECLARE(LED_12_OFF);
 
 void create_labels_outputs(void);
 void create_buttons_vol_out_xlr(void);
@@ -29,6 +29,8 @@ void create_buttons_vol_out_phone(void);
 void create_buttons_vol_out_mpx1(void);
 void create_buttons_vol_out_mpx2(void);
 void create_output_barmeter_xlr_out(void);
+void create_output_barmeter_aes_out(void);
+void create_output_barmeter_mpx_out(void);
 void create_outputs_text(void);
 void create_outputs_7Segment(void);
 
@@ -60,6 +62,12 @@ static led_ring_t ring_out_mpx2;
 static barmeter_t out_xlr_l;
 static barmeter_t out_xlr_r;
 
+static barmeter_t out_aes_l;
+static barmeter_t out_aes_r;
+
+static barmeter_t out_mpx1;
+static barmeter_t out_mpx2;
+
 void Screen_Outputs_Create(void)
 {
 	Tela_Outputs = lv_obj_create(NULL);
@@ -84,11 +92,11 @@ void Screen_Outputs_Create(void)
 	create_outputs_text();
 
 	// Led Rings
-	led_ring_create(Tela_Outputs, &ring_out_xlr, 12, 39);
-	led_ring_create(Tela_Outputs, &ring_out_aes, 200, 39);
+	led_ring_create(Tela_Outputs, &ring_out_xlr, 11, 39);
+	led_ring_create(Tela_Outputs, &ring_out_aes, 199, 39);
 	led_ring_create(Tela_Outputs, &ring_out_phone, 382, 39);
-	led_ring_create(Tela_Outputs, &ring_out_mpx1, 12, 174);
-	led_ring_create(Tela_Outputs, &ring_out_mpx2, 200, 174);
+	led_ring_create(Tela_Outputs, &ring_out_mpx1, 11, 174);
+	led_ring_create(Tela_Outputs, &ring_out_mpx2, 199, 174);
 
 	led_ring_set(&ring_out_xlr, 20);
 	led_ring_set(&ring_out_aes, 10);
@@ -98,6 +106,8 @@ void Screen_Outputs_Create(void)
 
 	// Bar-Meter
 	create_output_barmeter_xlr_out();
+	create_output_barmeter_aes_out();
+	create_output_barmeter_mpx_out();
 
 	// Text 7-Segment
 	create_outputs_7Segment();
@@ -348,27 +358,27 @@ void create_output_barmeter_xlr_out(void)
 	out_xlr_l.on       = NULL;
 	out_xlr_l.last_seg = -1;
 	out_xlr_l.x        = 187;
-	out_xlr_l.y        = 40;
+	out_xlr_l.y        = 30;
 	out_xlr_l.w        = BAR_W;
-	out_xlr_l.h        = BAR_H;
-	out_xlr_l.range    = BAR_RANGE;
-	out_xlr_l.segs     = BAR_SEGMENTS;
+	out_xlr_l.h        = 78;
+	out_xlr_l.range    = 12;
+	out_xlr_l.segs     = 12;
 	out_xlr_l.bounds   = NULL;
-	out_xlr_l.img_off  = &LED_OFF;
-	out_xlr_l.img_on   = &LED;
+	out_xlr_l.img_off  = &LED_12_OFF;
+	out_xlr_l.img_on   = &LED_12;
 	out_xlr_l.rotation = 900;
 
 	out_xlr_r.on       = NULL;
 	out_xlr_r.last_seg = -1;
 	out_xlr_r.x        = 187;
-	out_xlr_r.y        = 63;
+	out_xlr_r.y        = 54;
 	out_xlr_r.w        = BAR_W;
-	out_xlr_r.h        = BAR_H;
-	out_xlr_r.range    = BAR_RANGE;
-	out_xlr_r.segs     = BAR_SEGMENTS;
+	out_xlr_r.h        = 78;
+	out_xlr_r.range    = 12;
+	out_xlr_r.segs     = 12;
 	out_xlr_r.bounds   = NULL;
-	out_xlr_r.img_off  = &LED_OFF;
-	out_xlr_r.img_on   = &LED;
+	out_xlr_r.img_off  = &LED_12_OFF;
+	out_xlr_r.img_on   = &LED_12;
 	out_xlr_r.rotation = 900;
 
 	barmeter_create(Tela_Outputs, &out_xlr_l);
@@ -376,6 +386,76 @@ void create_output_barmeter_xlr_out(void)
 
 	//barmeter_set(&out_xlr_l, 4);
 	//barmeter_set(&out_xlr_r, 4);
+}
+
+void create_output_barmeter_aes_out(void)
+{
+	out_aes_l.on       = NULL;
+	out_aes_l.last_seg = -1;
+	out_aes_l.x        = 374;
+	out_aes_l.y        = 30;
+	out_aes_l.w        = BAR_W;
+	out_aes_l.h        = 78;
+	out_aes_l.range    = 12;
+	out_aes_l.segs     = 12;
+	out_aes_l.bounds   = NULL;
+	out_aes_l.img_off  = &LED_12_OFF;
+	out_aes_l.img_on   = &LED_12;
+	out_aes_l.rotation = 900;
+
+	out_aes_r.on       = NULL;
+	out_aes_r.last_seg = -1;
+	out_aes_r.x        = 374;
+	out_aes_r.y        = 54;
+	out_aes_r.w        = BAR_W;
+	out_aes_r.h        = 78;
+	out_aes_r.range    = 12;
+	out_aes_r.segs     = 12;
+	out_aes_r.bounds   = NULL;
+	out_aes_r.img_off  = &LED_12_OFF;
+	out_aes_r.img_on   = &LED_12;
+	out_aes_r.rotation = 900;
+
+	barmeter_create(Tela_Outputs, &out_aes_l);
+	barmeter_create(Tela_Outputs, &out_aes_r);
+
+	//barmeter_set(&out_aes_l, 4);
+	//barmeter_set(&out_aes_r, 4);
+}
+
+void create_output_barmeter_mpx_out(void)
+{
+	out_mpx1.on       = NULL;
+	out_mpx1.last_seg = -1;
+	out_mpx1.x        = 187;
+	out_mpx1.y        = 166;
+	out_mpx1.w        = BAR_W;
+	out_mpx1.h        = 78;
+	out_mpx1.range    = 12;
+	out_mpx1.segs     = 12;
+	out_mpx1.bounds   = NULL;
+	out_mpx1.img_off  = &LED_12_OFF;
+	out_mpx1.img_on   = &LED_12;
+	out_mpx1.rotation = 900;
+
+	out_mpx2.on       = NULL;
+	out_mpx2.last_seg = -1;
+	out_mpx2.x        = 374;
+	out_mpx2.y        = 166;
+	out_mpx2.w        = BAR_W;
+	out_mpx2.h        = 78;
+	out_mpx2.range    = 12;
+	out_mpx2.segs     = 12;
+	out_mpx2.bounds   = NULL;
+	out_mpx2.img_off  = &LED_12_OFF;
+	out_mpx2.img_on   = &LED_12;
+	out_mpx2.rotation = 900;
+
+	barmeter_create(Tela_Outputs, &out_mpx1);
+	barmeter_create(Tela_Outputs, &out_mpx2);
+
+	//barmeter_set(&out_mpx1, 4);
+	//barmeter_set(&out_mpx2, 4);
 }
 
 void create_outputs_text(void)
@@ -393,25 +473,25 @@ void create_outputs_text(void)
     lv_obj_set_pos(text_out_indic[0], 10, 28);
 
     lv_label_set_text(text_out_indic[1], "L");
-    lv_obj_set_pos(text_out_indic[1], 100, 44);
+    lv_obj_set_pos(text_out_indic[1], 100, 34);
 
     lv_label_set_text(text_out_indic[2], "R");
-    lv_obj_set_pos(text_out_indic[2], 100, 64);
+    lv_obj_set_pos(text_out_indic[2], 100, 58);
 
     lv_label_set_text(text_out_indic[3], "LEVEL %:");
     lv_obj_set_pos(text_out_indic[3], 196, 28);
 
     lv_label_set_text(text_out_indic[4], "L");
-    lv_obj_set_pos(text_out_indic[4], 290, 44);
+    lv_obj_set_pos(text_out_indic[4], 288, 34);
 
     lv_label_set_text(text_out_indic[5], "R");
-    lv_obj_set_pos(text_out_indic[5], 290, 64);
+    lv_obj_set_pos(text_out_indic[5], 288, 58);
 
     lv_label_set_text(text_out_indic[6], "LEVEL %:");
-    lv_obj_set_pos(text_out_indic[6], 120, 200);
+    lv_obj_set_pos(text_out_indic[6], 120, 196);
 
     lv_label_set_text(text_out_indic[7], "LEVEL %:");
-    lv_obj_set_pos(text_out_indic[7], 310, 200);
+    lv_obj_set_pos(text_out_indic[7], 310, 196);
 
     lv_label_set_text(text_out_indic[8], "EARPHONES");
     lv_obj_set_pos(text_out_indic[8], 394, 28);
@@ -424,34 +504,34 @@ void create_outputs_7Segment(void)
 	lv_obj_set_height(label_out_xlr, LV_SIZE_CONTENT);
 	lv_obj_set_style_text_color(label_out_xlr, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
 	lv_obj_set_style_text_opa(label_out_xlr, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(label_out_xlr, &Segment_BoldItalic_28, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_out_xlr, &Segment_BoldItalic_30, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(label_out_xlr, "26.6");
-    lv_obj_set_pos(label_out_xlr, 108, 94);
+    lv_obj_set_pos(label_out_xlr, 108, 90);
 
 	label_out_aes = lv_label_create(Tela_Outputs);
 	lv_obj_set_width(label_out_aes, LV_SIZE_CONTENT);
 	lv_obj_set_height(label_out_aes, LV_SIZE_CONTENT);
 	lv_obj_set_style_text_color(label_out_aes, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
 	lv_obj_set_style_text_opa(label_out_aes, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(label_out_aes, &Segment_BoldItalic_28, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_out_aes, &Segment_BoldItalic_30, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(label_out_aes, "35.8");
-    lv_obj_set_pos(label_out_aes, 300, 94);
+    lv_obj_set_pos(label_out_aes, 296, 90);
 
 	label_out_mpx1 = lv_label_create(Tela_Outputs);
 	lv_obj_set_width(label_out_mpx1, LV_SIZE_CONTENT);
 	lv_obj_set_height(label_out_mpx1, LV_SIZE_CONTENT);
 	lv_obj_set_style_text_color(label_out_mpx1, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
 	lv_obj_set_style_text_opa(label_out_mpx1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(label_out_mpx1, &Segment_BoldItalic_28, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_out_mpx1, &Segment_BoldItalic_30, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(label_out_mpx1, "58.0");
-    lv_obj_set_pos(label_out_mpx1, 108, 226);
+    lv_obj_set_pos(label_out_mpx1, 108, 224);
 
 	label_out_mpx2 = lv_label_create(Tela_Outputs);
 	lv_obj_set_width(label_out_mpx2, LV_SIZE_CONTENT);
 	lv_obj_set_height(label_out_mpx2, LV_SIZE_CONTENT);
 	lv_obj_set_style_text_color(label_out_mpx2, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
 	lv_obj_set_style_text_opa(label_out_mpx2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-	lv_obj_set_style_text_font(label_out_mpx2, &Segment_BoldItalic_28, LV_PART_MAIN | LV_STATE_DEFAULT);
+	lv_obj_set_style_text_font(label_out_mpx2, &Segment_BoldItalic_30, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_label_set_text(label_out_mpx2, "22.2");
-    lv_obj_set_pos(label_out_mpx2, 300, 226);
+    lv_obj_set_pos(label_out_mpx2, 296, 224);
 }
