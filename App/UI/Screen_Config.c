@@ -192,12 +192,12 @@ void create_buttons_config(void)
     // Button
 	for(uint8_t x = 0; x < 8; x++) {
 		bt_config[x] = lv_imagebutton_create(Tela_Config);
-		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
-		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
-		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
-		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG.bin", NULL);
+		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/CONFIG/BT_MENU_CONFIG.bin", NULL);
+		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/CONFIG/BT_MENU_CONFIG_P.bin", NULL);
+		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/CONFIG/BT_MENU_CONFIG.bin", NULL);
+		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/CONFIG/BT_MENU_CONFIG_P.bin", NULL);
+		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_MENU_CONFIG.bin", NULL);
+		lv_imagebutton_set_src(bt_config[x], LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_MENU_CONFIG.bin", NULL);
 		lv_obj_add_state(bt_config[x], LV_IMAGEBUTTON_STATE_RELEASED);
 
 		// Text
