@@ -12,7 +12,9 @@
 #include "lvgl.h"
 
 extern lv_obj_t * Tela_Config_About;
+extern lv_obj_t * Tela_Config_About_1;
 
 void Screen_Config_About_Create(void);
+void Screen_Config_About_1_Create(void);
 
 #endif /* UI_SCREEN_CONFIG_ABOUT_H_ */

@@ -23,6 +23,7 @@ void create_btn_config_sample_96(void);
 void create_btn_config_sample_192(void);
 
 lv_obj_t * Tela_Config_Sample = NULL;
+static lv_obj_t * img_fundo_sample = NULL;
 static lv_obj_t * text_config_sample_top = NULL;
 static lv_obj_t * bt_config_sample_48 = NULL;
 static lv_obj_t * bt_config_sample_96 = NULL;
@@ -36,8 +37,13 @@ void Screen_Config_Sample_Create(void)
 	lv_obj_set_style_bg_grad_color(Tela_Config_Sample, lv_color_hex(0x000000), 0);
 
 	// Label Screen
-	create_config_sample_label();
-	create_config_sample_label_2();
+	//create_config_sample_label();
+	//create_config_sample_label_2();
+
+	// Imagem de Fundo
+	img_fundo_sample = lv_img_create(Tela_Config_Sample);
+	lv_img_set_src(img_fundo_sample, "S:/CONFIG/TELA_CONFIG_SAMPLE.bin");
+	lv_obj_set_pos(img_fundo_sample, 0, 0);
 
 	// Buttons
 	create_btn_config_sample_48();
@@ -107,7 +113,7 @@ void create_btn_config_sample_48(void)
 	lv_imagebutton_set_src(bt_config_sample_48, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
 	lv_imagebutton_set_src(bt_config_sample_48, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_P_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_sample_48, event_bt_config_sample_48, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_sample_48, 18, 240);
+	lv_obj_set_pos(bt_config_sample_48, 18, 212);
 	lv_imagebutton_set_state(bt_config_sample_48, LV_IMAGEBUTTON_STATE_RELEASED);
 
 	// Text
@@ -127,8 +133,8 @@ static void event_bt_config_sample_96(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
-		lv_imagebutton_set_state(bt_config_sample_48,  LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
-		lv_imagebutton_set_state(bt_config_sample_96, LV_IMAGEBUTTON_STATE_RELEASED);
+		lv_imagebutton_set_state(bt_config_sample_48,  LV_IMAGEBUTTON_STATE_RELEASED);
+		lv_imagebutton_set_state(bt_config_sample_96, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 		lv_imagebutton_set_state(bt_config_sample_192 , LV_IMAGEBUTTON_STATE_RELEASED);
 	}
 }
@@ -143,7 +149,7 @@ void create_btn_config_sample_96(void)
 	lv_imagebutton_set_src(bt_config_sample_96, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
 	lv_imagebutton_set_src(bt_config_sample_96, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_P_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_sample_96, event_bt_config_sample_96, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_sample_96, 172, 240);
+	lv_obj_set_pos(bt_config_sample_96, 172, 212);
 	lv_imagebutton_set_state(bt_config_sample_96, LV_IMAGEBUTTON_STATE_RELEASED);
 
 	// Text
@@ -162,9 +168,9 @@ static void event_bt_config_sample_192(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED) {
-		lv_imagebutton_set_state(bt_config_sample_48,  LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+		lv_imagebutton_set_state(bt_config_sample_48,  LV_IMAGEBUTTON_STATE_RELEASED);
 		lv_imagebutton_set_state(bt_config_sample_96, LV_IMAGEBUTTON_STATE_RELEASED);
-		lv_imagebutton_set_state(bt_config_sample_192 , LV_IMAGEBUTTON_STATE_RELEASED);
+		lv_imagebutton_set_state(bt_config_sample_192 , LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 	}
 }
 
@@ -178,7 +184,7 @@ void create_btn_config_sample_192(void)
 	lv_imagebutton_set_src(bt_config_sample_192, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
 	lv_imagebutton_set_src(bt_config_sample_192, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_P_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_sample_192, event_bt_config_sample_192, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_sample_192, 326, 240);
+	lv_obj_set_pos(bt_config_sample_192, 326, 212);
 	lv_imagebutton_set_state(bt_config_sample_192, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 
 	// Text

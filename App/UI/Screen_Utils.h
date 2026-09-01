@@ -13,10 +13,12 @@
 
 enum page {
 	PAGE_MAIN = 0,
-	PAGE_CONFIG
+	PAGE_CONFIG,
+	PAGE_ABOUT
 };
 
 void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y, uint32_t page);
+void create_button_next_main(lv_obj_t * parent, int32_t x, int32_t y, uint32_t page);
 void create_text_footer(lv_obj_t * parent);
 
 #endif /* UI_SCREEN_UTILS_H_ */

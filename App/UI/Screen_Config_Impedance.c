@@ -22,6 +22,7 @@ void create_btn_config_imp_10k(void);
 void create_config_imp_label_2(void);
 
 lv_obj_t * Tela_Config_IMP = NULL;
+static lv_obj_t * img_fundo_imp = NULL;
 static lv_obj_t * text_config_imp_top = NULL;
 static lv_obj_t * bt_config_imp_600 = NULL;
 static lv_obj_t * bt_config_imp_10k = NULL;
@@ -34,8 +35,13 @@ void Screen_Config_IMP_Create(void)
 	lv_obj_set_style_bg_grad_color(Tela_Config_IMP, lv_color_hex(0x000000), 0);
 
 	// Label Screen
-	create_config_imp_label();
-	create_config_imp_label_2();
+	//create_config_imp_label();
+	//create_config_imp_label_2();
+
+	// Imagem de Fundo
+	img_fundo_imp = lv_img_create(Tela_Config_IMP);
+	lv_img_set_src(img_fundo_imp, "S:/CONFIG/TELA_CONFIG_IMPEDANCE.bin");
+	lv_obj_set_pos(img_fundo_imp, 0, 0);
 
 	// Buttons
 	create_btn_config_imp_600();
@@ -76,7 +82,7 @@ void create_btn_config_imp_600(void)
 	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
 	lv_imagebutton_set_src(bt_config_imp_600, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_G_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_imp_600, event_bt_600, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_imp_600, 23, 240);
+	lv_obj_set_pos(bt_config_imp_600, 23, 212);
 	lv_imagebutton_set_state(bt_config_imp_600, LV_IMAGEBUTTON_STATE_RELEASED);
 
 	// Text
@@ -110,7 +116,7 @@ void create_btn_config_imp_10k(void)
 	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_G.bin", NULL);
 	lv_imagebutton_set_src(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_G_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_imp_10k, event_bt_10k, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_imp_10k, 252, 240);
+	lv_obj_set_pos(bt_config_imp_10k, 252, 212);
 	lv_imagebutton_set_state(bt_config_imp_10k, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 
 	// Text
@@ -145,5 +151,5 @@ void create_config_imp_label_2(void)
 
 	// Centralizar o alinhamento das linhas de texto e a posição no container
 	lv_obj_set_style_text_align(label_main, LV_TEXT_ALIGN_LEFT, 0);
-	lv_obj_align(label_main, LV_ALIGN_CENTER, 0, -20);
+	lv_obj_align(label_main, LV_ALIGN_CENTER, 10, -12);
 }

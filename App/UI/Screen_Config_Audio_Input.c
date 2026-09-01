@@ -28,6 +28,7 @@ static lv_obj_t * text_config_Audio_In_top = NULL;
 static lv_obj_t * bt_config_audio_in_xlr = NULL;
 static lv_obj_t * bt_config_audio_in_opto = NULL;
 static lv_obj_t * bt_config_audio_in_aes = NULL;
+static lv_obj_t * img_fundo_audio_in = NULL;
 
 void Screen_Config_Audio_Input_Create(void)
 {
@@ -37,8 +38,13 @@ void Screen_Config_Audio_Input_Create(void)
 	lv_obj_set_style_bg_grad_color(Tela_Config_Audio_Input, lv_color_hex(0x000000), 0);
 
 	// Label Screen
-	create_config_audio_in_label();
-	create_config_audio_in_label_2();
+	//create_config_audio_in_label();
+	//create_config_audio_in_label_2();
+
+	// Imagem de Fundo
+	img_fundo_audio_in = lv_img_create(Tela_Config_Audio_Input);
+	lv_img_set_src(img_fundo_audio_in, "S:/CONFIG/TELA_CONFIG_AUDIO_INPUT.bin");
+	lv_obj_set_pos(img_fundo_audio_in, 0, 0);
 
 	// Buttons
 	create_btn_config_audio_in_xlr();
@@ -111,7 +117,7 @@ void create_btn_config_audio_in_xlr(void)
 	lv_imagebutton_set_src(bt_config_audio_in_xlr, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
 	lv_imagebutton_set_src(bt_config_audio_in_xlr, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_P_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_audio_in_xlr, event_bt_config_in_xlr, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_audio_in_xlr, 18, 240);
+	lv_obj_set_pos(bt_config_audio_in_xlr, 18, 212);
 	lv_imagebutton_set_state(bt_config_audio_in_xlr, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
 
 	// Text
@@ -146,7 +152,7 @@ void create_btn_config_audio_in_optical(void)
 	lv_imagebutton_set_src(bt_config_audio_in_opto, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
 	lv_imagebutton_set_src(bt_config_audio_in_opto, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_P_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_audio_in_opto, event_bt_config_in_optical, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_audio_in_opto, 172, 240);
+	lv_obj_set_pos(bt_config_audio_in_opto, 172, 212);
 	lv_imagebutton_set_state(bt_config_audio_in_opto, LV_IMAGEBUTTON_STATE_RELEASED);
 
 	// Text
@@ -181,7 +187,7 @@ void create_btn_config_audio_in_aes(void)
 	lv_imagebutton_set_src(bt_config_audio_in_aes, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/CONFIG/BT_CONFIG_P.bin", NULL);
 	lv_imagebutton_set_src(bt_config_audio_in_aes, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/CONFIG/BT_CONFIG_P_SEL.bin", NULL);
 	lv_obj_add_event_cb(bt_config_audio_in_aes, event_bt_config_in_aes, LV_EVENT_ALL, NULL);
-	lv_obj_set_pos(bt_config_audio_in_aes, 326, 240);
+	lv_obj_set_pos(bt_config_audio_in_aes, 326, 212);
 	lv_imagebutton_set_state(bt_config_audio_in_aes, LV_IMAGEBUTTON_STATE_RELEASED);
 
 	// Text
