@@ -116,7 +116,7 @@ uint32_t demo_vu_aes = 12;
 uint8_t flag_vu_pc = 0;
 uint32_t demo_vu_pc = 0;
 
-static int32_t fm_frequency = 104100;	// Escala de 76.000 - 108.100 MHz
+int32_t fm_frequency = 104100;	// Escala de 76.000 - 108.100 MHz
 char str_freq[20] = {0};
 
 static barmeter_t main_xlr_l;

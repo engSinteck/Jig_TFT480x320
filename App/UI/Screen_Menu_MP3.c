@@ -25,7 +25,7 @@ void Screen_Menu_MP3_Create(void)
 
 	// Imagem de Fundo
 	img_fundo_menu_mp3 = lv_img_create(Tela_Menu_MP3);
-	lv_img_set_src(img_fundo_menu_mp3, "S:/CONFIG/TELA_FUNDO.bin");
+	lv_img_set_src(img_fundo_menu_mp3, "S:/USB/TELA_USB.bin");
 	lv_obj_set_pos(img_fundo_menu_mp3, 0, 0);
 
 	create_button_back_main(Tela_Menu_MP3, 380, 265, PAGE_MAIN);
