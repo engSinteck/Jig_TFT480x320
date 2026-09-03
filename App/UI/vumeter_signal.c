@@ -8,6 +8,7 @@
 #include "lvgl.h"
 
 extern lv_obj_t * Tela_Config_Signal;
+extern lv_obj_t * Tela_Menu_TUNER;
 
 /* Imagens Vu-Meter */
 LV_IMG_DECLARE(LED_50_OFF);
@@ -80,6 +81,50 @@ static vumeter_50_t s_vu_mpx = {
 	.img_on=&LED_50_MPX_ON
 };
 
+// Tela Tuner
+/* Left e Right. Ajuste x/y do RIGHT p/ a posicao real na sua tela.       */
+static vumeter_50_t t_vu_left = {
+    .on=NULL,
+	.last_seg=-1,
+	.x=31,
+	.y=252,
+	.w=VU_50_W,
+	.h=VU_50_H,
+    .range=VU_50_RANGE,
+	.segs=VU_50_SEGMENTS,
+	.bounds=NULL,
+    .img_off=&LED_50_OFF,
+	.img_on=&LED_50_ON
+};
+
+static vumeter_50_t t_vu_right = {
+    .on=NULL,
+	.last_seg=-1,
+	.x=31,
+	.y=289,
+	.w=VU_50_W,
+	.h=VU_50_H,   /* <-- y do RIGHT */
+    .range=VU_50_RANGE,
+	.segs=VU_50_SEGMENTS,
+	.bounds=NULL,
+    .img_off=&LED_50_OFF,
+	.img_on=&LED_50_ON
+};
+
+static vumeter_50_t t_vu_mpx = {
+    .on=NULL,
+	.last_seg=-1,
+	.x=31,
+	.y=224,
+	.w=VU_50_W,
+	.h=VU_50_H,   /* <-- y do RIGHT */
+    .range=VU_50_RANGE,
+	.segs=VU_50_SEGMENTS,
+	.bounds=NULL,
+    .img_off=&LED_50_MPX_OFF,
+	.img_on=&LED_50_MPX_ON
+};
+
 /* --------------------------- INTERNOS ----------------------------- */
 /* segmento -> largura em pixels (borda linear ou por tabela nao-linear) */
 static int32_t seg_to_px_50(const vumeter_50_t * vu, int32_t seg)
@@ -126,6 +171,16 @@ void create_vumeter_50_left(void)   { vumeter_50_create(&s_vu_left,  Tela_Config
 void create_vumeter_50_right(void)  { vumeter_50_create(&s_vu_right, Tela_Config_Signal); }
 void create_vumeter_50_mpx(void)    { vumeter_50_create(&s_vu_mpx,   Tela_Config_Signal); }
 
+// Tela Tuner
+void create_vumeter_50_left_tuner(void)   { vumeter_50_create(&t_vu_left,  Tela_Menu_TUNER); }
+void create_vumeter_50_right_tuner(void)  { vumeter_50_create(&t_vu_right, Tela_Menu_TUNER); }
+void create_vumeter_50_mpx_tuner(void)    { vumeter_50_create(&t_vu_mpx,   Tela_Menu_TUNER); }
+
 void set_vumeter_50_left(int32_t value)  { vumeter_50_set(&s_vu_left,  value); }
 void set_vumeter_50_right(int32_t value) { vumeter_50_set(&s_vu_right, value); }
 void set_vumeter_50_mpx(int32_t value)   { vumeter_50_set(&s_vu_mpx, value); }
+
+// Tela Tuner
+void set_vumeter_50_left_tuner(int32_t value)  { vumeter_50_set(&t_vu_left,  value); }
+void set_vumeter_50_right_tuner(int32_t value) { vumeter_50_set(&t_vu_right, value); }
+void set_vumeter_50_mpx_tuner(int32_t value)   { vumeter_50_set(&t_vu_mpx, value); }

@@ -97,8 +97,8 @@ static void vumeter_set(vumeter_t * vu, int32_t value)
 }
 
 /* ---------------------- API (mesma que voce usa) ------------------ */
-void create_vumeter_left(void)   { vumeter_create(&g_vu_left,  Tela_Main); }
-void create_vumeter_right(void)  { vumeter_create(&g_vu_right, Tela_Main); }
+void create_vumeter_left(void)        { vumeter_create(&g_vu_left,  Tela_Main); }
+void create_vumeter_right(void)       { vumeter_create(&g_vu_right, Tela_Main); }
 
 void set_vumeter_left(int32_t value)  { vumeter_set(&g_vu_left,  value); }
 void set_vumeter_right(int32_t value) { vumeter_set(&g_vu_right, value); }

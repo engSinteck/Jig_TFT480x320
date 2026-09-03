@@ -6,4 +6,4 @@
  */
 
 
-const char* versao = {"1.0.0 (02-Set-26)"};
+const char* versao = {"1.0.0 (03-Set-26)"};
