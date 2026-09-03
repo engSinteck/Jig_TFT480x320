@@ -67,6 +67,7 @@ static lv_obj_t * tuner_bt_tuner = NULL;
 static uint32_t channel_space = 100;
 static uint32_t band_bw = 50;
 static uint8_t volume_phone = 55;
+static uint32_t user_data_bt_tuner = 0;
 
 void Screen_Menu_TUNER_Create(void)
 {
@@ -593,6 +594,26 @@ void create_tuner_text_indic(void)
     lv_obj_set_pos(text_tuner_r, 7, 294);
 }
 
+static void event_bt_tuner(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		uint32_t btn = (uint32_t)(uintptr_t)lv_event_get_user_data(e);
+
+		switch(btn) {
+			case 0:
+				lv_imagebutton_set_state(tuner_bt_mpx,  LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+				lv_imagebutton_set_state(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_RELEASED);
+				break;
+			case 1:
+				lv_imagebutton_set_state(tuner_bt_mpx,  LV_IMAGEBUTTON_STATE_RELEASED);
+				lv_imagebutton_set_state(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+				break;
+		}
+	}
+}
+
 void create_buttons_tuner(void)
 {
     // Button MPX
@@ -603,8 +624,9 @@ void create_buttons_tuner(void)
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
-    lv_obj_set_pos(tuner_bt_tuner, 382, 180);
-    //lv_obj_add_event_cb(tuner_bt_mpx, event_bt_tuner, LV_EVENT_ALL, NULL);
+	user_data_bt_tuner = 0;
+	lv_obj_add_event_cb(tuner_bt_mpx, event_bt_tuner, LV_EVENT_ALL, (void *)(uintptr_t)user_data_bt_tuner);
+	lv_obj_set_pos(tuner_bt_tuner, 382, 180);
 
 	// Button TUNER
     tuner_bt_tuner = lv_imagebutton_create(Tela_Menu_TUNER);
@@ -614,6 +636,7 @@ void create_buttons_tuner(void)
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
-    lv_obj_set_pos(tuner_bt_tuner, 382, 248);
-    //lv_obj_add_event_cb(tuner_bt_tuner, event_bt_tuner, LV_EVENT_ALL, NULL);
+	user_data_bt_tuner = 1;
+	lv_obj_add_event_cb(tuner_bt_tuner, event_bt_tuner, LV_EVENT_ALL, (void *)(uintptr_t)user_data_bt_tuner);
+	lv_obj_set_pos(tuner_bt_tuner, 382, 248);
 }
