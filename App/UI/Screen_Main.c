@@ -964,7 +964,6 @@ void create_img_button_volume(void)
 {
 	// PHONE Symbol
 	lv_obj_t * img_phone = lv_img_create(Tela_Main);
-	//lv_img_set_src(img_phone, &PHONE);
 	lv_img_set_src(img_phone, "S:/MAIN/PHONE.bin");
 	lv_obj_set_pos(img_phone, 456, 165);
 }
