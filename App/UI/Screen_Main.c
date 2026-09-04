@@ -19,6 +19,7 @@
 #include "../App/UI/Screen_Menu_PROC.h"
 #include "../App/UI/Screen_Menu_MP3.h"
 #include "../App/UI/Screen_Menu_TUNER.h"
+#include "../App/UI/Screen_Utils.h"
 #include "../App/UI/led_ring.h"
 #include "../App/UI/bar_leds.h"
 
@@ -26,6 +27,8 @@ extern void create_vumeter_left(void);
 extern void create_vumeter_right(void);
 extern void set_vumeter_left(int32_t value);
 extern void set_vumeter_right(int32_t value);
+
+extern bool is_checked_tuner;
 
 void create_fm_symbol(void);
 void create_text_lr(void);
@@ -202,6 +205,7 @@ void Screen_Create_Main(void)
 
 	// Create FM Symbol
 	create_fm_symbol();
+	create_img_separator(Tela_Main);
 
 	// Create Text L + R
 	create_text_lr();
@@ -292,8 +296,11 @@ void create_tuned(void)
 {
 	// TUNED Symbol
 	lv_obj_t * img_tuned = lv_img_create(Tela_Main);
-	lv_img_set_src(img_tuned, "S:/MAIN/BT_TUNED.bin");
-	//lv_img_set_src(img_tuned, &BT_TUNED);
+
+	if(is_checked_tuner)
+		lv_img_set_src(img_tuned, "S:/MAIN/BT_TUNED.bin");
+	else
+		lv_img_set_src(img_tuned, "S:/MAIN/BT_TUNED_OFF.bin");
 
 	lv_obj_set_pos(img_tuned, 332, 8);
 
@@ -312,8 +319,12 @@ void create_stereo(void)
 {
 	// STEREO Symbol
 	lv_obj_t * img_stereo = lv_img_create(Tela_Main);
-	//lv_img_set_src(img_stereo, &BT_STEREO);
-	lv_img_set_src(img_stereo, "S/MAIN/BT_STEREO.bin");
+
+	if(is_checked_tuner)
+		lv_img_set_src(img_stereo, "S/MAIN/BT_STEREO.bin");
+	else
+		lv_img_set_src(img_stereo, "S/MAIN/BT_STEREO_OFF.bin");
+
 	lv_obj_set_pos(img_stereo, 330, 38);
 
 	// Text
@@ -331,8 +342,12 @@ void create_rds(void)
 {
 	// RDS Symbol
 	lv_obj_t * img_rds = lv_img_create(Tela_Main);
-	//lv_img_set_src(img_rds, &BT_RDS);
-	lv_img_set_src(img_rds, "S:/MAIN/BT_RDS.bin");
+
+	if(is_checked_tuner)
+		lv_img_set_src(img_rds, "S:/MAIN/BT_RDS.bin");
+	else
+		lv_img_set_src(img_rds, "S:/MAIN/BT_RDS_OFF.bin");
+
 	lv_obj_set_pos(img_rds, 332, 66);
 
 	// Text
@@ -351,7 +366,7 @@ static void event_bt_next(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency < 108100) {
+		 if(is_checked_tuner && fm_frequency < 108100) {
 			 fm_frequency += 100; // Incrementa de 100
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_frequency, str_freq);
@@ -364,7 +379,7 @@ static void event_bt_rev(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency > 76000) {
+		 if(is_checked_tuner && fm_frequency > 76000) {
 			 fm_frequency -= 100; // Decrementa de 100
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_frequency, str_freq);
@@ -377,7 +392,7 @@ static void event_bt_nextff(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency < 108100) {
+		 if(is_checked_tuner && fm_frequency < 108100) {
 			 fm_frequency += 1000; // Incrementa de 1000
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_frequency, str_freq);
@@ -390,7 +405,7 @@ static void event_bt_prevff(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	 if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency > 76100) {
+		 if(is_checked_tuner && fm_frequency > 76100) {
 			 fm_frequency -= 1000; // Decrementa de 1000
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_frequency, str_freq);
@@ -747,7 +762,12 @@ void create_Label_RDS(void)
     label_rds = lv_label_create(Tela_Main);
     lv_obj_set_width(label_rds, 280);
     lv_obj_set_height(label_rds, LV_SIZE_CONTENT);
-    lv_label_set_text(label_rds, "AS MELHORES DA PROGRAMACAO SINTECK NEXT");
+
+    if(is_checked_tuner)
+    	lv_label_set_text(label_rds, "AS MELHORES DA PROGRAMACAO SINTECK NEXT");
+    else
+    	lv_label_set_text(label_rds, "");
+
     lv_label_set_long_mode(label_rds, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_obj_set_style_text_color(label_rds, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(label_rds, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -781,8 +801,12 @@ void create_Label_Frequency(int32_t frequency)
     lv_obj_set_style_text_line_space(label_frequency, 0, 1);
     lv_obj_set_style_text_align(label_frequency, LV_TEXT_ALIGN_CENTER, 0);
 
-    formatar_frequencia(frequency, str_freq, sizeof(str_freq));
-    lv_label_set_text_fmt(label_frequency, str_freq);
+    if(is_checked_tuner) {
+    	formatar_frequencia(frequency, str_freq, sizeof(str_freq));
+    	lv_label_set_text_fmt(label_frequency, str_freq);
+    }
+    else
+    	lv_label_set_text(label_frequency, "TUNER OFF");
 
     lv_obj_set_pos(label_frequency, 12, 34);
 }

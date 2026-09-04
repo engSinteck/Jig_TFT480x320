@@ -12,13 +12,21 @@
 
 #include "../App/UI/Screen_Menu_TUNER.h"
 #include "../App/UI/Screen_Utils.h"
+#include "../App/UI/bar_leds.h"
 
+LV_FONT_DECLARE(Neue_MediumItalic_10);
+LV_FONT_DECLARE(Neue_MediumItalic_11);
 LV_FONT_DECLARE(Neue_MediumItalic_14);
 LV_FONT_DECLARE(Neue_Medium_10);
+LV_FONT_DECLARE(Neue_Medium_11);
 LV_FONT_DECLARE(Neue_Medium_14);
 LV_FONT_DECLARE(Neue_Medium_16);
+LV_FONT_DECLARE(Neue_Medium_18);
 LV_FONT_DECLARE(Neue_Medium_20);
 LV_FONT_DECLARE(Neue_Medium_52);
+
+LV_IMG_DECLARE(LED_15_ON);
+LV_IMG_DECLARE(LED_15_OFF);
 
 extern int32_t fm_frequency;
 extern char str_freq[20];
@@ -43,6 +51,13 @@ void create_bw_space(void);
 void create_tuner_phone(void);
 void create_tuner_text_indic(void);
 void create_buttons_tuner(void);
+void create_memory_tuner(void);
+void create_tune_barmeter_signal(void);
+void create_label_19khz(void);
+void create_label_signal(void);
+void create_tuner_text_scale_vu(void);
+void create_tuner_label_vumeter_mpx(void);
+void create_tuner_indic(void);
 
 lv_obj_t * Tela_Menu_TUNER = NULL;
 static lv_obj_t * img_fundo_menu_tuner = NULL;
@@ -63,11 +78,27 @@ static lv_obj_t * tuner_bt_phone_inc = NULL;
 static lv_obj_t * label_vol_phone = NULL;
 static lv_obj_t * tuner_bt_mpx = NULL;
 static lv_obj_t * tuner_bt_tuner = NULL;
+static lv_obj_t * text_bt_tuner = NULL;
+static lv_obj_t * img_rds_tuner = NULL;
+static lv_obj_t * img_stereo_tuner = NULL;
+static lv_obj_t * img_tuned_tuner = NULL;
+static lv_obj_t * bt_mem_tuner[6];
+static lv_obj_t * text_mem_bt[6];
+static lv_obj_t * label_tuner_19k = NULL;
+static lv_obj_t * label_tuner_signal = NULL;
+static lv_obj_t * tuner_label_scale[8];
+static lv_obj_t * text_tuner_vumeter_mpx[7];
 
 static uint32_t channel_space = 100;
 static uint32_t band_bw = 50;
 static uint8_t volume_phone = 55;
 static uint32_t user_data_bt_tuner = 0;
+static uint32_t user_data_bt_mem = 0;
+
+static barmeter_t bar_signal;
+static barmeter_t bar_pilot;
+
+bool is_checked_tuner = 1;
 
 void Screen_Menu_TUNER_Create(void)
 {
@@ -83,6 +114,7 @@ void Screen_Menu_TUNER_Create(void)
 
 	// FM SYMBOL
 	create_tuner_fm_symbol();
+	create_img_separator(Tela_Menu_TUNER);
 	create_tuner_tuned();
 	create_tuner_stereo();
 	create_tuner_rds();
@@ -119,6 +151,23 @@ void Screen_Menu_TUNER_Create(void)
 	// Buttons TUNER
 	create_buttons_tuner();
 
+	// Buttons MEMORY
+	create_memory_tuner();
+
+	// BarMeter Signal
+	create_tune_barmeter_signal();
+
+	// Meter 19Khz
+	create_label_19khz();
+
+	// Meter Signal
+	create_label_signal();
+
+	// Vu-Meter Scale
+	create_tuner_text_scale_vu();
+	create_tuner_label_vumeter_mpx();
+	create_tuner_indic();
+
 	create_button_back_main(Tela_Menu_TUNER, 383, 288, PAGE_MAIN);
 }
 
@@ -142,56 +191,70 @@ void create_tuner_fm_symbol(void)
 void create_tuner_tuned(void)
 {
 	// TUNED Symbol
-	lv_obj_t * img_tuned = lv_img_create(Tela_Menu_TUNER);
-	lv_img_set_src(img_tuned, "S:/MAIN/BT_TUNED.bin");
+	img_tuned_tuner = lv_img_create(Tela_Menu_TUNER);
 
-	lv_obj_set_pos(img_tuned, 332, 8);
+	if(is_checked_tuner)
+		lv_img_set_src(img_tuned_tuner, "S:/MAIN/BT_TUNED.bin");
+	else
+		lv_img_set_src(img_tuned_tuner, "S:/MAIN/BT_TUNED_OFF.bin");
+
+	lv_obj_set_pos(img_tuned_tuner, 332, 8);
 
 	// Text
-    lv_obj_t * text_tuned = lv_label_create(img_tuned);
+    lv_obj_t * text_tuned = lv_label_create(img_tuned_tuner);
     lv_obj_set_width(text_tuned, LV_SIZE_CONTENT);
     lv_obj_set_height(text_tuned, LV_SIZE_CONTENT);
     lv_label_set_text(text_tuned, "TUNED");
     lv_obj_set_style_text_color(text_tuned, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_tuned, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_tuned, &Neue_Medium_10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_align_to(text_tuned, img_tuned, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align_to(text_tuned, img_tuned_tuner, LV_ALIGN_CENTER, 0, 0);
 }
 
 void create_tuner_stereo(void)
 {
 	// STEREO Symbol
-	lv_obj_t * img_stereo = lv_img_create(Tela_Menu_TUNER);
-	lv_img_set_src(img_stereo, "S/MAIN/BT_STEREO.bin");
-	lv_obj_set_pos(img_stereo, 330, 38);
+	img_stereo_tuner = lv_img_create(Tela_Menu_TUNER);
+
+	if(is_checked_tuner)
+		lv_img_set_src(img_stereo_tuner, "S/MAIN/BT_STEREO.bin");
+	else
+		lv_img_set_src(img_stereo_tuner, "S/MAIN/BT_STEREO_OFF.bin");
+
+	lv_obj_set_pos(img_stereo_tuner, 330, 38);
 
 	// Text
-    lv_obj_t * text_stereo = lv_label_create(img_stereo);
+    lv_obj_t * text_stereo = lv_label_create(img_stereo_tuner);
     lv_obj_set_width(text_stereo, LV_SIZE_CONTENT);
     lv_obj_set_height(text_stereo, LV_SIZE_CONTENT);
     lv_label_set_text(text_stereo, "STEREO");
     lv_obj_set_style_text_color(text_stereo, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_stereo, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_stereo, &Neue_Medium_10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_align_to(text_stereo, img_stereo, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_align_to(text_stereo, img_stereo_tuner, LV_ALIGN_CENTER, 0, 0);
 }
 
 void create_tuner_rds(void)
 {
 	// RDS Symbol
-	lv_obj_t * img_rds = lv_img_create(Tela_Menu_TUNER);
-	lv_img_set_src(img_rds, "S:/MAIN/BT_RDS.bin");
-	lv_obj_set_pos(img_rds, 332, 66);
+	img_rds_tuner = lv_img_create(Tela_Menu_TUNER);
+
+	if(is_checked_tuner)
+		lv_img_set_src(img_rds_tuner, "S:/MAIN/BT_RDS.bin");
+	else
+		lv_img_set_src(img_rds_tuner, "S:/MAIN/BT_RDS_OFF.bin");
+
+	lv_obj_set_pos(img_rds_tuner, 332, 66);
 
 	// Text
-    lv_obj_t * text_rds = lv_label_create(img_rds);
+    lv_obj_t * text_rds = lv_label_create(img_rds_tuner);
     lv_obj_set_width(text_rds, LV_SIZE_CONTENT);
     lv_obj_set_height(text_rds, LV_SIZE_CONTENT);
     lv_label_set_text(text_rds, "RDS");
     lv_obj_set_style_text_color(text_rds, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_rds, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_rds, &Neue_Medium_10, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_align_to(text_rds, img_rds, LV_ALIGN_CENTER, 0, 1);
+    lv_obj_align_to(text_rds, img_rds_tuner, LV_ALIGN_CENTER, 0, 1);
 }
 
 void create_tuner_Label_Frequency(int32_t frequency)
@@ -207,8 +270,12 @@ void create_tuner_Label_Frequency(int32_t frequency)
     lv_obj_set_style_text_line_space(label_tuner_frequency, 0, 1);
     lv_obj_set_style_text_align(label_tuner_frequency, LV_TEXT_ALIGN_CENTER, 0);
 
-    formatar_frequencia(frequency, str_freq, sizeof(str_freq));
-    lv_label_set_text_fmt(label_tuner_frequency, str_freq);
+    if(is_checked_tuner) {
+    	formatar_frequencia(frequency, str_freq, sizeof(str_freq));
+    	lv_label_set_text_fmt(label_tuner_frequency, str_freq);
+    }
+    else
+    	lv_label_set_text(label_tuner_frequency, "TUNER OFF");
 
     lv_obj_set_pos(label_tuner_frequency, 12, 34);
 }
@@ -218,7 +285,12 @@ void create_tuner_Label_RDS(void)
     label_tuner_rds = lv_label_create(Tela_Menu_TUNER);
     lv_obj_set_width(label_tuner_rds, 280);
     lv_obj_set_height(label_tuner_rds, LV_SIZE_CONTENT);
-    lv_label_set_text(label_tuner_rds, "AS MELHORES DA PROGRAMACAO SINTECK NEXT");
+
+    if(is_checked_tuner)
+    	lv_label_set_text(label_tuner_rds, "AS MELHORES DA PROGRAMACAO SINTECK NEXT");
+    else
+    	lv_label_set_text(label_tuner_rds, "");
+
     lv_label_set_long_mode(label_tuner_rds, LV_LABEL_LONG_SCROLL_CIRCULAR);
     lv_obj_set_style_text_color(label_tuner_rds, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(label_tuner_rds, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -231,7 +303,7 @@ static void event_tuner_bt_next(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency < 108100) {
+		 if(is_checked_tuner && fm_frequency < 108100) {
 			 fm_frequency += 100; // Incrementa de 100
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_tuner_frequency, str_freq);
@@ -244,7 +316,7 @@ static void event_tuner_bt_rev(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency > 76000) {
+		 if(is_checked_tuner && fm_frequency > 76000) {
 			 fm_frequency -= 100; // Decrementa de 100
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_tuner_frequency, str_freq);
@@ -257,7 +329,7 @@ static void event_tuner_bt_nextff(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency < 108100) {
+		 if(is_checked_tuner && fm_frequency < 108100) {
 			 fm_frequency += 1000; // Incrementa de 1000
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_tuner_frequency, str_freq);
@@ -270,7 +342,7 @@ static void event_tuner_bt_prevff(lv_event_t * e)
 	lv_event_code_t code = lv_event_get_code(e);
 
 	 if(code == LV_EVENT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-		 if(fm_frequency > 76100) {
+		 if(is_checked_tuner && fm_frequency > 76100) {
 			 fm_frequency -= 1000; // Decrementa de 1000
 			 formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
 			 lv_label_set_text_fmt(label_tuner_frequency, str_freq);
@@ -334,7 +406,7 @@ void create_memory_bank(void)
     lv_obj_set_style_text_color(text_memory_bank, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_memory_bank, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_memory_bank, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_pos(text_memory_bank, 18, 98);
+    lv_obj_set_pos(text_memory_bank, 18, 96);
 }
 
 
@@ -371,7 +443,7 @@ void create_channel_space(void)
     lv_obj_set_style_text_color(text_channel, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_channel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_channel, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_pos(text_channel, 202, 98);
+    lv_obj_set_pos(text_channel, 202, 96);
 
     // Button DEC Channel
     tuner_bt_channel_dec = lv_imagebutton_create(Tela_Menu_TUNER);
@@ -439,7 +511,7 @@ void create_bw_space(void)
     lv_obj_set_style_text_color(text_bw, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_bw, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_bw, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_pos(text_bw, 312, 98);
+    lv_obj_set_pos(text_bw, 312, 96);
 
     // Button DEC BW
     tuner_bt_bw_dec = lv_imagebutton_create(Tela_Menu_TUNER);
@@ -506,7 +578,7 @@ void create_tuner_phone(void)
     lv_obj_set_style_text_color(text_vol, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(text_vol, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(text_vol, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_pos(text_vol, 398, 98);
+    lv_obj_set_pos(text_vol, 398, 96);
 
     // Button DEC BW
     tuner_bt_phone_dec = lv_imagebutton_create(Tela_Menu_TUNER);
@@ -594,22 +666,49 @@ void create_tuner_text_indic(void)
     lv_obj_set_pos(text_tuner_r, 7, 294);
 }
 
+static void event_bt_mpx(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_VALUE_CHANGED) {
+		bool is_checked = lv_obj_has_state(tuner_bt_mpx, LV_STATE_CHECKED);
+
+		if(is_checked) {
+			LV_LOG_USER("Image button MPX is toggled ON (Checked)");
+		} else {
+			LV_LOG_USER("Image button MPX is toggled OFF (Unchecked)");
+		}
+	}
+}
+
 static void event_bt_tuner(lv_event_t * e)
 {
 	lv_event_code_t code = lv_event_get_code(e);
 
-	if(code == LV_EVENT_CLICKED) {
-		uint32_t btn = (uint32_t)(uintptr_t)lv_event_get_user_data(e);
+	if(code == LV_EVENT_VALUE_CHANGED) {
+		is_checked_tuner = lv_obj_has_state(tuner_bt_tuner, LV_STATE_CHECKED);
 
-		switch(btn) {
-			case 0:
-				lv_imagebutton_set_state(tuner_bt_mpx,  LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
-				lv_imagebutton_set_state(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_RELEASED);
-				break;
-			case 1:
-				lv_imagebutton_set_state(tuner_bt_mpx,  LV_IMAGEBUTTON_STATE_RELEASED);
-				lv_imagebutton_set_state(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
-				break;
+		if(is_checked_tuner) {
+			LV_LOG_USER("Image button Tuner is toggled ON (Checked)");
+			lv_label_set_text(text_bt_tuner, "TUNER ON");
+			//
+			lv_label_set_text(label_tuner_rds, "AS MELHORES DA PROGRAMACAO SINTECK NEXT");
+	    	formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
+	    	lv_label_set_text_fmt(label_tuner_frequency, str_freq);
+	    	lv_img_set_src(img_tuned_tuner, "S:/MAIN/BT_TUNED.bin");
+	    	lv_img_set_src(img_stereo_tuner, "S/MAIN/BT_STEREO.bin");
+	    	lv_img_set_src(img_rds_tuner, "S:/MAIN/BT_RDS.bin");
+			// RDS
+		} else {
+			LV_LOG_USER("Image button Tuner is toggled OFF (Unchecked)");
+			lv_label_set_text(text_bt_tuner, "TUNER OFF");
+
+			lv_label_set_text(label_tuner_rds, "");
+			lv_label_set_text(label_tuner_frequency, "TUNER OFF");
+
+			lv_img_set_src(img_tuned_tuner, "S:/MAIN/BT_TUNED_OFF.bin");
+			lv_img_set_src(img_stereo_tuner, "S/MAIN/BT_STEREO_OFF.bin");
+			lv_img_set_src(img_rds_tuner, "S:/MAIN/BT_RDS_OFF.bin");
 		}
 	}
 }
@@ -619,24 +718,294 @@ void create_buttons_tuner(void)
     // Button MPX
     tuner_bt_mpx = lv_imagebutton_create(Tela_Menu_TUNER);
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
-    lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
+    lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
-    lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
+    lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_mpx, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
-	user_data_bt_tuner = 0;
-	lv_obj_add_event_cb(tuner_bt_mpx, event_bt_tuner, LV_EVENT_ALL, (void *)(uintptr_t)user_data_bt_tuner);
-	lv_obj_set_pos(tuner_bt_tuner, 382, 180);
+    lv_obj_add_flag(tuner_bt_mpx, LV_OBJ_FLAG_CHECKABLE);
+    user_data_bt_tuner = 0;
+	lv_obj_add_event_cb(tuner_bt_mpx, event_bt_mpx, LV_EVENT_ALL, (void *)(uintptr_t)user_data_bt_tuner);
+	lv_obj_set_pos(tuner_bt_mpx, 383, 223);
+
+	// Text Button
+    lv_obj_t * text_bt_mpx = lv_label_create(tuner_bt_mpx);
+    lv_obj_set_width(text_bt_mpx, LV_SIZE_CONTENT);
+    lv_obj_set_height(text_bt_mpx, LV_SIZE_CONTENT);
+    lv_label_set_text(text_bt_mpx, "Sent to MPX");
+    lv_obj_set_style_text_color(text_bt_mpx, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(text_bt_mpx, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(text_bt_mpx, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_align_to(text_bt_mpx, tuner_bt_mpx, LV_ALIGN_CENTER, 0, 6);
 
 	// Button TUNER
     tuner_bt_tuner = lv_imagebutton_create(Tela_Menu_TUNER);
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
-    lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
+    lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
-    lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_TUNER_OFF.bin", NULL);
+    lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
     lv_imagebutton_set_src(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/TUNER/BT_TUNER_ON.bin", NULL);
-	user_data_bt_tuner = 1;
+    lv_obj_add_flag(tuner_bt_tuner, LV_OBJ_FLAG_CHECKABLE);
+    user_data_bt_tuner = 1;
 	lv_obj_add_event_cb(tuner_bt_tuner, event_bt_tuner, LV_EVENT_ALL, (void *)(uintptr_t)user_data_bt_tuner);
-	lv_obj_set_pos(tuner_bt_tuner, 382, 248);
+	lv_obj_set_pos(tuner_bt_tuner, 383, 256);
+
+	// Text Button
+    text_bt_tuner = lv_label_create(tuner_bt_tuner);
+    lv_obj_set_width(text_bt_tuner, LV_SIZE_CONTENT);
+    lv_obj_set_height(text_bt_tuner, LV_SIZE_CONTENT);
+    lv_label_set_text(text_bt_tuner, "TUNER OFF");
+    lv_obj_set_style_text_color(text_bt_tuner, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(text_bt_tuner, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(text_bt_tuner, &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_align_to(text_bt_tuner, tuner_bt_tuner, LV_ALIGN_CENTER, 0, 6);
+
+    // STATE
+    if(is_checked_tuner) {
+    	lv_label_set_text(text_bt_tuner, "TUNER ON");
+    	lv_imagebutton_set_state(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_CHECKED_RELEASED);
+    }
+    else {
+    	lv_label_set_text(text_bt_tuner, "TUNER OFF");
+    	lv_imagebutton_set_state(tuner_bt_tuner, LV_IMAGEBUTTON_STATE_RELEASED);
+    }
+}
+
+static void event_bt_mem_tuner(lv_event_t * e)
+{
+	lv_event_code_t code = lv_event_get_code(e);
+
+	if(code == LV_EVENT_CLICKED) {
+		uint32_t btn = (uint32_t)(uintptr_t)lv_event_get_user_data(e);
+
+		switch(btn) {
+			case 0:
+				fm_frequency = 103700;
+				break;
+			case 1:
+				fm_frequency = 98100;
+				break;
+			case 2:
+				fm_frequency = 104100;
+				break;
+			case 3:
+				fm_frequency = 77700;
+				break;
+			case 4:
+				fm_frequency = 106300;
+				break;
+			case 5:
+				fm_frequency = 86500;
+				break;
+		}
+
+		for(uint8_t x = 0; x < 6; x++) {
+			lv_imagebutton_set_state(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_RELEASED);
+		}
+
+		lv_imagebutton_set_state(bt_mem_tuner[btn], LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+    	formatar_frequencia(fm_frequency, str_freq, sizeof(str_freq));
+    	lv_label_set_text_fmt(label_tuner_frequency, str_freq);
+	}
+	else if(code == LV_EVENT_LONG_PRESSED) {
+		LV_LOG_USER("Image button MEM Long Pressed");
+	}
+}
+
+void create_memory_tuner(void)
+{
+	for(uint8_t x = 0; x < 6; x++) {
+		bt_mem_tuner[x] = lv_imagebutton_create(Tela_Menu_TUNER);
+		lv_imagebutton_set_src(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_RELEASED, NULL, "S:/TUNER/BT_MEM.bin", NULL);
+		lv_imagebutton_set_src(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_PRESSED, NULL, "S:/TUNER/BT_MEM_P.bin", NULL);
+		lv_imagebutton_set_src(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_DISABLED, NULL, "S:/TUNER/BT_MEM.bin", NULL);
+		lv_imagebutton_set_src(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_CHECKED_PRESSED, NULL, "S:/TUNER/BT_MEM_P.bin", NULL);
+		lv_imagebutton_set_src(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_CHECKED_RELEASED, NULL, "S:/TUNER/BT_MEM.bin", NULL);
+		lv_imagebutton_set_src(bt_mem_tuner[x], LV_IMAGEBUTTON_STATE_CHECKED_DISABLED, NULL, "S:/TUNER/BT_MEM_VD.bin", NULL);
+		user_data_bt_mem = x;
+		lv_obj_add_event_cb(bt_mem_tuner[x], event_bt_mem_tuner, LV_EVENT_ALL, (void *)(uintptr_t)user_data_bt_mem);
+	}
+	lv_imagebutton_set_state(bt_mem_tuner[2], LV_IMAGEBUTTON_STATE_CHECKED_DISABLED);
+
+	lv_obj_set_pos(bt_mem_tuner[0], 6, 112);
+	lv_obj_set_pos(bt_mem_tuner[1], 67, 112);
+	lv_obj_set_pos(bt_mem_tuner[2], 129, 112);
+	lv_obj_set_pos(bt_mem_tuner[3], 6, 148);
+	lv_obj_set_pos(bt_mem_tuner[4], 67, 148);
+	lv_obj_set_pos(bt_mem_tuner[5], 129, 148);
+
+	// Text text_mem_bt[x]
+	for(uint8_t x = 0; x < 6; x++) {
+		text_mem_bt[x] = lv_label_create(bt_mem_tuner[x]);
+	    lv_obj_set_width(text_mem_bt[x], LV_SIZE_CONTENT);
+	    lv_obj_set_height(text_mem_bt[x], LV_SIZE_CONTENT);
+	    lv_obj_set_style_text_color(text_mem_bt[x], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+	    lv_obj_set_style_text_opa(text_mem_bt[x], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+	    lv_obj_set_style_text_font(text_mem_bt[x], &Neue_Medium_14, LV_PART_MAIN | LV_STATE_DEFAULT);
+	    lv_obj_align_to(text_mem_bt[x], bt_mem_tuner[x], LV_ALIGN_CENTER, 0, 0);
+	}
+
+	lv_label_set_text(text_mem_bt[0], "103.7");
+	lv_label_set_text(text_mem_bt[1], "98.1");
+	lv_label_set_text(text_mem_bt[2], "104.1");
+	lv_label_set_text(text_mem_bt[3], "77.7");
+	lv_label_set_text(text_mem_bt[4], "106.3");
+	lv_label_set_text(text_mem_bt[5], "86.5");
+}
+
+
+void create_tune_barmeter_signal(void)
+{
+	bar_signal.on       = NULL;
+	bar_signal.last_seg = -1;
+	bar_signal.x        = 134;
+	bar_signal.y        = 185;
+	bar_signal.w        = 28;
+	bar_signal.h        = 104;
+	bar_signal.range    = 15;
+	bar_signal.segs     = 15;
+	bar_signal.bounds   = NULL;
+	bar_signal.img_off  = &LED_15_OFF;
+	bar_signal.img_on   = &LED_15_ON;
+	bar_signal.rotation = 900;
+
+	barmeter_create(Tela_Menu_TUNER, &bar_signal);
+	barmeter_set(&bar_signal, 10);
+
+	bar_pilot.on       = NULL;
+	bar_pilot.last_seg = -1;
+	bar_pilot.x        = 378;
+	bar_pilot.y        = 185;
+	bar_pilot.w        = 28;
+	bar_pilot.h        = 104;
+	bar_pilot.range    = 15;
+	bar_pilot.segs     = 15;
+	bar_pilot.bounds   = NULL;
+	bar_pilot.img_off  = &LED_15_OFF;
+	bar_pilot.img_on   = &LED_15_ON;
+	bar_pilot.rotation = 900;
+
+	barmeter_create(Tela_Menu_TUNER, &bar_pilot);
+	barmeter_set(&bar_pilot, 15);
+}
+
+void create_label_19khz(void)
+{
+    label_tuner_19k = lv_label_create(Tela_Menu_TUNER);
+    lv_obj_set_width(label_tuner_19k, LV_SIZE_CONTENT);
+    lv_obj_set_height(label_tuner_19k, LV_SIZE_CONTENT);
+    lv_obj_set_style_text_color(label_tuner_19k, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(label_tuner_19k, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(label_tuner_19k, &Neue_Medium_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text_fmt(label_tuner_19k, "%0.1f%%", 10.10f);
+    lv_obj_set_pos(label_tuner_19k, 384, 194);
+}
+
+void create_label_signal(void)
+{
+    label_tuner_signal = lv_label_create(Tela_Menu_TUNER);
+    lv_obj_set_width(label_tuner_signal, LV_SIZE_CONTENT);
+    lv_obj_set_height(label_tuner_signal, LV_SIZE_CONTENT);
+    lv_obj_set_style_text_color(label_tuner_signal, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(label_tuner_signal, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(label_tuner_signal, &Neue_Medium_18, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text_fmt(label_tuner_signal, "%0.2f dBm", -63.70f);
+    lv_obj_set_pos(label_tuner_signal, 142, 193);
+}
+
+void create_tuner_text_scale_vu(void)
+{
+	// Label L+R
+	for(uint8_t x = 0; x < 8; x++) {
+		tuner_label_scale[x] = lv_label_create(Tela_Menu_TUNER);
+		lv_obj_set_width(tuner_label_scale[x], LV_SIZE_CONTENT);
+		lv_obj_set_height(tuner_label_scale[x], LV_SIZE_CONTENT);
+		lv_obj_set_style_text_align(tuner_label_scale[x], LV_TEXT_ALIGN_CENTER, 0);
+		lv_obj_set_style_text_color(tuner_label_scale[x], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_text_opa(tuner_label_scale[x], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_text_font(tuner_label_scale[x], &Neue_Medium_11, LV_PART_MAIN | LV_STATE_DEFAULT);
+	}
+
+	// Text
+	lv_label_set_text(tuner_label_scale[0], "-60");
+	lv_label_set_text(tuner_label_scale[1], "-50");
+	lv_label_set_text(tuner_label_scale[2], "-40");
+	lv_label_set_text(tuner_label_scale[3], "-30");
+	lv_label_set_text(tuner_label_scale[4], "-20");
+	lv_label_set_text(tuner_label_scale[5], "-10");
+	lv_label_set_text(tuner_label_scale[6], "0dB");
+	lv_label_set_text(tuner_label_scale[7], "6dB>");
+
+	// Position
+	lv_obj_set_pos(tuner_label_scale[0], 27, 278);
+	lv_obj_set_pos(tuner_label_scale[1], 96, 278);
+	lv_obj_set_pos(tuner_label_scale[2], 164, 278);
+	lv_obj_set_pos(tuner_label_scale[3], 234, 278);
+	lv_obj_set_pos(tuner_label_scale[4], 270, 278);
+	lv_obj_set_pos(tuner_label_scale[5], 304, 278);
+	lv_obj_set_pos(tuner_label_scale[6], 329, 278);
+	lv_obj_set_pos(tuner_label_scale[7], 353, 278);
+}
+
+void create_tuner_label_vumeter_mpx(void)
+{
+	// Label MPX
+	for(uint8_t x = 0; x < 7; x++) {
+		text_tuner_vumeter_mpx[x] = lv_label_create(Tela_Menu_TUNER);
+		lv_obj_set_width(text_tuner_vumeter_mpx[x], LV_SIZE_CONTENT);
+		lv_obj_set_height(text_tuner_vumeter_mpx[x], LV_SIZE_CONTENT);
+		lv_obj_set_style_text_align(text_tuner_vumeter_mpx[x], LV_TEXT_ALIGN_CENTER, 0);
+		lv_obj_set_style_text_color(text_tuner_vumeter_mpx[x], lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_text_opa(text_tuner_vumeter_mpx[x], 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+		lv_obj_set_style_text_font(text_tuner_vumeter_mpx[x], &Neue_Medium_11, LV_PART_MAIN | LV_STATE_DEFAULT);
+	}
+
+	// Text
+	lv_label_set_text(text_tuner_vumeter_mpx[0], "2.5KHz");
+	lv_label_set_text(text_tuner_vumeter_mpx[1], "STEP");
+	lv_label_set_text(text_tuner_vumeter_mpx[2], "25KHz");
+	lv_label_set_text(text_tuner_vumeter_mpx[3], "50");
+	lv_label_set_text(text_tuner_vumeter_mpx[4], "75");
+	lv_label_set_text(text_tuner_vumeter_mpx[5], "82.5");
+	lv_label_set_text(text_tuner_vumeter_mpx[6], "100KHz");
+
+	// Position
+	lv_obj_set_pos(text_tuner_vumeter_mpx[0], 27, 213);
+	lv_obj_set_pos(text_tuner_vumeter_mpx[1], 65, 213);
+	lv_obj_set_pos(text_tuner_vumeter_mpx[2], 96, 213);
+	lv_obj_set_pos(text_tuner_vumeter_mpx[3], 160, 213);
+	lv_obj_set_pos(text_tuner_vumeter_mpx[4], 228, 213);	// 75
+	lv_obj_set_pos(text_tuner_vumeter_mpx[5], 250, 213);
+	lv_obj_set_pos(text_tuner_vumeter_mpx[6], 282, 213);
+}
+
+void create_tuner_indic(void)
+{
+    lv_obj_t * label_tuner_indic1 = lv_label_create(Tela_Menu_TUNER);
+    lv_obj_set_width(label_tuner_indic1, LV_SIZE_CONTENT);
+    lv_obj_set_height(label_tuner_indic1, LV_SIZE_CONTENT);
+    lv_obj_set_style_text_color(label_tuner_indic1, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(label_tuner_indic1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(label_tuner_indic1, &Neue_MediumItalic_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(label_tuner_indic1, "SIGNAL");
+    lv_obj_set_pos(label_tuner_indic1, 204, 185);
+
+    lv_obj_t * label_tuner_indic2 = lv_label_create(Tela_Menu_TUNER);
+    lv_obj_set_width(label_tuner_indic2, LV_SIZE_CONTENT);
+    lv_obj_set_height(label_tuner_indic2, LV_SIZE_CONTENT);
+    lv_obj_set_style_text_color(label_tuner_indic2, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(label_tuner_indic2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(label_tuner_indic2, &Neue_MediumItalic_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(label_tuner_indic2, "DEVIATION");
+    lv_obj_set_pos(label_tuner_indic2, 327, 215);
+
+    lv_obj_t * label_tuner_indic3 = lv_label_create(Tela_Menu_TUNER);
+    lv_obj_set_width(label_tuner_indic3, LV_SIZE_CONTENT);
+    lv_obj_set_height(label_tuner_indic3, LV_SIZE_CONTENT);
+    lv_obj_set_style_text_color(label_tuner_indic3, lv_color_hex(0xB4DCFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(label_tuner_indic3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(label_tuner_indic3, &Neue_MediumItalic_10, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_label_set_text(label_tuner_indic3, "19KHz PILOT");
+    lv_obj_set_pos(label_tuner_indic3, 411, 185);
 }

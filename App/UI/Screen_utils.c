@@ -13,11 +13,16 @@
 LV_FONT_DECLARE(Neue_Medium_14);
 LV_FONT_DECLARE(Neue_Medium_16);
 
+LV_IMG_DECLARE(SEP_CIANO);
+LV_IMG_DECLARE(SEP_VD);
+
 extern lv_obj_t * Tela_Main;
 
 static lv_obj_t * bt_backmain = NULL;
 static lv_obj_t * bt_nextmain = NULL;
 static lv_obj_t * text_footer = NULL;
+static lv_obj_t * img_tuned_sep1 = NULL;
+static lv_obj_t * img_tuned_sep2 = NULL;
 
 static void event_menu_back(lv_event_t * e)
 {
@@ -134,3 +139,15 @@ void create_text_footer(lv_obj_t * parent)
     lv_obj_set_pos(text_footer, 284, 300);
 }
 
+void create_img_separator(lv_obj_t * parent)
+{
+	// SEP Symbol
+	img_tuned_sep1 = lv_img_create(parent);
+	lv_img_set_src(img_tuned_sep1, &SEP_CIANO);
+	lv_obj_set_pos(img_tuned_sep1, 334, 28);
+
+	// SEP VD Symbol
+	img_tuned_sep2 = lv_img_create(parent);
+	lv_img_set_src(img_tuned_sep2, &SEP_VD);
+	lv_obj_set_pos(img_tuned_sep2, 334, 58);
+}

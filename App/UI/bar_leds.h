@@ -34,5 +34,6 @@ typedef struct {
 
 void barmeter_create(lv_obj_t * parent, barmeter_t * bar);
 void barmeter_set(barmeter_t * bar, int32_t value);
+void barmeter_set_manual_image(barmeter_t * bar, int32_t value);
 
 #endif /* UI_BAR_LEDS_H_ */

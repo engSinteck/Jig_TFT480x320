@@ -20,5 +20,6 @@ enum page {
 void create_button_back_main(lv_obj_t * parent, int32_t x, int32_t y, uint32_t page);
 void create_button_next_main(lv_obj_t * parent, int32_t x, int32_t y, uint32_t page);
 void create_text_footer(lv_obj_t * parent);
+void create_img_separator(lv_obj_t * parent);
 
 #endif /* UI_SCREEN_UTILS_H_ */

@@ -384,8 +384,8 @@ void create_output_barmeter_xlr_out(void)
 	barmeter_create(Tela_Outputs, &out_xlr_l);
 	barmeter_create(Tela_Outputs, &out_xlr_r);
 
-	//barmeter_set(&out_xlr_l, 4);
-	//barmeter_set(&out_xlr_r, 4);
+	barmeter_set(&out_xlr_l, 4);
+	barmeter_set(&out_xlr_r, 4);
 }
 
 void create_output_barmeter_aes_out(void)
@@ -419,8 +419,8 @@ void create_output_barmeter_aes_out(void)
 	barmeter_create(Tela_Outputs, &out_aes_l);
 	barmeter_create(Tela_Outputs, &out_aes_r);
 
-	//barmeter_set(&out_aes_l, 4);
-	//barmeter_set(&out_aes_r, 4);
+	barmeter_set(&out_aes_l, 4);
+	barmeter_set(&out_aes_r, 4);
 }
 
 void create_output_barmeter_mpx_out(void)
@@ -454,8 +454,8 @@ void create_output_barmeter_mpx_out(void)
 	barmeter_create(Tela_Outputs, &out_mpx1);
 	barmeter_create(Tela_Outputs, &out_mpx2);
 
-	//barmeter_set(&out_mpx1, 4);
-	//barmeter_set(&out_mpx2, 4);
+	barmeter_set(&out_mpx1, 6);
+	barmeter_set(&out_mpx2, 6);
 }
 
 void create_outputs_text(void)
